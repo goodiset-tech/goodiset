@@ -1,0 +1,31 @@
+/.phpunit.cache
+/node_modules
+/public/build
+/public/src/media/users
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.htaccess
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+/public/*.xml  # This line ignores all .xml files directly in the public directory
+/public/**/*.xml  # This line ignores all .xml files in subdirectories of public
+sitemap.xml
+brand.xml
+category.xml
+product_tags_1.xml
+composer.lock
+resources/lang/ar.json
+resources/lang/en.json
+public/front/assets/sass/main.css.map

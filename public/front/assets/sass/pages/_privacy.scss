@@ -1,0 +1,101 @@
+.outer_privacy_policy_container {
+    width: 100%;
+    z-index: 1;
+    position: relative;
+    padding: 60px 16px;
+
+    @include mobile {
+        padding: 30px 16px;
+    }
+}
+
+.privacy_policy_container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    box-sizing: border-box;
+    max-width: 1290px;
+    margin: 0 auto;
+
+    // Card Styles
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05);
+    padding: 80px;
+
+    @include tablet {
+        padding: 60px 40px;
+        gap: 30px;
+    }
+
+    @include mobile {
+        padding: 40px 24px;
+        gap: 24px;
+    }
+
+    h1 {
+        font-family: $secFont;
+        font-size: 36px;
+        font-weight: 700;
+        line-height: 1.2;
+        display: block;
+        letter-spacing: 0.02em;
+        margin-bottom: 20px;
+        color: $priColor;
+
+        @include mobile {
+            font-size: 28px;
+        }
+    }
+
+    h4 {
+        font-size: 22px;
+        margin-top: 32px;
+        margin-bottom: 12px;
+        font-weight: 800;
+        color: $uiBlack;
+        line-height: 1.4;
+
+        @include mobile {
+            font-size: 19px;
+            margin-top: 24px;
+        }
+    }
+
+    p {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.8;
+        text-align: left;
+        color: lighten($uiBlack, 10%);
+
+        @include rtl {
+            text-align: right;
+        }
+
+        @include mobile {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+    }
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        list-style: none;
+        padding: 0;
+
+        counter-reset: privacy-counter;
+
+        >li {
+            position: relative;
+
+            div {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    }
+}

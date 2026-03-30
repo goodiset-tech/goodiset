@@ -1,0 +1,31 @@
+const dropdowns=document.querySelectorAll(".filter_dropdown");const selectedValues={};let array=[];let arrayKey=[];dropdowns.forEach((dropdown)=>{const button=dropdown.querySelector(".filter_dropdown-btn");const menu=dropdown.querySelector(".filter_dropdown-menu");const items=dropdown.querySelectorAll(".filter_dropdown-item");const dropdownKey=dropdown.dataset.dropdown;let startY=0;window.addEventListener("touchstart",(e)=>{startY=e.touches[0].clientY},{passive:!1});window.addEventListener("touchmove",(e)=>{handleScroll(e,"touch")},{passive:!1});window.addEventListener("wheel",(e)=>{handleScroll(e,"wheel")},{passive:!1});function handleScroll(e,eventType){const menuAll=document.querySelectorAll(".filter_dropdown-menu");menuAll.forEach((menu)=>{if(menu&&(e.target.classList.contains("filter_dropdown-item")||e.target.classList.contains("filter_dropdown-menu"))){const scrollTop=menu.scrollTop;const scrollHeight=menu.scrollHeight;const clientHeight=menu.clientHeight;const atTop=scrollTop===0;const atBottom=scrollTop+clientHeight>=scrollHeight;let deltaY=0;if(eventType==="touch"){deltaY=startY-e.touches[0].clientY}else if(eventType==="wheel"){deltaY=e.deltaY}
+if((atTop&&deltaY<0)||(atBottom&&deltaY>0)){e.preventDefault()}}else if(menu){menu.style.display="none"}})}
+document.querySelector(".main-container").addEventListener("scroll",(e)=>{menu.style.display="none"});button.addEventListener("click",()=>{button.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>{const position=button.getBoundingClientRect();menu.style.display=menu.style.display==="block"?"none":"block";menu.style.left=`${position.left + window.scrollX}px`;menu.style.top=`${position.top + position.height}px`},300)});items.forEach((item)=>{item.addEventListener("click",(e)=>{items.forEach((i)=>i.classList.remove("selected"));e.target.classList.add("selected");selectedValues[`${button.innerText}`]=e.target.innerText;array=[];arrayKey=[];arrayKey.push(...extractKeys(selectedValues));array.push(...extractValues(selectedValues));array.forEach((el,index)=>{let selectedFiltersContainer=document.querySelector(".filters-container .selected_filters");if(!selectedFiltersContainer){const selectedFiltersDiv=document.createElement("div");selectedFiltersDiv.classList.add("selected_filters");document.querySelector(".filters-container").appendChild(selectedFiltersDiv);selectedFiltersContainer=selectedFiltersDiv}
+let selectedKey=null;for(const key in selectedValues){if(selectedValues[key]===el){selectedKey=key;break}}
+if(index==0){selectedFiltersContainer.innerHTML=`
+                            <span class="filter">
+                             ${selectedKey} :  ${el} <i class="fa-solid fa-xmark" onclick="call('${el}')"></i>
+                            </span>`}else{selectedFiltersContainer.innerHTML+=`
+                            <span class="filter">
+                                 ${selectedKey} :  ${el}<i class="fa-solid fa-xmark" onclick="call('${el}')"></i>
+                            </span>`}
+if(index==array.length-1){selectedFiltersContainer.innerHTML+=`
+                            <span
+                                {{ isset($cateid) ? 'disabled' : '' }}
+                                class="clear_all_filter"
+                                onclick="clearAllFilters()"
+                            >
+                                Clear all filters
+                            </span>`}});menu.style.display="none"})});document.addEventListener("click",(e)=>{if(!dropdown.contains(e.target)){menu.style.display="none"}})});function call(el){let keyToRemove=null;for(const key in selectedValues){if(selectedValues[key]===el){keyToRemove=key;break}}
+if(keyToRemove){delete selectedValues[keyToRemove];console.log(selectedValues," i am selected value ");const dropdown=Array.from(dropdowns).find((d)=>d.querySelector(".filter_dropdown-btn").innerText.trim()===keyToRemove.trim());if(dropdown){const items=dropdown.querySelectorAll(".filter_dropdown-item");console.log(el,"i am dropdown ");items.forEach((item)=>{if(item.innerText.trim()==el){console.log(item.innerText,">>>.");item.classList.remove("selected");removeFilter()}})}}
+array=array.filter((n)=>n!==el);if(array.length===0){document.querySelector(".selected_filters").innerHTML=``}else{document.querySelector(".selected_filters").innerHTML=array.map((filter,index)=>`
+                    <span class="filter">
+                        ${filter} <i class="fa-solid fa-xmark" onclick="call('${filter}')"></i>
+                    </span>
+                `).join("");document.querySelector(".selected_filters").innerHTML+=`<a href=""  onclick ="clearAllFilters()" class="clear_all_filter">Clear all filters</a>`}}
+function clearAllFilters(){for(const key in selectedValues){delete selectedValues[key]}
+dropdowns.forEach((dropdown)=>{const items=dropdown.querySelectorAll(".filter_dropdown-item");items.forEach((item)=>{if(item.getAttribute("data-filter")==="slug"||item.getAttribute("data-filter")==="selected_cate"){return}
+item.classList.remove("selected");removeFilter()})});array=[];const selectedFiltersDiv=document.querySelector(".selected_filters");if(selectedFiltersDiv){selectedFiltersDiv.remove()}}
+const slider2=document.querySelectorAll(".product_slider");slider2.forEach((slide)=>{slide.addEventListener("mouseover",()=>{const slider_images=slide.querySelectorAll(".product_slider_image");console.log(slider_images,"slidee");slider_images[0].classList.remove("active");slider_images[1].classList.add("active")});slide.addEventListener("mouseout",()=>{const slider_images=slide.querySelectorAll(".product_slider_image");slider_images[1].classList.remove("active");slider_images[0].classList.add("active")})});const extractValues=(obj)=>{const result=[];for(const key in obj){if(typeof obj[key]==="object"){result.push(...extractValues(obj[key]))}else{result.push(obj[key])}}
+return result};const extractKeys=(obj)=>{const result=[];for(const key in obj){if(typeof obj[key]==="object"){result.push(...extractKeys(obj[key]))}else{result.push(key)}}
+return result};function removeFilter(){initializeFilter();fetchProducts()}

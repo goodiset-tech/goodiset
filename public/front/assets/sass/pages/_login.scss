@@ -1,0 +1,48 @@
+.contact_us {
+    &_wrapper {
+        background: #F2F2F2;
+        border-radius: 24px;
+        overflow: hidden;
+
+        .side_image {
+            background: url(../../assets/images/Signup.jpg);
+            overflow: hidden;
+            background-size: cover;
+
+            @include mobile {
+                display: none;
+            }
+        }
+
+        .form {
+            padding: 100px;
+
+            @include tablet {
+                padding: 30px;
+            }
+
+            @include mobile {
+                padding: 24px;
+            }
+
+
+
+            &_content {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+
+                @include tablet {
+                    .g-recaptcha {
+                        transform: scale(0.77);
+                        transform-origin: 0 0;
+                    }
+                }
+            }
+
+            .remember {
+                margin: 15px 0px;
+            }
+        }
+    }
+}

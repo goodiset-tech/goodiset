@@ -1,0 +1,678 @@
+$order-status-colors: (
+    cancelled: #d3d3d3,
+    refunded: #f8d7da,
+    complete: #d4edda,
+    pending: #fff3cd,
+    processing: #cce5ff,
+);
+
+.dashboard {
+    background-color: $priColor20;
+    padding: 56px 0;
+    display: flex;
+    min-height: calc(100vh - 100px);
+    .sidebar {
+        border-radius: 8px;
+        margin-bottom: 30px;
+
+        &_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            .account_menu {
+                color: $priColor;
+                border: 1px solid $priColor;
+                padding: 4px 16px;
+                background: #fff;
+                border-radius: 8px;
+                display: none;
+            }
+        }
+
+        h3 {
+            font: 500 22px/32px $priFont;
+
+            // margin-bottom: 20px;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            background: $white;
+
+            .menu-item {
+                padding: 16px 32px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                a {
+                    text-decoration: none;
+                    font: 500 16px/24px $priFont;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                &.active {
+                    background: $priColor;
+                    color: $white;
+
+                    &:hover {
+                        background: $priColor;
+                        color: $white;
+                    }
+                }
+
+                &:hover {
+                    background: rgba(239, 239, 239, 1);
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .content {
+        flex: 1;
+        margin-left: 30px;
+
+        .tab {
+            display: none; // Hidden by default
+            animation: fadeIn 0.3s ease-in-out;
+
+            &.active-tab {
+                display: block;
+                h3 {
+                    font: 700 24px/32px $priFont;
+                    // margin-bottom: 20px;
+                }
+                .tab-name {
+                    margin-bottom: 20px;
+                }
+
+                .main-content {
+                    background: $white;
+                    padding: 40px 32px;
+                    display: flex;
+                    flex-direction: column;
+                    margin: 0;
+                    gap: 32px;
+
+                    .info {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 16px;
+                        .title {
+                            font: 700 24px/32px $priFont;
+                            margin: 0;
+                        }
+                        .hr-line {
+                            height: 1px;
+                            background: $uiLightGray;
+                        }
+                        .row {
+                            .grid-column {
+                                .contact-info {
+                                    h4 {
+                                        font: 700 16px/24px $priFont;
+                                        margin-bottom: 16px;
+                                    }
+                                    p {
+                                        font: 400 14px/20px $priFont;
+                                        margin: 0;
+                                    }
+                                    .links {
+                                        display: flex;
+                                        gap: 8px;
+                                        margin-top: 8px;
+                                        a {
+                                            text-decoration: none;
+                                            color: $priColor;
+                                            font: 400 14px/20px $priFont;
+                                        }
+                                        .vr-line {
+                                            width: 1px;
+                                            height: 16px;
+                                            background: $priColor;
+                                        }
+                                    }
+                                }
+                                .two-fields {
+                                    display: flex;
+                                    gap: 16px;
+                                    width: 100%;
+
+                                    .input-field {
+                                        width: 100%;
+                                    }
+                                }
+                            }
+                            .form-grid {
+                                display: flex;
+                                flex-direction: column;
+                                gap: 24px;
+
+                                .input-field {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 8px;
+
+                                    label {
+                                        font: 700 16px/20px $priFont;
+
+                                        span {
+                                            color: $priColor;
+                                        }
+                                    }
+                                    input,
+                                    select {
+                                        padding: 16px;
+                                        border-radius: 6px;
+                                        font: 400 16px/24px $priFont;
+                                        border: 1px solid $uiGray !important;
+                                    }
+                                }
+                            }
+                        }
+                        .no-payment-methods {
+                            margin: 0 auto;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            // gap: 18px;
+                        }
+
+                        .card-form {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 24px;
+                            width: 100%;
+                            .two-fields {
+                                display: flex;
+                                gap: 16px;
+                                width: 100%;
+                                .cardinput {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 8px;
+                                    width: 100%;
+                                    label {
+                                        font: 700 16px/20px $priFont;
+
+                                        span {
+                                            color: $priColor;
+                                        }
+                                    }
+                                    .input-with-icon {
+                                        position: relative;
+                                        display: flex;
+                                        border: 1px solid $uiGray;
+                                        padding: 16px 22px;
+                                        border-radius: 6px;
+
+                                        input {
+                                            // padding-right: 50px;
+                                            border: none;
+                                            outline: none;
+                                            width: 100%;
+                                        }
+                                        img {
+                                            margin-left: 8px;
+                                        }
+                                    }
+                                }
+                                .input-field {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 8px;
+                                    width: 100%;
+
+                                    label {
+                                        font: 700 16px/20px $priFont;
+
+                                        span {
+                                            color: $priColor;
+                                        }
+                                    }
+                                    input,
+                                    select {
+                                        padding: 16px;
+                                        border-radius: 6px;
+                                        font: 400 16px/24px $priFont;
+                                        border: 1px solid $uiGray !important;
+                                    }
+                                }
+                            }
+                            .input-field {
+                                display: flex;
+                                flex-direction: column;
+                                gap: 8px;
+
+                                label {
+                                    font: 700 16px/20px $priFont;
+
+                                    span {
+                                        color: $priColor;
+                                    }
+                                }
+                                input,
+                                select {
+                                    padding: 16px;
+                                    border-radius: 6px;
+                                    font: 400 16px/24px $priFont;
+                                    border: 1px solid $uiGray !important;
+                                }
+                            }
+                            .dropdown {
+                                position: relative;
+                                width: 100%;
+
+                                &-btn {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    width: 100%;
+                                    padding: 16px;
+                                    background-color: #fff;
+                                    border: 1px solid #00000080;
+                                    font-family: "DM Sans", sans-serif;
+                                    font-size: 16px;
+                                    font-weight: 500;
+                                    line-height: 20px;
+                                    color: #333;
+                                    cursor: pointer;
+
+                                    img {
+                                        width: 14px;
+                                        height: auto;
+                                    }
+                                }
+
+                                &-menu {
+                                    display: none;
+                                    position: absolute;
+                                    top: 100%;
+                                    left: 0;
+                                    width: 100%;
+                                    margin-top: 8px;
+                                    background-color: #fff;
+                                    border: 1px solid #ddd;
+                                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                    z-index: 10;
+                                    list-style: none;
+                                    padding: 0;
+
+                                    .dropdown-item {
+                                        padding: 12px 16px;
+                                        font-family: "DM Sans", sans-serif;
+                                        font-size: 16px;
+                                        font-weight: 500;
+                                        color: #333;
+                                        cursor: pointer;
+
+                                        &:hover {
+                                            background-color: #f8f8f8;
+                                        }
+
+                                        &.selected {
+                                            background-color: #fce9e9;
+                                            position: relative;
+
+                                            &::after {
+                                                content: "✓";
+                                                position: absolute;
+                                                right: 16px;
+                                                color: #e63946;
+                                                font-size: 14px;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                &.open .dropdown-menu {
+                                    display: block;
+                                }
+                            }
+                        }
+                        p {
+                            font: 400 16px/24px $priFont;
+                        }
+                        .information-card {
+                            display: flex;
+                            align-items: flex-end;
+                            justify-content: space-between;
+                            .card-info {
+                                h3 {
+                                    font: 700 20px/24px $priFont;
+                                    margin-bottom: 12px;
+                                }
+                                p {
+                                    font: 400 16px/24px $priFont;
+                                }
+                            }
+                            .remove-btn {
+                                border: none;
+                                border-bottom: 1px solid $priColor;
+                                background: none;
+                                font: 700 16px/24px $priFont;
+                                color: $priColor;
+                                cursor: pointer;
+                            }
+                        }
+                    }
+
+                    .address-btn {
+                        width: max-content;
+                    }
+
+                    .active-address {
+                        display: flex;
+                    }
+
+                    .deactive-address {
+                        display: none;
+                    }
+                }
+            }
+
+            .order-table-container {
+                // padding: 10px 0;
+                background-color: $white;
+
+                .table-responsive {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch; // Enables smooth scrolling for touch devices
+                    border: 1px solid #ddd; // Optional, to visually separate the table
+
+                    .order-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        text-align: left;
+
+                        thead {
+                            th {
+                                padding: 16px 22px;
+                                font: 700 14px/20px $priFont;
+                                border-bottom: 1px solid #ddd;
+                                text-align: left;
+                            }
+
+                            th:last-child {
+                                text-align: right;
+                            }
+                        }
+
+                        tbody {
+                            tr {
+                                border-bottom: 1px solid #ddd;
+
+                                &:hover {
+                                    background-color: #f9f9f9;
+                                }
+
+                                td {
+                                    padding: 16px 22px;
+                                    font: 400 14px/20px $priFont;
+text-align: left;
+                                    .status {
+                                        padding: 5px 10px;
+                                        border-radius: 5px;
+                                        font-size: 0.9rem;
+                                        text-align: center;
+
+                                        @each $key,
+                                            $color in $order-status-colors
+                                        {
+                                            &.#{$key} {
+                                                background-color: $color;
+                                                color: darken($color, 30%);
+                                            }
+                                        }
+                                    }
+
+                                    .action-btn {
+                                        padding: 5px 10px;
+                                        border: none;
+                                        border-radius: 3px;
+                                        cursor: pointer;
+                                        font-size: 0.9rem;
+                                        margin-right: 5px;
+                                        background: $uiBlack;
+                                        color: $white;
+
+                                        &:hover {
+                                            opacity: 0.8;
+                                        }
+                                    }
+                                }
+
+                                td:last-child {
+                                    text-align: right;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .favorite-items {
+                display: flex;
+                gap: 34px;
+                flex-wrap: wrap;
+                .card-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    width: 180px;
+                    overflow: hidden;
+                    .image {
+                        width: 100%;
+                        height: 180px;
+                        background: $white;
+                        position: relative;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                    }
+                    .content {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-start;
+                        margin: 0;
+                        // gap: 8px;
+                        .product-name {
+                            font: 700 14px/20px $priFont;
+                            text-align: left;
+                        }
+                        .rats {
+                            font: 500 14px/20px $priFont;
+                            color: $uiGray80;
+                        }
+                    }
+                    .button {
+                        button {
+                            width: 100%;
+                            border-radius: 4px;
+                            text-align: center;
+                            padding: 3px 0;
+                            background: $priColor;
+                            color: $white;
+                            border: none;
+                            font: 500 12px/24px $priFont;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .dashboard {
+        .sidebar {
+            &_header {
+                padding-bottom: 12px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                .account_menu {
+                    display: block;
+                }
+            }
+
+            .menu {
+                &.active {
+                    position: absolute;
+                }
+            }
+
+            .fullscreen-menu {
+                // display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 300px;
+                height: 100%;
+                background: #fff;
+                z-index: 999;
+                padding: 20px;
+                overflow-y: auto;
+                transform: translateX(-100%);
+                transition: all 0.8s;
+
+                ul.menu {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+
+                    .menu-item {
+                        padding: 16px 24px;
+                        border-bottom: 1px solid $uiLightGray;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+
+                        a {
+                            text-decoration: none;
+                            color: $uiBlack;
+                            font: 500 16px/24px $priFont;
+                        }
+
+                        &.active {
+                            background: $priColor;
+                            color: $white;
+
+                            a {
+                                color: $white;
+                            }
+                        }
+                    }
+                }
+
+                &.active {
+                    display: block;
+                    transform: translateX(0%);
+                }
+            }
+
+            .account_menu {
+                display: block;
+                background: $priColor;
+                color: $white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font: 500 16px/24px $priFont;
+            }
+        }
+
+        .content {
+            margin-left: 0px;
+        }
+    }
+}
+
+// Additional styles for smaller screens
+@media (max-width: 767px) {
+    .order-table {
+        thead {
+            display: none; // Hide the table header for mobile
+        }
+
+        tbody {
+            tr {
+                display: block;
+                margin-bottom: 10px;
+                border: 1px solid #ddd;
+
+                td {
+                    display: block;
+                    text-align: right;
+                    padding: 10px;
+
+                    &:before {
+                        content: attr(
+                            data-label
+                        ); // Use data-label for mobile labels
+                        float: left;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                    }
+
+                    .status {
+                        text-align: left; // Align status on mobile
+                    }
+                }
+            }
+        }
+    }
+}
+
+.btn-danger button {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: 1px;
+    text-align: center;
+    color: white;
+    background-color: $priColor;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: $priFont;
+    border: none;
+    cursor: pointer;
+    margin-top: 30px;
+}
+
+@media (max-width: 580px) {
+    .dashboard .container {
+        width: 100%;
+        .content .tab.active-tab .main-content {
+            padding: 20px 16px;
+        }
+        .sidebar {
+            h3 {
+                max-width: 140px;
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-wrap: nowrap;
+            }
+        }
+    }
+}

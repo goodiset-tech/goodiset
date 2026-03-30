@@ -1,0 +1,967 @@
+h2 {
+    line-height: 1;
+}
+/* -----------------------------
+               Hero Section
+            ----------------------------- */
+.retailer-hero {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.retailer-overlay {
+    background: rgba(0, 0, 0, 0.55);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.retailer-hero-content h1 {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.retailer-hero-content p {
+    font-size: 18px;
+    margin-bottom: 35px;
+    color: #f4f4f4;
+}
+
+.retailer-btns .btn {
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 12px 26px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.retailer-btns .btn-primary {
+    background: #dc3545;
+    color: #fff;
+}
+
+.retailer-btns .btn-primary:hover {
+    background: #b62c3b;
+}
+
+.retailer-btns .btn-outline {
+    border: 2px solid #fff;
+    color: #fff;
+}
+
+.retailer-btns .btn-outline:hover {
+    background: #fff;
+    color: #000;
+}
+
+/* -----------------------------
+               Why Partner Section
+            ----------------------------- */
+.partner-section {
+    padding: 80px 0;
+    background: #f8f8f8;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 10px;
+}
+
+.section-subtitle {
+    color: #777;
+    margin-bottom: 50px;
+    font-size: 16px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    justify-items: center;
+}
+
+.feature-box {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 30px 20px;
+    transition: all 0.3s ease;
+    max-width: 280px;
+    box-shadow: unset;
+}
+
+.feature-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.feature-box .icon img {
+    width: 45px;
+    height: 45px;
+    margin-bottom: 15px;
+}
+
+.feature-box h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.feature-box p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* -----------------------------
+               See It In Action
+            ----------------------------- */
+.see-it-section {
+    padding: 80px 0;
+    background: #fff;
+    text-align: center;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+.gallery-item{
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    height: 430px;
+    margin-bottom: 24px;
+}
+
+.gallery-item img {
+    width: 100%;
+    border-radius: 10px;
+    transition: transform 0.4s ease;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+/* -----------------------------
+               Product Range
+            ----------------------------- */
+.product-range {
+    padding: 80px 0;
+    background: #fff;
+    text-align: center;
+}
+
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 25px 20px;
+    width: 300px;
+    transition: 0.3s ease;
+    text-align: left;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card .icon img {
+    width: 40px;
+    margin-bottom: 10px;
+}
+
+.product-card h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.product-card p {
+    font-size: 14px;
+    color: #666;
+}
+
+.product-card span {
+    color: #dc3545;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* -----------------------------
+               Marketing Support
+            ----------------------------- */
+.marketing-support {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.marketing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    align-items: stretch;
+    margin-top: 40px;
+}
+
+.marketing-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.marketing-item.red {
+    background: #ffe8eb;
+}
+
+.marketing-item h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #dc3545;
+}
+
+.marketing-item ul {
+    list-style: none;
+    padding: 0;
+}
+
+.marketing-item ul li {
+    font-size: 15px;
+    color: #555;
+    padding-left: 20px;
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.marketing-item ul li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #dc3545;
+    font-size: 13px;
+    top: 1px;
+}
+
+
+
+/* -----------------------------
+               Responsive
+            ----------------------------- */
+@media (max-width: 768px) {
+    .retailer-hero-content h1 {
+        font-size: 34px;
+    }
+
+    .product-card {
+        width: 100%;
+    }
+}
+
+/* --- Proven Results --- */
+.proven-results {
+    padding: 80px 0;
+    background: #fafafa;
+    text-align: center;
+}
+
+.results-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.result-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px 25px;
+    width: 300px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.result-card:hover {
+    transform: translateY(-6px);
+}
+
+.result-card h3 {
+    color: #dc3545;
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.result-card p {
+    font-size: 15px;
+    color: #555;
+}
+
+/* --- Trusted Retailers --- */
+.trusted-retailers {
+    background: #ffeef2;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.retailer-logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    margin: 40px 0;
+}
+
+.retailer-logos img {
+    height: 125px;
+    width: 125px;
+    transition: transform 0.3s ease;
+    border-radius: 50%;
+}
+
+.retailer-logos img:hover {
+    transform: scale(1.1);
+}
+
+.trusted-retailers p {
+    color: #555;
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 15px;
+}
+
+/* --- How It Works --- */
+/* -----------------------------
+               How It Works (Updated)
+            ----------------------------- */
+.how-it-works {
+    padding: 80px 0;
+    text-align: center;
+    background: #fff;
+}
+
+.steps-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 50px;
+}
+
+.step-box {
+    width: 220px;
+    text-align: center;
+}
+
+.step-num {
+    width: 60px;
+    height: 60px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+}
+
+.step-box h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 5px;
+}
+
+.step-box p {
+    color: #555;
+    font-size: 15px;
+    margin: 0;
+}
+
+/* Service Levels */
+.service-levels {
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 40px 30px;
+    margin-top: 60px;
+    text-align: left;
+}
+
+.service-levels h5 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 25px;
+}
+
+.service-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.service-item .check-icon {
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.service-item strong {
+    font-size: 15px;
+    color: #333;
+}
+
+.service-item small {
+    font-size: 13px;
+    color: #666;
+}
+
+
+/* --- Service Levels --- */
+.service-box {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 50px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+.service-box h5 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.service-item {
+    font-size: 15px;
+    color: #555;
+    position: relative;
+    padding-left: 22px;
+}
+
+@media (max-width: 768px) {
+
+    .results-grid,
+    .steps-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .result-card,
+    .step-box {
+        width: 90%;
+    }
+}
+
+/* -----------------------------
+               Pricing Section
+            ----------------------------- */
+.pricing-section {
+    background: #f9f9f9;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.pricing-section .section-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 10px;
+}
+
+.pricing-section .section-subtitle {
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 50px;
+}
+
+.pricing-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.pricing-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    width: 310px;
+    padding: 40px 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Popular plan highlighted */
+.pricing-card.popular {
+    border: 2px solid #dc3545;
+}
+
+.pricing-card .tag {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #dc3545;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+}
+
+.pricing-card h4 {
+    font-family: "Playfair Display", serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 10px;
+}
+
+.pricing-card .desc {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 18px;
+}
+
+.pricing-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px;
+}
+
+.pricing-card ul li {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+/* Red "Inquire" Button */
+.pricing-card .btn {
+    display: inline-block;
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 12px 0;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 15px;
+    width: 100%;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.pricing-card .btn:hover {
+    background: #b62c3b;
+}
+
+/* Download catalog area */
+.catalog-text {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.btn-download {
+    background: #dc3545;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.btn-download i {
+    font-size: 15px;
+}
+
+.btn-download:hover {
+    background: #b62c3b;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .pricing-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pricing-card {
+        width: 90%;
+    }
+}
+
+
+/* -----------------------------
+               Retailer Contact Section
+            ----------------------------- */
+.reseller-contact {
+    background: #ffeef2;
+    padding: 100px 20px;
+    text-align: center;
+    position: relative;
+}
+
+
+
+.reseller-contact .subtitle {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 40px;
+}
+
+/* Logos Row */
+.reseller-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.reseller-logos img {
+    height: 40px;
+    object-fit: contain;
+    filter: grayscale(0);
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.reseller-logos img:hover {
+    transform: scale(1.05);
+    opacity: 1;
+}
+
+/* Form Styling */
+.reseller-form {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.reseller-form .form-row {
+    /* margin-bottom: 18px; */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.reseller-form .two-cols input {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 48%;
+}
+
+.reseller-form input,
+.reseller-form textarea {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    color: #333;
+    transition: border 0.3s ease;
+}
+
+.reseller-form input:focus,
+.reseller-form textarea:focus {
+    border-color: #E63946;
+    outline: none;
+}
+
+/* Button */
+.reseller-form .btn-red {
+    background: #E63946;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.reseller-form .btn-red:hover {
+    background: #d22f3d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reseller-contact {
+        padding: 80px 15px;
+    }
+
+    .reseller-logos {
+        gap: 20px;
+    }
+
+    .reseller-form .two-cols input {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+}
+
+/* -----------------------------
+   Product Range
+----------------------------- */
+html[dir="rtl"] .product-card {
+    text-align: right;
+}
+
+/* -----------------------------
+   Service Levels
+----------------------------- */
+html[dir="rtl"] .service-levels {
+    text-align: right;
+}
+
+html[dir="rtl"] .service-item {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .service-item .check-icon {
+    margin-left: 10px;
+    margin-right: 0;
+}
+
+
+/* -----------------------------
+   Responsive Adjustments
+----------------------------- */
+@media (max-width: 768px) {
+    html[dir="rtl"] .faq-item
+     {
+        text-align: right;
+    }
+}
+
+/* WHY RESELL SECTION */
+.why-resell {
+    background: #f9fafb;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.why-resell h2 {
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.why-resell .subtitle {
+    color: #444;
+    margin-bottom: 60px;
+    font-size: 1.05rem;
+}
+
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px 40px;
+    justify-items: center;
+}
+
+.why-item {
+    max-width: 320px;
+}
+
+.circle-icon {
+    background: #ffe6ea;
+    color: #E63946;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px;
+    font-size: 28px;
+}
+
+.why-item h4 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.why-item p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Responsive Layout */
+@media (max-width: 992px) {
+    .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px 25px;
+    }
+}
+
+@media (max-width: 576px) {
+    .why-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* HOW IT WORKS SECTION */
+.how-it-works {
+    background: #fdecef;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+
+.how-it-works .subtitle {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 60px;
+}
+
+/* Steps layout */
+.steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+}
+
+/* Center the whole step container */
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Red numbered circle */
+.step-number-reseller {
+    background: #E63946;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+/* Step text */
+.step-content {
+    text-align: left;
+    max-width: 480px;
+}
+
+.step-content h4 {
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #111;
+    margin-bottom: 5px;
+}
+
+.step-content p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .how-it-works {
+        padding: 70px 20px;
+    }
+
+    .step-item {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 15px;
+        max-width: 100%;
+    }
+
+    .step-content h4 {
+        font-size: 1rem;
+    }
+
+    .step-number-reseller {
+        width: 28px;
+        height: 28px;
+        font-size: 0.95rem;
+    }
+}
+
+html[dir="rtl"] .step-content h4 {
+    text-align: right;
+}
+html[dir="rtl"] .step-content p {
+    text-align: right;
+}

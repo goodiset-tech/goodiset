@@ -1,0 +1,453 @@
+/* ============ GLOBAL ============ */
+body {
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+/* ============ TITLES ============ */
+/* .section-title {
+    text-align: center;
+    margin: 60px 0 30px;
+} */
+
+.section-title h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 30px 0px;
+
+}
+
+.section-title p {
+    color: #666;
+    text-align: center;
+    margin: 14px 0px;
+}
+
+/* ============ STORE CARDS ============ */
+.store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+    margin-bottom: 60px;
+}
+
+.store-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.store-card:hover {
+    transform: translateY(-5px);
+}
+
+.store-card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+}
+
+.store-card .content {
+    padding: 22px;
+}
+
+.store-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 16px;
+}
+
+.info-box {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.info-box i {
+    color: #e11d48;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.info-box .text {
+    font-size: 14px;
+    color: #444;
+}
+
+/* ===== Fix Store Card Button Row ===== */
+.btn-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-row .btn {
+    flex: 1;
+    background: #e11d48;
+    color: #fff;
+    border-radius: 40px;
+    padding: 12px 24px;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-row .btn:hover {
+    background: #be123c;
+}
+
+.call-btn {
+    border: 2px solid #e11d48;
+    color: #e11d48;
+    background: #fff;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.call-btn:hover {
+    background: #e11d48;
+    color: #fff;
+}
+
+@media (max-width: 576px) {
+    .btn-row {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .call-btn {
+        width: 100%;
+        border-radius: 40px;
+    }
+}
+
+/* ============ MAP SECTION ============ */
+/* ===== Map Section Styles ===== */
+.map-section {
+    background: #fff;
+    padding: 60px 0;
+    position: relative;
+}
+
+.map-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+#map {
+    width: 100%;
+    height: 500px;
+    border-radius: 16px;
+    z-index: 1;
+}
+
+/* Card slider overlay */
+.map-card-slider {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 10px 20px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    z-index: 1;
+    width: 100%;
+}
+
+.map-card-slider::-webkit-scrollbar {
+    display: none;
+}
+
+/* Card design */
+/* ===== Final Card Design (Matches Screenshot) ===== */
+.map-card {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #e11d48;
+    border-radius: 14px;
+    overflow: hidden;
+    min-width: 340px;
+    max-width: 370px;
+    height: 120px;
+    scroll-snap-align: center;
+    transition: all 0.3s ease;
+}
+
+.map-card:hover {
+    transform: translateY(-3px);
+}
+
+.map-card img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    flex-shrink: 0;
+    padding: 15px;
+    border-radius: 30px;
+}
+
+.map-card .details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px 14px;
+}
+
+.map-card .details h4 {
+    font-size: 15px;
+    font-weight: 400;
+    color: #111;
+    margin-bottom: 10px;
+}
+
+.map-card .buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===== Buttons ===== */
+.map-card .buttons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 7px 14px;
+    transition: all 0.3s ease;
+}
+
+.map-card .buttons a:first-child {
+    background: #e11d48;
+    color: #fff;
+    border: none;
+}
+
+.map-card .buttons a:first-child:hover {
+    background: #be123c;
+}
+
+.map-card .buttons a:last-child {
+    background: #fff;
+    color: #111;
+    border: 1px solid #d1d5db;
+}
+
+.map-card .buttons a:last-child:hover {
+    background: #f9fafb;
+}
+
+.map-card.active {
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.2);
+    transform: scale(1.02);
+}
+
+/* ===== Slider Position (Same as before) ===== */
+
+
+.map-card-slider::-webkit-scrollbar {
+    display: none;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .map-card {
+        flex-direction: column;
+        height: auto;
+        min-width: 280px;
+        max-width: 300px;
+    }
+
+    .map-card img {
+        width: 100%;
+        height: 140px;
+        border-radius: 0;
+    }
+
+    .map-card .buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .map-card .buttons a {
+        width: 100%;
+    }
+}
+
+
+/* ============ APPS SECTION ============ */
+.apps-section {
+    background-color: #ffedcc;
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.apps-section h3 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 36px;
+}
+
+.apps-logos {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 32px;
+    margin-bottom: 20px;
+}
+
+.apps-logos img {
+    height: 125px;
+    transition: transform 0.3s ease;
+    border-radius: 50%;
+    width: 125px;
+}
+
+.apps-logos img:hover {
+    transform: scale(1.08);
+}
+
+.apps-section p {
+    font-size: 15px;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+
+/* -----------------------------
+                   Responsive
+                ----------------------------- */
+@media (max-width: 768px) {
+    .retailer-hero-content h1 {
+        font-size: 34px;
+    }
+
+    .product-card {
+        width: 100%;
+    }
+}
+
+/* =====================================================
+   RTL (Arabic) Support
+   ===================================================== */
+html[dir="rtl"],
+body[dir="rtl"],
+html[lang="ar"],
+body[lang="ar"] {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+}
+
+/* Flip breadcrumbs order */
+html[dir="rtl"] .breadcrumbs,
+body[lang="ar"] .breadcrumbs {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .breadcrumbs img,
+body[lang="ar"] .breadcrumbs img {
+    transform: rotate(180deg);
+}
+
+/* Reverse store card info boxes */
+html[dir="rtl"] .info-box,
+body[lang="ar"] .info-box {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+html[dir="rtl"] .info-box i,
+body[lang="ar"] .info-box i {
+    margin-left: 8px;
+    margin-right: 0;
+}
+
+/* Reverse map card content */
+html[dir="rtl"] .map-card,
+body[lang="ar"] .map-card {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .map-card img,
+body[lang="ar"] .map-card img {
+    border-radius: 0 30px 30px 0;
+}
+
+html[dir="rtl"] .map-card .details,
+body[lang="ar"] .map-card .details {
+    text-align: right;
+}
+
+/* Reverse direction of map card slider */
+html[dir="rtl"] .map-card-slider,
+body[lang="ar"] .map-card-slider {
+    direction: rtl;
+}
+
+
+
+/* Buttons & alignments */
+html[dir="rtl"] .btn-row,
+body[lang="ar"] .btn-row {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .btn-row .btn,
+body[lang="ar"] .btn-row .btn {
+    text-align: center;
+}
+
+/* Reverse app logos if needed */
+html[dir="rtl"] .apps-logos,
+body[lang="ar"] .apps-logos {
+    flex-direction: row-reverse;
+}
+
+/* Adjust text alignment for sections */
+html[dir="rtl"] .section-title,
+body[lang="ar"] .section-title {
+    text-align: center; /* keep centered titles same */
+}
+
+html[dir="rtl"] .store-card h3,
+html[dir="rtl"] .store-card .text,
+body[lang="ar"] .store-card h3,
+body[lang="ar"] .store-card .text {
+    text-align: right;
+}
+

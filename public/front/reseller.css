@@ -1,0 +1,859 @@
+/* Font imports */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Merriweather:wght@700&display=swap');
+
+:root {
+    --red: #E63946;
+    --gray: #666;
+    --light-gray: #f7f7f7;
+}
+
+h2 {
+    line-height: 1;
+}
+
+/* General Layout */
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #222;
+    margin: 0;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* HERO SECTION */
+.reseller-hero {
+    position: relative;
+    color: #fff;
+    text-align: center;
+    padding: 160px 20px 140px;
+}
+
+.reseller-hero .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+
+.reseller-hero p {
+    font-size: 1.1rem;
+    max-width: 650px;
+    margin: 0 auto 25px;
+}
+
+/* Badges */
+.badges {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 35px;
+}
+
+.badges span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.15);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.badges i {
+    color: #fff;
+}
+
+/* Buttons */
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--red);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #c72e3b;
+}
+
+.btn-outline {
+    border: 2px solid #fff;
+    color: #fff;
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: #fff;
+    color: var(--red);
+}
+
+/* WHO SECTION */
+.who-for {
+    background: #fff;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+
+.subtitle {
+    color: var(--gray);
+    max-width: 700px;
+    margin: 0 auto 10px;
+    font-size: 1rem;
+}
+
+.subnote {
+    color: var(--gray);
+    font-size: 0.95rem;
+    margin-bottom: 50px;
+}
+
+.subnote a {
+    color: var(--red);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+/* Cards */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.card {
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 35px 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    transform: translateY(-5px);
+}
+
+.card .icon {
+    margin-bottom: 15px;
+}
+
+.card .icon img {
+    width: 42px;
+    height: 42px;
+}
+
+.card h3 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.card p {
+    color: var(--gray);
+    font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .reseller-hero h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+    .reseller-hero {
+        padding: 120px 20px;
+    }
+    .reseller-hero h1 {
+        font-size: 1.8rem;
+    }
+}
+
+
+/* WHY RESELL SECTION */
+.why-resell {
+    background: #f9fafb;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+
+
+.why-resell .subtitle {
+    color: #444;
+    margin-bottom: 60px;
+    font-size: 1.05rem;
+}
+
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px 40px;
+    justify-items: center;
+}
+
+.why-item {
+    max-width: 320px;
+}
+
+.circle-icon {
+    background: #ffe6ea;
+    color: #E63946;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px;
+    font-size: 28px;
+}
+
+.why-item h4 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.why-item p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Responsive Layout */
+@media (max-width: 992px) {
+    .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px 25px;
+    }
+}
+
+@media (max-width: 576px) {
+    .why-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* PRODUCT RANGES SECTION */
+.product-ranges {
+    background: #fff;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+
+
+.product-ranges .subtitle {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 60px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+    justify-items: center;
+}
+
+.product-card {
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 18px;
+    overflow: hidden;
+    text-align: left;
+    width: 100%;
+    max-width: 360px;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transform: translateY(-4px);
+}
+
+.product-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 25px;
+}
+
+.icon-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #E63946;
+    margin-bottom: 8px;
+}
+
+.icon-title i {
+    font-size: 22px;
+}
+
+.icon-title h3 {
+    /* font-family: 'Merriweather', serif; */
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+.card-content h5 {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.card-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card-content li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.card-content li::before {
+    content: "⦿";
+    position: absolute;
+    left: 0;
+    color: #E63946;
+    font-size: 0.8rem;
+    top: 3px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+    .product-card {
+        max-width: 100%;
+    }
+}
+
+
+/* COMMERCIALS SECTION */
+.commercials {
+    background: #f9fafb;
+    padding: 100px 20px;
+    text-align: center;
+    border-top: 1px solid #eee;
+}
+
+
+
+.commercials .subtitle {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 60px;
+}
+
+.commercials-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    justify-items: center;
+}
+
+.commercial-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 40px 35px;
+    text-align: left;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.commercial-card h3 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    color: #111;
+}
+
+.commercial-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.commercial-card li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.5;
+}
+
+.commercial-card li .dot {
+    width: 8px;
+    height: 8px;
+    background: #E63946;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 8px;
+}
+
+.commercial-card strong {
+    color: #111;
+    font-weight: 600;
+}
+
+.commercial-card hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 25px 0;
+}
+
+.btn.full-width {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    padding: 12px 0;
+}
+
+.btn-primary i {
+    margin-right: 6px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .commercials-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* HOW IT WORKS SECTION */
+.how-it-works {
+    background: #fdecef;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+
+
+.how-it-works .subtitle {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 60px;
+}
+
+/* Steps layout */
+.steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+}
+
+/* Center the whole step container */
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Red numbered circle */
+.step-number-reseller {
+    background: #E63946;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+/* Step text */
+.step-content {
+    text-align: left;
+    max-width: 480px;
+}
+
+.step-content h4 {
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #111;
+    margin-bottom: 5px;
+}
+
+.step-content p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .how-it-works {
+        padding: 70px 20px;
+    }
+
+    .step-item {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 15px;
+        max-width: 100%;
+    }
+
+    .step-content h4 {
+        font-size: 1rem;
+    }
+
+    .step-number-reseller {
+        width: 28px;
+        height: 28px;
+        font-size: 0.95rem;
+    }
+}
+
+/* LOGISTICS SECTION */
+.logistics {
+    background: #f9fafb;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+
+
+.logistics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+    justify-items: center;
+}
+
+.logistics-card {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 14px;
+    padding: 40px 25px;
+    text-align: left;
+    max-width: 360px;
+    transition: all 0.3s ease;
+}
+
+.logistics-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    transform: translateY(-4px);
+}
+
+.logistics-card .icon {
+    color: #E63946;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.logistics-card h4 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #111;
+    margin-bottom: 8px;
+}
+
+.logistics-card p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .logistics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .logistics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .logistics-card {
+        max-width: 100%;
+    }
+}
+/* FAQ SECTION */
+.faq {
+    background: #fafafa;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+
+
+.faq .subtitle {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 60px;
+}
+
+/* FAQ Container */
+.faq-list {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+/* FAQ Items */
+.faq-item {
+    background: #fff;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* FAQ Question Button */
+.faq-question {
+    width: 100%;
+    background: #fff;
+    border: none;
+    outline: none;
+    padding: 20px 24px;
+    text-align: left;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #111;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+/* Chevron Icon */
+.faq-question i {
+    font-size: 0.85rem;
+    color: #777;
+    transition: transform 0.3s ease;
+}
+
+/* Answer Box */
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 24px;
+    transition: all 0.3s ease;
+}
+
+.faq-answer p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    padding: 15px 0 20px;
+}
+
+/* Active state */
+.faq-item.active .faq-answer {
+    max-height: 200px;
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(180deg);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .faq {
+        padding: 70px 15px;
+    }
+    .faq h2 {
+        font-size: 1.8rem;
+    }
+    .faq-question {
+        font-size: 0.95rem;
+        padding: 18px;
+    }
+}
+/* WELCOMING RESELLERS SECTION */
+.reseller-contact {
+    background: #ffeef2;
+    padding: 100px 20px;
+    text-align: center;
+    position: relative;
+}
+
+
+.reseller-contact .subtitle {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 40px;
+}
+
+/* Logos Row */
+.reseller-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.reseller-logos img {
+    height: 40px;
+    object-fit: contain;
+    filter: grayscale(0);
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.reseller-logos img:hover {
+    transform: scale(1.05);
+    opacity: 1;
+}
+
+/* Form Styling */
+.reseller-form {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.reseller-form .form-row {
+    margin-bottom: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.reseller-form .two-cols input {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 48%;
+}
+
+.reseller-form input,
+.reseller-form textarea {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    color: #333;
+    transition: border 0.3s ease;
+}
+
+.reseller-form input:focus,
+.reseller-form textarea:focus {
+    border-color: #E63946;
+    outline: none;
+}
+
+/* Button */
+.reseller-form .btn-red {
+    background: #E63946;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.reseller-form .btn-red:hover {
+    background: #d22f3d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reseller-contact {
+        padding: 80px 15px;
+    }
+
+    .reseller-logos {
+        gap: 20px;
+    }
+
+    .reseller-form .two-cols input {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+}
+
+
+html[dir="rtl"] .step-content h4 {
+    text-align: right;
+}
+html[dir="rtl"] .faq-answer {
+     text-align: right;
+}

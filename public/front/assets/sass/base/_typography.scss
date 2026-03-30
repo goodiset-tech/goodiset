@@ -1,0 +1,65 @@
+// Rubik font for RTL (Arabic) support
+
+@font-face {
+    font-family: currencyFontStyle;
+    src: url(../../font/currency.woff2) format("woff2");
+    font-display: swap;
+    font-weight: 600;
+    font-style: normal
+}
+
+.icon-aed {
+    font-family: "currencyFontStyle", sans-serif !important;
+    font-size: 18px;
+}
+
+.dm-sans-body {
+    font-family: "DM Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+body {
+    font: 300 18px/24px $priFont !important;
+    width: 100vw;
+    max-height: calc(100vh);
+
+    .body-container {
+        max-height: calc(100vh);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    @include rtl {
+        font-family: $arFont !important;
+    }
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    scrollbar-width: none;
+}
+
+a {
+    color: inherit;
+    /* Inherit color from the parent element */
+    text-decoration: none;
+    /* Remove underline */
+    -webkit-tap-highlight-color: transparent;
+    /* Prevent tap highlight on touch */
+}
+
+input[type="radio"] {
+    width: unset;
+    accent-color: $priColor;
+}

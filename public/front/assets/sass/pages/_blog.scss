@@ -1,0 +1,534 @@
+/* ============================================
+   BLOG STYLES
+   ============================================ */
+
+/* -----------------------------
+   Blog Listing Page
+   ----------------------------- */
+
+.auther-detail {
+    font-family: $priFont;
+    font-weight: 400;
+    font-size: 15.13px;
+    line-height: 24px;
+    letter-spacing: 0%;
+    color: #303030;
+}
+
+.blog-sub-title {
+    margin-top: 8px;
+    font-family: $priFont;
+    font-weight: 400;
+    font-size: 15.13px;
+    line-height: 24px;
+    letter-spacing: 0%;
+    width: 100%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    color: #697281;
+}
+
+/* -----------------------------
+   Pagination
+   ----------------------------- */
+
+.pagination {
+    display: flex;
+    margin-top: 20px;
+    gap: 8px;
+    justify-content: flex-end;
+
+    .page-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        font-size: 16px;
+        max-height: 32px;
+        width: 32px;
+
+        &.active {
+            color: white;
+            background-color: $priColor;
+        }
+
+        &.disabled {
+            .page-link {
+                opacity: 0.5;
+                cursor: text;
+            }
+        }
+
+        &:has(.page-link) {
+            width: fit-content;
+            height: auto;
+        }
+    }
+
+    .page-link {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        font-size: 16px;
+        gap: 8px;
+
+        svg {
+            min-width: 16px;
+        }
+    }
+
+    .prev .page-link svg {
+        transform: rotate(180deg);
+    }
+}
+
+/* -----------------------------
+   Filter & Search
+   ----------------------------- */
+
+.filter-container {
+    display: flex;
+    gap: 12px;
+
+    .search-box {
+        min-width: 300px;
+    }
+
+    @media (max-width: 768px) {
+        flex-wrap: wrap;
+
+        .search-box {
+            min-width: 100%;
+        }
+    }
+}
+
+.category-pills {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+
+    .pills {
+        padding: 8px 12px;
+        border-radius: 16px;
+        background-color: white;
+        font-size: 14px;
+        color: #333;
+        text-wrap: nowrap;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+            border-color: $priColor;
+        }
+
+        &.active {
+            color: white;
+            background: $priColor;
+            border-color: $priColor;
+        }
+    }
+}
+
+/* -----------------------------
+   Blog Detail Content
+   ----------------------------- */
+
+#blog-detail-content {
+    div {
+        width: 100%;
+    }
+
+    h1 {
+        display: block;
+        font-size: 2em;
+        margin: 0.67em 0;
+        font-weight: bold;
+        line-height: 1em;
+    }
+
+    h2 {
+        display: block;
+        font-size: 1.5em;
+        margin: 0.75em 0;
+        font-weight: bold;
+        line-height: 1em;
+    }
+
+    h3 {
+        display: block;
+        font-size: 1.17em;
+        margin: 0.83em 0;
+        line-height: 1em;
+        font-weight: bold;
+    }
+
+    h4 {
+        display: block;
+        margin: 1.12em 0;
+        font-weight: bold;
+        line-height: 1em;
+    }
+
+    h5 {
+        display: block;
+        font-size: 0.83em;
+        margin: 1.5em 0;
+        font-weight: bold;
+        line-height: 0.8em;
+    }
+
+    h6 {
+        display: block;
+        font-size: 0.75em;
+        margin: 1.67em 0;
+        font-weight: bold;
+        line-height: 0.7em;
+    }
+
+    p {
+        display: block;
+        margin: 1em 0;
+    }
+
+    strong,
+    b {
+        font-weight: bold;
+    }
+
+    em,
+    i {
+        font-style: italic;
+    }
+
+    u {
+        text-decoration: underline;
+    }
+
+    mark {
+        background-color: yellow;
+        color: black;
+    }
+
+    del,
+    s {
+        text-decoration: line-through;
+    }
+
+    ins {
+        text-decoration: underline;
+    }
+
+    sub {
+        vertical-align: sub;
+        font-size: smaller;
+    }
+
+    sup {
+        vertical-align: super;
+        font-size: smaller;
+    }
+
+    ul {
+        display: block;
+        list-style-type: disc;
+        margin: 1em 0;
+        padding-left: 40px;
+    }
+
+    ol {
+        display: block;
+        list-style-type: decimal;
+        margin: 1em 0;
+        padding-left: 40px;
+    }
+
+    li {
+        display: list-item;
+    }
+
+    table {
+        display: table;
+        border-collapse: separate;
+        border-spacing: 2px;
+        width: 100%;
+    }
+
+    thead {
+        display: table-header-group;
+        vertical-align: middle;
+    }
+
+    tbody {
+        display: table-row-group;
+        vertical-align: middle;
+    }
+
+    tr {
+        display: table-row;
+        vertical-align: inherit;
+    }
+
+    th,
+    td {
+        display: table-cell;
+        vertical-align: inherit;
+        padding: 1px;
+    }
+
+    th {
+        font-weight: bold;
+        text-align: center;
+    }
+
+    caption {
+        display: table-caption;
+        text-align: center;
+    }
+
+    a {
+        color: $priColor;
+        text-decoration: underline;
+        cursor: pointer;
+        transition: color 0.3s ease;
+
+        &:hover {
+            color: darken($priColor, 10%);
+        }
+    }
+
+    img {
+        display: inline-block;
+        max-width: 100%;
+        height: auto;
+    }
+
+    video,
+    audio {
+        display: inline-block;
+        max-width: 100%;
+    }
+
+    div,
+    section,
+    article,
+    aside,
+    header,
+    footer,
+    nav,
+    main {
+        display: block;
+    }
+
+    form {
+        display: block;
+        margin-top: 0em;
+    }
+
+    label {
+        cursor: default;
+    }
+
+    input,
+    textarea,
+    select,
+    button {
+        font: 1em sans-serif;
+        margin: 0;
+    }
+
+    input[type="text"],
+    textarea {
+        padding: 1px;
+    }
+
+    button {
+        appearance: button;
+        text-align: center;
+    }
+
+    code,
+    kbd,
+    samp {
+        font-family: monospace;
+        background-color: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    pre {
+        display: block;
+        font-family: monospace;
+        white-space: pre;
+        margin: 1em 0;
+        background-color: #f5f5f5;
+        padding: 12px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    span {
+        display: inline;
+    }
+
+    abbr[title] {
+        text-decoration: underline dotted;
+        cursor: help;
+    }
+
+    hr {
+        display: block;
+        border: 1px inset;
+        margin: 0.5em auto;
+        border-style: inset;
+        border-width: 1px;
+    }
+
+    @media (max-width: 768px) {
+        textarea {
+            width: 100%;
+        }
+    }
+}
+
+/* -----------------------------
+   Blog Card Styles
+   ----------------------------- */
+
+.blog-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+    }
+
+    .blog-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .blog-content {
+        padding: 20px;
+
+        .blog-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #303030;
+            font-family: $priFont;
+        }
+
+        .blog-excerpt {
+            font-size: 14px;
+            color: #697281;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #999;
+
+            .read-more {
+                color: $priColor;
+                font-weight: 600;
+                text-decoration: none;
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: darken($priColor, 10%);
+                }
+            }
+        }
+    }
+}
+
+/* -----------------------------
+   Blog Grid Layout
+   ----------------------------- */
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+/* -----------------------------
+   Featured Blog Post
+   ----------------------------- */
+
+.featured-blog {
+    background: linear-gradient(135deg, $priColor10 0%, #fff 100%);
+    padding: 60px 20px;
+    border-radius: 16px;
+    margin-bottom: 40px;
+
+    .featured-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: center;
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .featured-image {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .featured-text {
+            h2 {
+                font-size: 32px;
+                font-weight: 700;
+                color: $priColor;
+                margin-bottom: 16px;
+                font-family: $priFont;
+            }
+
+            p {
+                font-size: 16px;
+                line-height: 1.8;
+                color: #555;
+                margin-bottom: 24px;
+            }
+
+            .btn-read-more {
+                display: inline-block;
+                padding: 12px 24px;
+                background: $priColor;
+                color: white;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    background: darken($priColor, 10%);
+                    transform: translateY(-2px);
+                }
+            }
+        }
+    }
+}

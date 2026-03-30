@@ -1,0 +1,21 @@
+@mixin mobile {
+  @media (max-width: ($sm - 1px)) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: ($lg - 1px)) {
+    @content;
+  }
+}
+
+@mixin rtl {
+  [dir="rtl"] &,
+  html[dir="rtl"] &,
+  body[dir="rtl"] &,
+  html[lang="ar"] &,
+  body[lang="ar"] & {
+    @content;
+  }
+}

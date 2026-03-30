@@ -1,0 +1,72 @@
+/* --- Trusted Retailers --- */
+.trusted-retailer {
+    /* background: #FFD07E; */
+    padding: 80px 0;
+    text-align: center;
+    margin-top: 24px;
+}
+
+.retailer-logo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    margin: 40px 0;
+}
+
+.retailer-logo img {
+    height: 150px;
+    width: 150px;
+    transition: transform 0.3s ease;
+    border-radius: 50%;
+}
+
+.retailer-logo img:hover {
+    transform: scale(1.1);
+}
+
+.trusted-retailer p {
+    color: #555;
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 15px;
+}
+
+.retailer-item {
+    position: relative;
+    width: 180px;
+    height: 180px;
+}
+
+.retailer-item img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transition: 0.3s ease;
+}
+
+.retailer-item:hover img {
+    filter: brightness(0.8);
+    transform: scale(1.1);
+}
+
+.visit-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #AB0416;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-weight: bold;
+}
+
+.retailer-item:hover .visit-btn {
+    opacity: 1;
+}
+

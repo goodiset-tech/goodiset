@@ -1,0 +1,225 @@
+.thanks_container {
+    max-width: 1020px;
+    width: 100%;
+    margin: 60px auto;
+    h1 {
+        
+        font-size: 40px;
+        font-weight: 700;
+        color: $uiBlack;
+        line-height: 56px;
+        text-align: left;
+        text-underline-position: from-font;
+        text-decoration-skip-ink: none;
+        @include rtl {
+            text-align: right;
+        }
+    }
+    p {
+        color: #7b7b7b;
+        
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 20px;
+        text-align: left;
+        margin-top: 6px;
+        text-underline-position: from-font;
+        text-decoration-skip-ink: none;
+        @include rtl {
+            text-align: right;
+        }
+    }
+    .order_detail_card {
+        width: 100%;
+        display: flex;
+        margin-top: 24px;
+        flex-direction: column;
+        padding: 32px;
+        gap: 16px;
+        background-color: #fafafa;
+        border-radius: 10px;
+        .order_detail_info {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            ul {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                margin-top: 8px;
+                li {
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: #303030;
+                    line-height: 20.83px;
+                    text-align: left;
+                    text-underline-position: from-font;
+                    text-decoration-skip-ink: none;
+                    @include rtl {
+                        text-align: right;
+                    }
+                }
+            }
+            h5 {
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 20px;
+                margin-top: 16px;
+                text-align: left;
+                text-underline-position: from-font;
+                text-decoration-skip-ink: none;
+                @include rtl {
+                    text-align: right;
+                }
+            }
+            h3 {
+                
+                font-size: 20px;
+                font-weight: 600;
+                line-height: 26.04px;
+                text-align: left;
+                color: #202020;
+                text-underline-position: from-font;
+                text-decoration-skip-ink: none;
+                @include rtl {
+                    text-align: right; 
+                }
+            }
+        }
+        h2 {
+            color: #202020;
+            font-size: 22px;
+            font-weight: 500;
+            line-height: 20px;
+            letter-spacing: -0.006em;
+            text-align: left;
+            text-underline-position: from-font;
+            text-decoration-skip-ink: none;
+            @include rtl {
+                text-align: right;
+            }  
+        }
+        .ordered_items {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            // height: Hug (310px) px;
+            gap: 32px;
+
+            .item {
+                display: flex;
+                gap: 16px;
+                img {
+                    width: 83px;
+                    height: 107px;
+                    object-fit: cover;
+                }
+                .detail {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    h6 {
+                        font-size: 18px;
+                        font-weight: 600;
+                        line-height: 23.44px;
+                        text-align: left;
+                        text-underline-position: from-font;
+                        text-decoration-skip-ink: none;
+                        @include rtl {
+                            text-align: right;
+                        }
+                    }
+                    span {
+                        font-size: 16px;
+                        font-weight: 500;
+                        line-height: 20.83px;
+                        text-align: left;
+                        text-underline-position: from-font;
+                        text-decoration-skip-ink: none;
+                        color: #4a4a4a;
+                        @include rtl {
+                            text-align: right;
+                        }
+                    }
+
+                    .quantity {
+                        display: flex;
+                        width: 100%;
+                        justify-content: space-between;
+                        align-items: center;
+                        p {
+                            color: #202020;
+                            font-size: 16px;
+                            font-weight: 600;
+                            line-height: 20.83px;
+                            text-align: right;
+                            text-underline-position: from-font;
+                            text-decoration-skip-ink: none;
+                        }
+                    }
+                }
+            }
+            hr {
+                margin-top: 0px;
+                width: 100%;
+                border-top: 1px solid #cccccc;
+            }
+        }
+        .continue_shipping {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            p {
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 20px;
+                letter-spacing: -0.006em;
+                text-align: left;
+                color: #202020;
+                text-underline-position: from-font;
+                text-decoration-skip-ink: none;
+                a {
+                    color: $priColor;
+                }
+
+                @include rtl {
+                    text-align: right;
+                }
+            }
+            button {
+                color: $white;
+                font-size: 16px;
+                font-weight: 700;
+                line-height: 20.83px;
+                text-align: center;
+                text-underline-position: from-font;
+                text-decoration-skip-ink: none;
+                padding: 16px 51px;
+                background-color: $priColor;
+                border-radius: 4px;
+                border: none;
+            }
+        }
+    }
+}
+
+@media (max-width: 786px) {
+    .thanks_container {
+       
+        h1 {
+            font-size: 24px;
+            line-height: 28px;
+            text-align: center;
+        }
+        p {
+            text-align: center;
+        }
+    }
+}

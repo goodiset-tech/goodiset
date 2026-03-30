@@ -1,0 +1,397 @@
+.footer_menu_outer {
+    display: flex;
+    gap: 60px;
+}
+
+footer {
+    width: 100vw;
+    background: $uiBlack;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: flex;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    flex-direction: column;
+    gap: 27px;
+    align-items: center;
+    position: relative;
+
+
+    @include rtl {
+        * {
+            font-family: $arFont !important;
+        }
+
+
+    }
+
+    .getinfo {
+        max-width: 1112px;
+        border-radius: 16px;
+        background: $uiGray60;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 auto;
+        padding: 24px;
+        gap: 80px;
+
+        h2 {
+            font-family: "Caprasimo", serif;
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 36px;
+            color: $white;
+            text-align: center;
+        }
+
+        .info-btn {
+            background: $priColor;
+            border: none;
+            border-radius: 12px;
+            color: $white;
+            padding: 8px;
+            width: 138px;
+            cursor: pointer;
+            font-family: $priFont;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 24px;
+        }
+    }
+
+    .menus {
+        max-width: 1230px;
+        display: flex;
+        width: 100%;
+        gap: 60px;
+
+        .logo {
+            max-width: 245px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+
+            @include mobile {
+                // align-items: center;
+                max-width: 165px;
+            }
+
+            img {
+                max-width: 165px;
+            }
+
+            p {
+                font-family: $priFont;
+                font-size: 12px;
+                font-weight: 400;
+                line-height: 19px;
+                color: $white;
+                text-transform: capitalize;
+            }
+        }
+
+        .footer-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            list-style-type: none;
+
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                max-width: 230px;
+            }
+
+            .head {
+                a {
+                    font-family: "Caprasimo", serif;
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 18px;
+                    text-wrap: nowrap;
+                    text-align: left;
+                    text-decoration: none;
+                    color: $white;
+                    text-transform: capitalize;
+                }
+            }
+
+            li {
+                a {
+                    font-family: "DM Sans", sans-serif;
+                    font-size: 13px;
+                    font-weight: 400;
+                    line-height: 18px;
+                    text-align: left;
+                    text-wrap: nowrap;
+                    color: $white;
+                    text-decoration: none;
+                    text-transform: capitalize;
+                }
+            }
+
+            input {
+                width: 230px;
+                padding: 12px;
+                // border-radius: 10px;
+                border: none;
+                background: transparent;
+                color: $white;
+                border: 1px solid $white;
+            }
+
+            input::placeholder {
+                color: #c1c1c1;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+                border-radius: 10px;
+                border: none;
+                background: $white;
+                text-transform: uppercase;
+                color: #000000;
+                font-family: $secFont;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 24px;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .footer-social-icons {
+        display: flex;
+        gap: 16px;
+
+        @include mobile {
+            justify-content: center;
+        }
+
+        .icon {
+            padding: 10px;
+            aspect-ratio: 1;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+            border-radius: 100%;
+            border: 1px solid $white;
+            color: $white;
+
+            i {
+                @include rtl {
+                    font-family: "Font Awesome 6 Brands" !important;
+                    font-weight: 900;
+                }
+            }
+        }
+    }
+
+    .hr-line {
+        width: 100%;
+        height: 1px;
+        background: $uiGray60;
+    }
+
+    .footer-text {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 22px;
+        text-align: center;
+        color: $white;
+        margin: 0 auto;
+    }
+
+    // .whatsapp {
+    //     position: absolute;
+    //     bottom: 110px;
+    //     right: 50px;
+    // }
+    .footer-bottom {
+        max-width: 1230px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        @include mobile {
+            flex-direction: column;
+            gap: 15px;
+            padding: 10px 0;
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    footer {
+        padding-top: 40px;
+        gap: 40px;
+        align-items: flex-start;
+
+        .getinfo {
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 90%;
+        }
+
+        .menus {
+            flex-wrap: wrap;
+            // padding: 0 20px;
+            box-sizing: border-box;
+            gap: 30px;
+
+            .footer-menu {
+                gap: 10px;
+            }
+        }
+
+        .whatsapp {
+            display: none;
+        }
+    }
+}
+
+.subscribe_footer_input {
+    display: flex;
+    border: 1px solid $white;
+    border-radius: 9px;
+    // max-width: 350px;
+    width: 100%;
+    overflow: hidden;
+
+    input {
+        border: none !important;
+        width: 100% !important;
+        outline: none;
+        border-radius: 0px;
+    }
+
+    input::placeholder {
+        color: $white;
+    }
+
+    button {
+        font-size: 13px !important;
+        padding: 12px 10px !important;
+        display: inline;
+        line-height: 15px;
+        width: 118px !important;
+        box-sizing: border-box;
+        border-radius: 0px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    footer .menus .logo {
+        max-width: unset;
+    }
+
+    footer .menus .footer_menu_outer .footer-menu {
+        gap: 2px;
+    }
+
+    .add-to-cart:hover,
+    .add-to-cart:active {
+        background: #fef2f2 !important;
+        color: #e92827 !important;
+    }
+
+    .footer_menu_outer {
+        // gap: 12px;
+    }
+
+    footer {
+        gap: 10px;
+        padding-top: 20px;
+        padding-bottom: 10px;
+
+        .menus .footer-menu {
+            button {
+                padding: 12px 10px !important;
+            }
+
+            .subscribe_footer_input {
+                height: 48px;
+                border-radius: 4px;
+
+                input {
+                    font-size: 12px;
+                    padding: 5px 16px;
+                    height: 100%;
+                }
+
+                input::placeholder {
+                    color: #c1c1c1;
+                }
+
+                .subscribe {
+                    height: 100%;
+                    font-size: 12px !important;
+                    padding: 5px 10px !important;
+                }
+            }
+        }
+
+        .getinfo {
+            gap: 12px;
+            justify-content: start;
+            padding: 26px;
+            width: 100%;
+
+            h2 {
+                font-size: 16px;
+                line-height: 22px;
+                text-align: left;
+            }
+        }
+
+        .menus {
+            flex-direction: column;
+            gap: 15px;
+
+            .footer-menu {
+                input {
+                    // width: 85vw;
+                    // max-width: 343px;
+                }
+
+                a {
+                    font-size: 12px !important;
+                }
+            }
+        }
+
+        .footer-text {
+            margin: 0 auto;
+            font-size: 10px;
+        }
+    }
+
+    .location-list {
+        max-width: 150px !important;
+    }
+}
+
+@media (max-width: 375px) {
+    .footer_menu_outer {
+        gap: 16px;
+    }
+
+    footer .menus .footer-menu li a {
+        font-size: 10px !important;
+    }
+}

@@ -1,0 +1,84 @@
+User-agent: Mediapartners-Google
+Disallow: 
+Disallow: /login/
+Disallow: /cart/
+Disallow: /user_register/
+Disallow: /order/
+Disallow: /order_submit/
+Disallow: /cart/decrement/
+Disallow: /guest_checkout/
+User-agent: *
+Allow: /
+
+
+# === Allow Major AI Bots ===
+User-agent: GPTBot
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: MetaAI
+Allow: /
+
+User-agent: Omgilibot  # Grok AI (X.com)
+Allow: /
+
+User-agent: Applebot-Extended  # Apple AI (if used)
+Allow: /
+
+# === Allow Search Engines ===
+User-agent: Googlebot
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# === Allow Social Media Bots ===
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Pinterestbot
+Allow: /
+
+
+# === Block Bad Bots (Spam/Scrapers) ===
+User-agent: MJ12bot
+Disallow: /
+
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: ZoominfoBot
+Disallow: /
+
+User-agent: Barkrowler
+Disallow: /
+
+Sitemap: https://goodiset.com/sitemap.xml

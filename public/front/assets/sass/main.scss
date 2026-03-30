@@ -1,0 +1,71 @@
+// -------------------------------------------------
+// Helper
+@import "./helper/functions.scss";
+@import "./helper/mixins.scss";
+@import "./helper/classes.scss";
+
+// Base
+@import "./base/variables.scss";
+@import "./base/typography.scss";
+@import "./base/reset.scss";
+// -------------------------------------------------
+// 3rd party libraries
+
+// font awesome
+
+// importing core styling file
+// @import "./fontawesome/scss/fontawesome.scss";
+
+// our project needs Solid + Brands
+// @import "./fontawesome/scss/solid.scss";
+// @import "./fontawesome/scss/brands.scss";
+
+@import "./plugins/slick.scss";
+// @import './bootstrap/bootstrap-grid.scss';
+
+// -------------------------------------------------
+// Components
+
+@import "./components/buttons.scss";
+@import "./components/carousel.scss";
+@import "./components/banner.scss";
+@import "./components/loader.scss";
+@import "./components/productCard.scss";
+@import "./components/filters.scss";
+@import "./components/heroBreadcrumbs";
+@import "./components/megaMenu";
+@import "./components/search_card";
+@import "./components/rating_stars";
+@import "./components/stepper";
+@import "./components/form";
+@import "./components/slider";
+@import "./components/featureCards";
+// -------------------------------------------------
+// Layout
+@import "./layout/header.scss";
+@import "./layout/nav.scss";
+@import "./layout/footer.scss";
+@import "./layout/sidebar.scss";
+@import "./layout/forms.scss";
+@import "./layout/sections.scss";
+
+// -------------------------------------------------
+// pages
+
+@import "./pages/home.scss";
+@import "./pages/product-details.scss";
+@import "./pages/celebration";
+@import "./pages/contact-us.scss";
+@import "./pages/privacy";
+@import "./pages/faqs.scss";
+@import "./pages/about-us.scss";
+@import "./pages/add_cart";
+@import "./pages/become-partner.scss";
+@import "./pages/your-shop.scss";
+@import "./pages/login";
+@import "./pages/dashboard";
+@import "./pages/custom_box";
+@import "./pages/thanks";
+@import "./pages/admin_setting";
+@import "./pages/corporate-events";
+@import "./pages/blog";

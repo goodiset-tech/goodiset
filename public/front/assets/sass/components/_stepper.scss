@@ -1,0 +1,86 @@
+/* Stepper Container */
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
+    gap: 16px;
+    max-width: 1227px;
+    width: 100%;
+}
+.step_connector {
+    height: 2px;
+    width: 100%;
+    background-color: #eaecf0;
+}
+/* Default Step Style */
+.step {
+    text-align: center;
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    .fa-check {
+        display: none;
+    }
+    p {
+        text-wrap: nowrap;
+        margin: 0 !important;
+        font-family: $priFont;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 24px;
+        text-align: left;
+        color: #666;
+    }
+}
+
+/* Step Number Base Styles */
+.step-number {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto;
+    line-height: 40px;
+    border: 1.6px solid #eaecf0;
+    border-radius: 50%;
+    text-align: center;
+    display: flex;
+    font-weight: 500;
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: #666;
+    font-weight: bold;
+
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* Active Step */
+.step.active .step-number {
+    background-color: $white; /* Green for active */
+    color: $priColor;
+    border-color: $priColor;
+}
+
+/* Completed Step */
+.step.completed .step-number {
+    background-color: white; /* White for completed */
+    background-color: $priColor;
+    color: $white;
+    border: none;
+}
+
+.step.active p {
+    color: $priColor;
+}
+.step.step.completed .fa-check {
+    display: block;
+}
+.step.step.completed .number {
+    display: none;
+}
+.step.completed p {
+    color: $priColor;
+}

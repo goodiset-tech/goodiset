@@ -1,0 +1,124 @@
+.btn {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 24px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    &.width_100 {
+        width: 100%;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        pointer-events: none;
+        text-decoration: line-through;
+        color: #fff;
+    }
+
+    &.btn_primary {
+        background-color: #FFDA1A;
+        color: $uiBlack;
+
+        &:hover {
+            background: darken(#FFDA1A, 10%);
+        }
+
+        &.red {
+            background-color: #FF1E28;
+            color: $white;
+
+            &:hover {
+                background: darken(#FF1E28, 10%);
+            }
+        }
+
+        &.white {
+            background: #fff;
+            color: $uiBlack;
+        }
+    }
+
+    &.btn_secondary {
+        background-color: $white;
+        color: $uiBlack;
+
+        &:hover {
+            background: darken($white, 10%);
+        }
+    }
+
+    &.btn_outlined {
+        border: 1px solid $uiBlack;
+        color: $uiBlack;
+
+        &.red {
+            border-color: #FF1E28;
+            background: #fff;
+            color: #FF1E28;
+        }
+    }
+}
+
+
+
+.add-to-cart,
+.add-to-cart-item1,
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background: #fff;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgba(110, 110, 110, 0.6);
+    font-family: $priColor;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    height: 48px;
+    text-align: center;
+    color: #000;
+    // color: $priColor;
+
+
+    @include mobile {
+        height: 40px;
+    }
+
+    &:hover {
+        background: $priColor;
+        color: $white;
+        border-color: $priColor;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        pointer-events: none;
+        text-decoration: line-through;
+        color: $uiBlack;
+    }
+}
+
+.quantity-controls {
+    position: relative;
+    justify-content: space-between;
+    color: $uiBlack;
+    overflow: hidden;
+    padding: 0 4px;
+
+    &:hover {
+        background: #fff;
+        color: $uiBlack;
+        border-color: rgba($uiBlack, 0.6);
+    }
+
+}

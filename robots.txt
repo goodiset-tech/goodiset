@@ -1,0 +1,13 @@
+User-agent: Mediapartners-Google
+Disallow: 
+Disallow: /login/
+Disallow: /cart/
+Disallow: /user_register/
+Disallow: /order/
+Disallow: /order_submit/
+Disallow: /cart/decrement/
+Disallow: /guest_checkout/
+User-agent: *
+Allow: /
+
+Sitemap: https://goodiset.com/sitemap.xml

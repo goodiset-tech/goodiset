@@ -1,0 +1,184 @@
+// Corporate Events Page Styles
+
+.confetti-section {
+  position: relative;
+  overflow: hidden;
+}
+
+
+.hero_section .container {
+  position: relative;
+  z-index: 1;
+}
+
+// Product Lineup Section
+.product-lineup {
+  .lineup-list {
+    background: #f2f2f2;
+    padding: 24px;
+    border-radius: 24px;
+    height: 100%;
+  }
+
+  .lineup-list-title {
+    color: #AB0416;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .lineup-list-content {
+    list-style: none;
+    padding: 0;
+
+    .lineup-list-item {
+      padding: 12px 0;
+      font-size: 16px;
+      color: #333;
+      position: relative;
+      padding-left: 30px;
+
+      &:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #AB0416;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      strong {
+        color: #AB0416;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// We Are Ready Section
+.we-are-ready {
+  background: #FFF9F0;
+}
+
+// Customised Section
+.customised-section {
+  padding: 60px 0;
+
+  .section-subtitle {
+    max-width: 800px;
+    margin: 20px auto 40px;
+    text-align: center;
+    color: #555;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+
+    .gallery-item {
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      height: 430px;
+      margin-bottom: 24px;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+
+    @include tablet {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.reseller-contact {
+  background: #ffeef2;
+  padding: 100px 20px;
+  text-align: center;
+  position: relative;
+
+  .subtitle {
+    color: #444;
+    font-size: 1.05rem;
+    margin-bottom: 40px;
+  }
+
+  /* Logos Row */
+  .reseller-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 50px;
+
+    img {
+      height: 40px;
+      object-fit: contain;
+      filter: grayscale(0);
+      opacity: 0.9;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+    }
+  }
+
+  /* Form Styling */
+  .reseller-form {
+    max-width: 700px;
+    margin: 0 auto;
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .two-cols {
+      input {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 48%;
+      }
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      color: #333;
+      transition: border 0.3s ease;
+
+      &:focus {
+        border-color: #E63946;
+        outline: none;
+      }
+    }
+  }
+}

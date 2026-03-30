@@ -1,0 +1,155 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .checkboxs {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .checkox {
+            width: 100%;
+        }
+
+        input {
+            accent-color: $priColor;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 24px;
+            text-align: left;
+            color: #000000cc;
+            text-wrap: nowrap;
+        }
+    }
+
+    input,
+    textarea,
+    select {
+        // width: 100%;
+        padding: 12px;
+        border: 1px solid #00000029;
+        font: 400 16px/24px $priFont;
+
+        resize: none;
+        border-radius: 8px;
+        outline: none;
+        color: $uiBlack;
+
+        // &:not(textarea) {
+        //     height: 48px;
+        // }
+    }
+
+    input::placeholder,
+    select::placeholder,
+    textarea::placeholder {
+        color: #00000066;
+    }
+
+    select {
+        color: #00000066; // Light gray for placeholder state
+        
+        &.selected {
+            color: $uiBlack; // Dark color when option is selected
+        }
+        
+        option {
+            color: $uiBlack; // All options should be dark
+            
+            &:first-child {
+                display: none;
+            }
+        }
+    }
+
+    .fields {
+        display: flex;
+        flex-direction: column;
+        gap: 24px !important;
+    }
+
+    .two-fields {
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+    }
+
+    button {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 18px;
+        letter-spacing: 1px;
+        text-align: center;
+        color: white;
+        background-color: $priColor;
+        padding: 15px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px !important;
+        width: 100%;
+        position: relative;
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 24px;
+            text-align: left;
+            color: #000000cc;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem top 50%;
+            background-size: 0.65rem auto;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .two-fields {
+        flex-wrap: wrap;
+    }
+
+    .add_quantity.plus,
+    .minus_quantity {
+        padding: 8px;
+    }
+}
+
+.add_quantity.plus,
+.minus_quantity,
+.fa-magnifying-glass {
+    cursor: pointer;
+}
+
+html[lang="ar"],
+:root:lang(ar),
+html[dir="rtl"],
+body[dir="rtl"] {
+
+    .field {
+
+
+        select {
+            background-position: left 0.7rem top 50% !important;
+        }
+
+    }
+
+    form .field label {
+        text-align: right;
+    }
+}

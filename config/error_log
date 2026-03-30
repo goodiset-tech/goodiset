@@ -1,0 +1,4 @@
+[08-Oct-2024 17:50:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home1/dealsto1/public_html/config/cache.php:18
+Stack trace:
+#0 {main}
+  thrown in /home1/dealsto1/public_html/config/cache.php on line 18

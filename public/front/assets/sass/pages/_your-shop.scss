@@ -1,0 +1,226 @@
+.your-shop {
+    padding: 80px 0;
+    // width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    .row {
+        flex-wrap: wrap-reverse;
+        width: 100%;
+        .col {
+            .business-card {
+                background: $priColor10;
+                padding: 20px 30px;
+                width: 630px;
+                max-width: 730px;
+                height: 444px;
+                margin: auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 20px;
+
+                .heading {
+                    font: 400 38px/38px $secFont;
+                }
+                .desc {
+                    font: 400 21px/34px $priFont;
+                    color: $uiBlack;
+                }
+                .btn {
+                    padding: 8px 32px;
+                    border-radius: 4px;
+                    font: 700 16px/20px $priFont;
+                    color: $white;
+                    border: none;
+                    height: 48px;
+                    width: max-content;
+                    background-color: $priColor;
+                }
+            }
+            .slider {
+                position: relative;
+                width: 444px; // Adjust width to fit your design
+                margin: 0 auto;
+                overflow: hidden;
+                background-color: #fee7f1; // Light pink background
+                border-radius: 10px;
+                padding: 20px;
+                box-sizing: border-box;
+
+                .slider-wrapper {
+                    display: flex;
+                    transition: transform 0.3s ease-in-out;
+                }
+
+                .slider-item {
+                    min-width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 384px;
+
+                    img {
+                        width: 100%;
+                        max-width: 280px; // Adjust image size to fit container
+                        object-fit: contain;
+                        height: 100%;
+                    }
+                }
+
+                .slider-dots {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-top: 10px;
+
+                    .dot {
+                        width: 10px;
+                        height: 10px;
+                        margin: 0 5px;
+                        background-color: #ccc;
+                        border: none;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        transition: background-color 0.2s;
+
+                        &.active {
+                            background-color: #e74c3c;
+                            width: 20px;
+                            border-radius: 40%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .second-row {
+        flex-wrap: wrap;
+    }
+}
+
+.welcome-retailers {
+    width: 100%;
+    // display: flex;
+    // justify-content: space-between;
+    background-image: url("../images/formbg.jpg");
+    background-size: cover;
+    background-position: center;
+
+    .form-container21 {
+        padding: 80px 0px 80px 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        max-width: 748px;
+        width: 90%;
+
+        .form-headings {
+            .heading1 {
+                font: 400 40px/52px $secFont;
+                margin-bottom: 16px;
+            }
+            .desc {
+                font: 400 20px/24px $priFont;
+                color: $uiGray60;
+            }
+        }
+
+        .logo-slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 10px 0;
+
+            .logos {
+                display: flex;
+                gap: 30px; // Spacing between logos
+                animation: scroll 15s linear infinite; // Adjust speed as needed
+
+                img {
+                    height: 40px; // Adjust the logo size
+                    object-fit: contain;
+                }
+            }
+        }
+
+        // Keyframes for continuous scrolling
+        @keyframes scroll {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+    }
+}
+
+@media (max-width: 1200px) {
+    .your-shop {
+        .row {
+            row-gap: 24px;
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .your-shop {
+        padding: 40px 0;
+        .row {
+            row-gap: 24px;
+            .col {
+                .business-card {
+                    width: 100%;
+                    max-height: 290px;
+
+                    .heading {
+                        font: 400 20px/22px $secFont;
+                    }
+                    .desc {
+                        font: 400 16px/20px $priFont;
+                    }
+                }
+                .slider {
+                    width: 100%;
+                    min-width: 300px;
+                    height: 330px;
+                    padding: 20px;
+
+                    .slider-item {
+                        height: 280px;
+                        img {
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .welcome-retailers {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-image: url("../images/FormBGM.png");
+        background-size: cover;
+        padding-bottom: 350px;
+        .form-container21 {
+            padding: 48px 0px 0px 0px;
+            .form-headings {
+                .heading1 {
+                    font: 400 32px/42px $secFont;
+                }
+                .desc {
+                    font: 400 18px/24px $priFont;
+                }
+            }
+
+
+        }
+    }
+}

@@ -1,0 +1,84 @@
+.section {
+    padding: 80px 0;
+
+    @include mobile {
+        padding: 40px 0;
+    }   
+    &_heading {
+        font-size: 40px;
+        line-height: 48px;
+        font-family: $secFont;
+        margin-bottom: 40px;
+
+        @include rtl {
+            font-family: $arFont;
+            font-weight: 700;
+        }
+
+        @include mobile {
+            font-size: 28px;
+            line-height: 36px;
+            margin-bottom: 24px;
+        }
+
+        &.red {
+            color: #AB0416;
+        }
+
+        &.center {
+            text-align: center;
+        }
+
+        &.left {
+            text-align: left;
+        }
+
+        &.right {
+            text-align: right;
+        }
+    }
+
+    &_subheading {
+        font-size: 16px;
+        line-height: 30px;
+        font-family: $priFont;
+        margin-bottom: 24px;
+        font-weight: 500;
+        margin-top: 12px;
+
+        @include rtl {
+            font-family: $arFont;
+        }
+
+        @include mobile {
+            font-size: 14px;
+            line-height: 22px;
+        }
+
+        &.center {
+            text-align: center;
+        }
+
+        &.left {
+            text-align: left;
+        }
+
+        &.right {
+            text-align: right;
+        }
+
+        &.max_width{
+            max-width: 800px;
+            margin: 12px auto 0 auto;
+        }
+
+        &.h_m_b{ 
+            margin-bottom: 40px;
+        }
+    }
+
+
+    &.n_p_b {
+        padding-bottom: 0;
+    }
+}
