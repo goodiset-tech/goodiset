@@ -3,173 +3,281 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ShoppingBag, Search, User, ChevronDown } from "lucide-react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [shopMenuOpen, setShopMenuOpen] = useState(false);
 
   const categories = [
-    { name: "Pick & Mix", slug: "pick-mix", color: "#FF6B6B" },
-    { name: "Pre-Mixed Bags", slug: "pre-mixed", color: "#4ECDC4" },
-    { name: "Chocolates", slug: "chocolates", color: "#95E1D3" },
-    { name: "Gift Boxes", slug: "gift-boxes", color: "#F38181" },
+    { name: "Pick & Mix", slug: "pick-mix", image: "/img/category/pick-mix.webp" },
+    { name: "Pre-Mixed Bags", slug: "pre-mixed", image: "/img/category/premixed.webp" },
+    { name: "Chocolates", slug: "chocolates", image: "/img/category/chocolates.webp" },
+    { name: "Gift Boxes", slug: "gift-boxes", image: "/img/category/giftbox.webp" },
   ];
 
   return (
     <>
       {/* Announcement Bar */}
-      <div className="bg-[#e63946] text-white text-center py-2 px-4 text-sm">
-        <p>Free delivery on orders over AED 100 | Use code SWEET10 for 10% off</p>
+      <div className="announcement-bar">
+        <div className="container">
+          <div className="ann-text">
+            <p>Free delivery on orders over AED 100 | Use code SWEET10 for 10% off</p>
+          </div>
+        </div>
       </div>
 
       {/* Main Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+      <div className="main_header">
         <div className="container">
-          <nav className="flex items-center justify-between py-4">
-            {/* Logo */}
-            <Link href="/" className="flex-shrink-0">
-              <Image
-                src="/front/assets/images/logo.png"
-                alt="Goodiset Swedish Candy"
-                width={165}
-                height={72}
-                className="h-14 w-auto"
-                priority
-              />
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-8">
-              <div
-                className="relative"
-                onMouseEnter={() => setShopMenuOpen(true)}
-                onMouseLeave={() => setShopMenuOpen(false)}
-              >
-                <button className="flex items-center gap-1 text-gray-700 hover:text-[#e63946] font-medium transition-colors">
-                  Shop <ChevronDown className="w-4 h-4" />
-                </button>
-
-                {/* Mega Menu */}
-                {shopMenuOpen && (
-                  <div className="absolute top-full left-0 w-[600px] bg-white shadow-xl rounded-lg p-6 mt-2">
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-3">Categories</h3>
-                        <ul className="space-y-2">
-                          <li>
-                            <Link href="/shop" className="text-gray-600 hover:text-[#e63946] transition-colors">
-                              All Products
-                            </Link>
-                          </li>
-                          {categories.map((cat) => (
-                            <li key={cat.slug}>
-                              <Link
-                                href={`/category/${cat.slug}`}
-                                className="text-gray-600 hover:text-[#e63946] transition-colors flex items-center gap-2"
-                              >
-                                <span
-                                  className="w-3 h-3 rounded-full"
-                                  style={{ backgroundColor: cat.color }}
-                                />
-                                {cat.name}
-                              </Link>
+          <nav className="navbar_container">
+            <div className="logo-wrapper">
+              <Link href="/" title="Goodiset Logo">
+                <Image
+                  src="/front/assets/images/logo.png"
+                  alt="Goodiset Swedish Candy"
+                  width={165}
+                  height={72}
+                  className="logo"
+                  priority
+                />
+              </Link>
+              
+              <ul className="nav-ul">
+                <li>
+                  <div className="mega-dropdown">
+                    <button className="mega-dropdown-toggle nav_item" title="Shop Menu">
+                      <span>Shop</span>
+                      <i className="fa-solid fa-angle-down mega_menu_arrow"></i>
+                    </button>
+                    <div className="mega-dropdown-menu">
+                      <div className="mega_dropdown_menu_inner">
+                        <div className="menu-left">
+                          <ul>
+                            <li className="category category_item">
+                              <Link href="/shop">All Products</Link>
                             </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-3">Popular</h3>
-                        <ul className="space-y-2">
-                          <li>
-                            <Link href="/shop?filter=bestsellers" className="text-gray-600 hover:text-[#e63946] transition-colors">
-                              Best Sellers
-                            </Link>
-                          </li>
-                          <li>
-                            <Link href="/shop?filter=new" className="text-gray-600 hover:text-[#e63946] transition-colors">
-                              New Arrivals
-                            </Link>
-                          </li>
-                          <li>
-                            <Link href="/shop?filter=sale" className="text-gray-600 hover:text-[#e63946] transition-colors">
-                              On Sale
-                            </Link>
-                          </li>
-                        </ul>
+                            <li className="category category_item">
+                              <Link href="/category/pick-mix">Pick & Mix</Link>
+                            </li>
+                            <li className="category category_item">
+                              <Link href="/category/pre-mixed">Pre-Mixed Bags</Link>
+                            </li>
+                            <li className="category category_item">
+                              <Link href="/category/chocolates">Chocolates</Link>
+                            </li>
+                            <li className="category category_item">
+                              <Link href="/category/gift-boxes">Gift Boxes</Link>
+                            </li>
+                          </ul>
+                        </div>
+                        <div className="menu-right zero_category active">
+                          <div className="row">
+                            {categories.map((cat) => (
+                              <div key={cat.slug} className="col-md-3">
+                                <div className="category_wrapper">
+                                  <Link href={`/category/${cat.slug}`} style={{ display: 'block' }}>
+                                    <Image
+                                      src={cat.image}
+                                      alt={cat.name}
+                                      width={200}
+                                      height={200}
+                                      style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                                    />
+                                    <p>{cat.name}</p>
+                                  </Link>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-
-              <Link href="/about" className="text-gray-700 hover:text-[#e63946] font-medium transition-colors">
-                About Us
-              </Link>
-              <Link href="/blogs" className="text-gray-700 hover:text-[#e63946] font-medium transition-colors">
-                Blog
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-[#e63946] font-medium transition-colors">
-                Contact
-              </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="nav_item">About Us</Link>
+                </li>
+                <li>
+                  <Link href="/blogs" className="nav_item">Blog</Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="nav_item">Contact</Link>
+                </li>
+              </ul>
             </div>
 
-            {/* Right Side Actions */}
-            <div className="flex items-center gap-4">
-              <button className="p-2 text-gray-700 hover:text-[#e63946] transition-colors" aria-label="Search">
-                <Search className="w-5 h-5" />
+            <div className="nav-actions">
+              <button className="nav-icon" aria-label="Search">
+                <i className="fa-solid fa-magnifying-glass"></i>
               </button>
-              <Link href="/login" className="p-2 text-gray-700 hover:text-[#e63946] transition-colors" aria-label="Account">
-                <User className="w-5 h-5" />
+              <Link href="/login" className="nav-icon" aria-label="Account">
+                <i className="fa-regular fa-user"></i>
               </Link>
-              <Link href="/cart" className="p-2 text-gray-700 hover:text-[#e63946] transition-colors relative" aria-label="Cart">
-                <ShoppingBag className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 bg-[#e63946] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  0
-                </span>
+              <Link href="/cart" className="nav-icon cart-icon" aria-label="Cart">
+                <i className="fa-solid fa-bag-shopping"></i>
+                <span className="cart-count">0</span>
               </Link>
-
-              {/* Mobile Menu Button */}
               <button
-                className="lg:hidden p-2 text-gray-700"
+                className="mobile-menu-btn"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label="Menu"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                <i className={`fa-solid ${mobileMenuOpen ? 'fa-xmark' : 'fa-bars'}`}></i>
               </button>
             </div>
           </nav>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t">
-            <div className="container py-4 space-y-4">
-              <Link href="/shop" className="block text-gray-700 hover:text-[#e63946] font-medium py-2">
-                Shop All
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu">
+          <div className="container">
+            <Link href="/shop" className="mobile-menu-item">Shop All</Link>
+            {categories.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/category/${cat.slug}`}
+                className="mobile-menu-item sub"
+              >
+                {cat.name}
               </Link>
-              {categories.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/category/${cat.slug}`}
-                  className="block text-gray-600 hover:text-[#e63946] py-2 pl-4"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-              <Link href="/about" className="block text-gray-700 hover:text-[#e63946] font-medium py-2">
-                About Us
-              </Link>
-              <Link href="/blogs" className="block text-gray-700 hover:text-[#e63946] font-medium py-2">
-                Blog
-              </Link>
-              <Link href="/contact" className="block text-gray-700 hover:text-[#e63946] font-medium py-2">
-                Contact
-              </Link>
-            </div>
+            ))}
+            <Link href="/about" className="mobile-menu-item">About Us</Link>
+            <Link href="/blogs" className="mobile-menu-item">Blog</Link>
+            <Link href="/contact" className="mobile-menu-item">Contact</Link>
           </div>
-        )}
-      </header>
+        </div>
+      )}
+
+      <style jsx>{`
+        .announcement-bar {
+          background: #e92827;
+          color: #fff;
+          text-align: center;
+          padding: 10px 0;
+          font-size: 14px;
+        }
+        .ann-text p {
+          margin: 0;
+        }
+        .main_header {
+          background: #fff;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .navbar_container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 0;
+        }
+        .logo-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 40px;
+        }
+        .logo {
+          height: 56px;
+          width: auto;
+        }
+        .nav-ul {
+          display: flex;
+          align-items: center;
+          gap: 32px;
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+        .nav_item {
+          font-family: "DM Sans", sans-serif;
+          font-size: 16px;
+          font-weight: 500;
+          color: #303030;
+          background: none;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .nav_item:hover {
+          color: #e92827;
+        }
+        .nav-actions {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .nav-icon {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #303030;
+          font-size: 18px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          border-radius: 50%;
+          transition: all 0.2s;
+        }
+        .nav-icon:hover {
+          background: #fef2f2;
+          color: #e92827;
+        }
+        .cart-icon {
+          position: relative;
+        }
+        .cart-count {
+          position: absolute;
+          top: 0;
+          right: 0;
+          background: #e92827;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 600;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .mobile-menu-btn {
+          display: none;
+        }
+        .mobile-menu {
+          display: none;
+          background: #fff;
+          border-top: 1px solid #eee;
+          padding: 16px 0;
+        }
+        .mobile-menu-item {
+          display: block;
+          padding: 12px 0;
+          color: #303030;
+          font-weight: 500;
+        }
+        .mobile-menu-item.sub {
+          padding-left: 16px;
+          font-weight: 400;
+          color: #6e6e6e;
+        }
+        @media (max-width: 992px) {
+          .nav-ul {
+            display: none;
+          }
+          .mobile-menu-btn {
+            display: flex;
+          }
+          .mobile-menu {
+            display: block;
+          }
+        }
+      `}</style>
     </>
   );
 }

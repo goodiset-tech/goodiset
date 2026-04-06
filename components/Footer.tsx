@@ -1,147 +1,257 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="footer">
+      <div className="container">
+        <div className="footer-grid">
           {/* Logo & Description */}
-          <div className="lg:col-span-1">
+          <div className="footer-col footer-about">
             <Image
               src="/front/assets/images/logo.png"
               alt="Goodiset"
               width={165}
               height={72}
-              className="h-12 w-auto brightness-0 invert mb-4"
+              className="footer-logo"
             />
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="footer-desc">
               Premium Swedish candy and sweets. Discover authentic Scandinavian treats delivered to your door in the UAE.
             </p>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Company</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/about" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/blogs" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/login" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Join Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Help Links */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Help</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/terms" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link href="/faqs" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  FAQs
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/corporate-events" className="text-gray-400 hover:text-white transition-colors text-sm">
-                  Corporate Events
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Newsletter</h3>
-            <form className="space-y-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-[#e63946] transition-colors"
-              />
-              <button
-                type="submit"
-                className="w-full px-4 py-2 bg-[#e63946] text-white rounded-lg font-medium hover:bg-[#d62836] transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
-            <div className="flex gap-4 mt-6">
+            <div className="social-links">
               <a
                 href="https://www.facebook.com/share/1CkAwUTTgm/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
                 aria-label="Facebook"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
+                <i className="fa-brands fa-facebook-f"></i>
               </a>
               <a
                 href="https://www.tiktok.com/@goodiset"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
                 aria-label="TikTok"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
-                </svg>
+                <i className="fa-brands fa-tiktok"></i>
               </a>
               <a
                 href="https://www.instagram.com/goodiset"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
                 aria-label="Instagram"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                </svg>
+                <i className="fa-brands fa-instagram"></i>
               </a>
             </div>
+          </div>
+
+          {/* Company Links */}
+          <div className="footer-col">
+            <h3 className="footer-heading">Company</h3>
+            <ul className="footer-links">
+              <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/blogs">Blog</Link></li>
+              <li><Link href="/login">Join Us</Link></li>
+              <li><Link href="/contact">Contact Us</Link></li>
+            </ul>
+          </div>
+
+          {/* Help Links */}
+          <div className="footer-col">
+            <h3 className="footer-heading">Help</h3>
+            <ul className="footer-links">
+              <li><Link href="/terms">Terms & Conditions</Link></li>
+              <li><Link href="/faqs">FAQs</Link></li>
+              <li><Link href="/privacy">Privacy Policy</Link></li>
+              <li><Link href="/corporate-events">Corporate Events</Link></li>
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div className="footer-col footer-newsletter">
+            <h3 className="footer-heading">Newsletter</h3>
+            <p className="newsletter-text">Subscribe to get special offers and updates!</p>
+            <form className="newsletter-form">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="newsletter-input"
+              />
+              <button type="submit" className="newsletter-btn">
+                Subscribe
+              </button>
+            </form>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-10 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-500 text-sm">
-              &copy; {new Date().getFullYear()} Goodiset. All rights reserved.
-            </p>
-            <div className="flex items-center gap-4">
-              <Image src="/front/assets/icons/visa.svg" alt="Visa" width={40} height={25} className="h-6 w-auto" />
-              <Image src="/front/assets/icons/mastercard.svg" alt="Mastercard" width={40} height={25} className="h-6 w-auto" />
-              <Image src="/front/assets/icons/applePay.png" alt="Apple Pay" width={40} height={25} className="h-6 w-auto" />
-            </div>
+        <div className="footer-bottom">
+          <p className="copyright">
+            &copy; {new Date().getFullYear()} Goodiset. All rights reserved.
+          </p>
+          <div className="payment-icons">
+            <span className="payment-icon">
+              <i className="fa-brands fa-cc-visa"></i>
+            </span>
+            <span className="payment-icon">
+              <i className="fa-brands fa-cc-mastercard"></i>
+            </span>
+            <span className="payment-icon">
+              <i className="fa-brands fa-cc-apple-pay"></i>
+            </span>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .footer {
+          background: #1a1a1a;
+          color: #fff;
+          padding: 60px 0 30px;
+        }
+        .container {
+          max-width: 1290px;
+          margin: 0 auto;
+          padding: 0 15px;
+        }
+        .footer-grid {
+          display: grid;
+          grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+          gap: 40px;
+        }
+        .footer-logo {
+          height: 48px;
+          width: auto;
+          margin-bottom: 16px;
+          filter: brightness(0) invert(1);
+        }
+        .footer-desc {
+          color: #9ca3af;
+          font-size: 14px;
+          line-height: 1.6;
+          margin-bottom: 20px;
+        }
+        .social-links {
+          display: flex;
+          gap: 12px;
+        }
+        .social-links a {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: #333;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          font-size: 16px;
+          transition: all 0.2s;
+        }
+        .social-links a:hover {
+          background: #e92827;
+        }
+        .footer-heading {
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 20px;
+          color: #fff;
+        }
+        .footer-links {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+        .footer-links li {
+          margin-bottom: 12px;
+        }
+        .footer-links a {
+          color: #9ca3af;
+          font-size: 14px;
+          transition: color 0.2s;
+        }
+        .footer-links a:hover {
+          color: #fff;
+        }
+        .newsletter-text {
+          color: #9ca3af;
+          font-size: 14px;
+          margin-bottom: 16px;
+        }
+        .newsletter-form {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .newsletter-input {
+          padding: 12px 16px;
+          border-radius: 8px;
+          border: 1px solid #333;
+          background: #262626;
+          color: #fff;
+          font-size: 14px;
+          outline: none;
+        }
+        .newsletter-input::placeholder {
+          color: #6b7280;
+        }
+        .newsletter-input:focus {
+          border-color: #e92827;
+        }
+        .newsletter-btn {
+          padding: 12px 24px;
+          border-radius: 8px;
+          border: none;
+          background: #e92827;
+          color: #fff;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .newsletter-btn:hover {
+          background: #c1002e;
+        }
+        .footer-bottom {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-top: 1px solid #333;
+          margin-top: 40px;
+          padding-top: 24px;
+        }
+        .copyright {
+          color: #6b7280;
+          font-size: 14px;
+          margin: 0;
+        }
+        .payment-icons {
+          display: flex;
+          gap: 16px;
+        }
+        .payment-icon {
+          font-size: 28px;
+          color: #6b7280;
+        }
+        @media (max-width: 992px) {
+          .footer-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+        @media (max-width: 576px) {
+          .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+          }
+          .footer-bottom {
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+          }
+        }
+      `}</style>
     </footer>
   );
 }

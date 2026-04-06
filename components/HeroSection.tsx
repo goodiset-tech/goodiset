@@ -1,60 +1,115 @@
-import Link from "next/link";
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-gradient-to-br from-[#fff5f5] to-[#ffe8e8] overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#e63946]/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#ffd700]/10 rounded-full blur-3xl" />
+    <section className="hero_section confetti-section">
+      <div className="confetti-layer"></div>
+      
+      <div className="hero_slider">
+        <div className="container">
+          <Link href="/shop" title="hero_slider">
+            <div className="hero_slide">
+              <Image
+                src="/img/slider/1750932777.webp"
+                alt="Goodiset Swedish Candy Banner"
+                width={1260}
+                height={500}
+                priority
+                style={{ 
+                  width: '100%', 
+                  height: 'auto',
+                  borderRadius: '24px'
+                }}
+              />
+            </div>
+          </Link>
+        </div>
       </div>
 
-      <div className="container relative">
-        <div className="flex flex-col lg:flex-row items-center min-h-[500px] lg:min-h-[600px] py-12 lg:py-0">
-          {/* Text Content */}
-          <div className="flex-1 text-center lg:text-left z-10">
-            <span className="inline-block bg-[#e63946] text-white text-sm font-medium px-4 py-1 rounded-full mb-4">
-              Premium Swedish Candy
-            </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              Discover the <span className="text-[#e63946]">Sweetest</span> Treats from Sweden
-            </h1>
-            <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0">
-              Indulge in authentic Scandinavian candies, chocolates, and sweets. 
-              Handpicked favorites delivered right to your doorstep in the UAE.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link
-                href="/shop"
-                className="inline-flex items-center justify-center px-8 py-3 bg-[#e63946] text-white font-semibold rounded-full hover:bg-[#d62836] transition-colors shadow-lg shadow-[#e63946]/25"
-              >
-                Shop Now
-              </Link>
-              <Link
-                href="/category/pick-mix"
-                className="inline-flex items-center justify-center px-8 py-3 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-100 transition-colors border border-gray-200"
-              >
-                Build Your Box
+      {/* Promotional Banners */}
+      <section className="promo_banner">
+        <div className="container">
+          <div className="banner_grid">
+            <div className="banner_item">
+              <Link href="/category/pick-mix">
+                <Image
+                  src="/img/promotional/banner1.webp"
+                  alt="Pick & Mix Promotion"
+                  width={625}
+                  height={200}
+                  style={{ 
+                    width: '100%', 
+                    height: 'auto',
+                    borderRadius: '12px'
+                  }}
+                />
               </Link>
             </div>
-          </div>
-
-          {/* Hero Image */}
-          <div className="flex-1 relative mt-8 lg:mt-0">
-            <div className="relative w-full max-w-lg mx-auto">
-              <Image
-                src="/front/assets/images/candy-bg.webp"
-                alt="Swedish Candy Collection"
-                width={600}
-                height={500}
-                className="w-full h-auto object-contain"
-                priority
-              />
+            <div className="banner_item">
+              <Link href="/category/gift-boxes">
+                <Image
+                  src="/img/promotional/banner2.webp"
+                  alt="Gift Boxes Promotion"
+                  width={625}
+                  height={200}
+                  style={{ 
+                    width: '100%', 
+                    height: 'auto',
+                    borderRadius: '12px'
+                  }}
+                />
+              </Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <style jsx>{`
+        .hero_section {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          background: none;
+        }
+        .confetti-layer {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 450px;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 1;
+          opacity: 0.5;
+        }
+        .hero_slide {
+          margin: 48px auto;
+          position: relative;
+          z-index: 2;
+        }
+        .promo_banner {
+          padding: 0 0 40px;
+        }
+        .banner_grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 30px;
+          margin: 0 auto;
+        }
+        @media (max-width: 575px) {
+          .hero_slide {
+            margin: 24px auto 0 auto;
+          }
+          .banner_grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 12px;
+          }
+        }
+      `}</style>
     </section>
   );
 }
