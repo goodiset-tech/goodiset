@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import "@/public/front/assets/sass/main.css";
-import "@/public/front/assets/sass/bootstrap.min.css";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -9,8 +7,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "Goodiset - Swedish Candy Store",
-  description: "Premium Swedish candy and sweets. Discover authentic Scandinavian treats delivered to your door.",
+  title: "Goodiset - Swedish Candy Dubai | Sweet Candy | Swedish Chocolate",
+  description: "Premium Swedish candy and sweets delivered in Dubai and UAE. Same-day delivery available. Bubs, Marabou, Pick & Mix and more!",
 };
 
 export default function RootLayout({
@@ -19,12 +17,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="ltr">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link 
-          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Caprasimo&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" 
+          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Caprasimo&display=swap" 
           rel="stylesheet" 
         />
         <link 
@@ -32,10 +30,8 @@ export default function RootLayout({
           rel="stylesheet" 
         />
       </head>
-      <body id="body" className="ltr">
-        <div className="body-container">
-          {children}
-        </div>
+      <body className="antialiased">
+        {children}
       </body>
     </html>
   );

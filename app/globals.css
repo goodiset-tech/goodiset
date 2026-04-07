@@ -1,75 +1,151 @@
-/* Minimal reset - main.css handles most styles */
-*, ::before, ::after {
-  box-sizing: border-box;
+@import 'tailwindcss';
+
+@theme inline {
+  --font-sans: 'DM Sans', sans-serif;
+  --font-display: 'Caprasimo', cursive;
+  
+  --color-primary: #e92827;
+  --color-primary-dark: #c1002e;
+  --color-secondary: #303030;
+  --color-text: #666666;
+  --color-light-bg: #fef6f0;
+  --color-cream: #fff8f2;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
+/* Base styles */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: "DM Sans", sans-serif;
-  color: #303030;
+  font-family: var(--font-sans);
+  color: var(--color-secondary);
   background: #fff;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+/* Headings with Caprasimo font */
+.font-display {
+  font-family: 'Caprasimo', cursive;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
+/* Primary button */
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Container */
-.container {
-  max-width: 1290px;
-  margin: 0 auto;
-  padding: 0 15px;
-  width: 100%;
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
 }
 
-/* Section */
-.section {
-  padding: 80px 0;
+/* Category card hover effect */
+.category-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Utilities */
-.n_m_t {
-  margin-top: 0 !important;
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
-.n_p_b {
-  padding-bottom: 0 !important;
+/* Product card */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.n_p_t {
-  padding-top: 0 !important;
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
 }
 
-/* Row and columns for grid */
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 -15px;
+/* Flavor button blob effect */
+.flavor-btn {
+  position: relative;
+  padding: 16px 32px;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-[class*="col-"] {
-  padding: 0 15px;
+.flavor-btn.active,
+.flavor-btn:hover {
+  transform: scale(1.05);
 }
 
-/* Global Image styles for Next.js Image component */
-:global(.product-image) {
-  position: absolute !important;
-  top: 0;
+/* Wave decoration */
+.wave-decoration {
+  position: absolute;
+  bottom: 0;
   left: 0;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+/* Sale badge */
+.sale-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--color-primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+/* Animation keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Horizontal scroll for product sections */
+.products-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.products-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.products-scroll > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
 }
