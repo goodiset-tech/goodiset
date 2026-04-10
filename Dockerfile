@@ -1,19 +1,18 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm-alpine
 
 # Install system dependencies (must come before any PHP extension compilation)
-RUN apt-get update && apt-get install -y \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
+RUN apk add --no-cache \
+        freetype-dev \
+        libjpeg-turbo-dev \
         libpng-dev \
         libzip-dev \
-        libpq-dev \
+        postgresql-dev \
         libxml2-dev \
-        libicu-dev \
-        libonig-dev \
+        icu-dev \
+        oniguruma-dev \
         unzip \
         curl \
-        git \
-    && rm -rf /var/lib/apt/lists/*
+        git
 
 # Configure GD with freetype + jpeg support, then install all required extensions
 RUN docker-php-ext-configure gd \
@@ -32,14 +31,6 @@ RUN docker-php-ext-configure gd \
         bcmath \
         intl \
         opcache
-
-# Enable Apache mod_rewrite for Laravel routing
-RUN a2enmod rewrite
-
-# Replace the default VirtualHost with one that points to Laravel's public/
-# directory and enables .htaccess overrides — no sed patching of core configs
-# needed, which avoids the "More than one MPM loaded" conflict.
-COPY docker/apache/laravel.conf /etc/apache2/sites-available/000-default.conf
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -68,4 +59,4 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-EXPOSE 80
+EXPOSE 9000
