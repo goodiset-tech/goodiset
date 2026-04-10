@@ -1,39 +1,10 @@
-FROM php:8.2-fpm-alpine
+FROM serversideup/php:8.2-fpm
 
-# Install system dependencies and nginx
-RUN apk add --no-cache \
-        nginx \
-        freetype-dev \
-        libjpeg-turbo-dev \
-        libpng-dev \
-        libzip-dev \
-        postgresql-dev \
-        icu-dev \
-        unzip \
-        git \
-        libpq
-
-# Configure and install PHP extensions
-RUN docker-php-ext-configure gd \
-        --with-freetype \
-        --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-        gd \
-        pdo_mysql \
-        pdo_pgsql \
-        zip \
-        intl \
-        opcache
+# Switch to root to install Composer and system packages
+USER root
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Copy startup script
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
 
 WORKDIR /var/www/html
 
@@ -60,5 +31,3 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 EXPOSE 80
-
-CMD ["/start.sh"]
