@@ -1,21 +1,18 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.2-apache
 
-# Install system dependencies (must come before any PHP extension compilation)
-RUN apk add --no-cache \
-        freetype-dev \
-        libjpeg-turbo-dev \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
         libpng-dev \
         libzip-dev \
-        postgresql-dev \
-        libxml2-dev \
-        icu-dev \
-        oniguruma-dev \
+        libpq-dev \
+        libicu-dev \
         unzip \
-        curl \
         git \
-        caddy
+    && rm -rf /var/lib/apt/lists/*
 
-# Configure GD with freetype + jpeg support, then install all required extensions
+# Configure and install PHP extensions
 RUN docker-php-ext-configure gd \
         --with-freetype \
         --with-jpeg \
@@ -24,14 +21,16 @@ RUN docker-php-ext-configure gd \
         pdo_mysql \
         pdo_pgsql \
         zip \
-        dom \
-        mbstring \
-        xml \
-        fileinfo \
-        exif \
-        bcmath \
         intl \
         opcache
+
+# Enable Apache mod_rewrite for Laravel routing
+RUN a2enmod rewrite
+
+# Point DocumentRoot at Laravel's public directory
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
+    && sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/apache2.conf
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -60,13 +59,6 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-# Install Caddy configuration
-COPY Caddyfile /etc/caddy/Caddyfile
-
-# Install startup script
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
-
 EXPOSE 80
 
-CMD ["/usr/local/bin/start.sh"]
+CMD ["apache2-foreground"]
