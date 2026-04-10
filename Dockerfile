@@ -27,11 +27,6 @@ RUN docker-php-ext-configure gd \
 # Enable Apache mod_rewrite for Laravel routing
 RUN a2enmod rewrite
 
-# Point DocumentRoot at Laravel's public directory
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
-    && sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/apache2.conf
-
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
