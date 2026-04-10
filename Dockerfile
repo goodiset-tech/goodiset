@@ -3,6 +3,10 @@ FROM serversideup/php:8.2-fpm
 # Switch to root to install Composer and system packages
 USER root
 
+# Install gd extension (required by phpoffice/phpspreadsheet via maatwebsite/excel)
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install gd
+
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
