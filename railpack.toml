@@ -1,2 +1,5 @@
+[apt]
+packages = ["libpng-dev", "libjpeg-dev", "libfreetype6-dev"]
+
 [php]
 extensions = ["zip", "gd", "pdo_mysql", "pdo_pgsql", "curl", "dom", "mbstring", "xml", "tokenizer", "fileinfo", "exif", "bcmath", "intl", "openssl"]
