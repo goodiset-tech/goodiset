@@ -58,12 +58,11 @@ WORKDIR /var/www/html
 # Copy only composer.json — composer.lock is not committed (listed in .gitignore)
 COPY composer.json ./
 
-# Install PHP dependencies without a lock file, deferring scripts and autoloader
+# Install PHP dependencies, deferring scripts and autoloader
 RUN composer install \
         --no-dev \
         --no-scripts \
         --no-autoloader \
-        --no-lock \
         --prefer-dist
 
 # Copy the rest of the application source
