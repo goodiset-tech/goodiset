@@ -12,7 +12,8 @@ RUN apk add --no-cache \
         oniguruma-dev \
         unzip \
         curl \
-        git
+        git \
+        caddy
 
 # Configure GD with freetype + jpeg support, then install all required extensions
 RUN docker-php-ext-configure gd \
@@ -59,4 +60,13 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-EXPOSE 9000
+# Install Caddy configuration
+COPY Caddyfile /etc/caddy/Caddyfile
+
+# Install startup script
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+EXPOSE 80
+
+CMD ["/usr/local/bin/start.sh"]
