@@ -1,2 +1,2 @@
-[php]
+[goodiset.php]
 extensions = ["zip", "gd", "pdo_mysql", "pdo_pgsql", "curl", "dom", "mbstring", "xml", "tokenizer", "fileinfo", "exif", "bcmath", "intl", "openssl"]
