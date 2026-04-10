@@ -27,7 +27,6 @@ RUN docker-php-ext-configure gd \
         dom \
         mbstring \
         xml \
-        tokenizer \
         fileinfo \
         exif \
         bcmath \
