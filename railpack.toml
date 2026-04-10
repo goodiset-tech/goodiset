@@ -1,0 +1,2 @@
+[php]
+extensions = ["zip", "gd", "pdo_mysql", "pdo_pgsql"]
