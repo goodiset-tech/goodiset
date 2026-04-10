@@ -1,16 +1,17 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm-alpine
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
+# Install system dependencies and nginx
+RUN apk add --no-cache \
+        nginx \
+        freetype-dev \
+        libjpeg-turbo-dev \
         libpng-dev \
         libzip-dev \
-        libpq-dev \
-        libicu-dev \
+        postgresql-dev \
+        icu-dev \
         unzip \
         git \
-    && rm -rf /var/lib/apt/lists/*
+        libpq
 
 # Configure and install PHP extensions
 RUN docker-php-ext-configure gd \
@@ -24,11 +25,15 @@ RUN docker-php-ext-configure gd \
         intl \
         opcache
 
-# Enable Apache mod_rewrite for Laravel routing
-RUN a2enmod rewrite
-
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 
 WORKDIR /var/www/html
 
@@ -56,4 +61,4 @@ RUN chown -R www-data:www-data /var/www/html \
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["/start.sh"]
