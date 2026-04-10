@@ -1,16 +1,40 @@
-FROM serversideup/php:8.2-fpm
+FROM php:8.2-fpm
 
-# Switch to root to install Composer and system packages
-USER root
+# Install system dependencies and nginx
+RUN apt-get update && apt-get install -y \
+        nginx \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libzip-dev \
+        libonig-dev \
+        libxml2-dev \
+        zip \
+        unzip \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install gd extension (required by phpoffice/phpspreadsheet via maatwebsite/excel)
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd
+# Install and configure PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        gd \
+        pdo \
+        pdo_mysql \
+        mbstring \
+        zip \
+        xml \
+        bcmath \
+        opcache
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
+
+# Copy nginx and startup configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
 
 # Copy only composer.json — composer.lock is not committed (listed in .gitignore)
 COPY composer.json ./
@@ -35,3 +59,5 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 EXPOSE 80
+
+CMD ["/start.sh"]
