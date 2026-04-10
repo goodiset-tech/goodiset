@@ -1,8 +1,12 @@
 #!/bin/sh
-set -e
+set -xe
 
 # Start PHP-FPM in the background
-php-fpm -D
+php-fpm -D || { echo "ERROR: php-fpm failed to start" >&2; exit 1; }
 
-# Start nginx in the foreground (keeps the container alive)
+# Give PHP-FPM a moment to fully initialise before nginx starts accepting
+# requests and forwarding them via FastCGI.
+sleep 1
+
+# Start nginx in the foreground — this keeps the container alive.
 exec nginx -g 'daemon off;'
