@@ -36,19 +36,10 @@ RUN docker-php-ext-configure gd \
 # Enable Apache mod_rewrite for Laravel routing
 RUN a2enmod rewrite
 
-# Point Apache document root at Laravel's public directory
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
-        /etc/apache2/sites-available/*.conf \
-    && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
-        /etc/apache2/apache2.conf \
-        /etc/apache2/conf-available/*.conf
-
-# Allow .htaccess overrides so Laravel's rewrite rules are honoured
-RUN sed -ri -e 's!AllowOverride None!AllowOverride All!g' \
-        /etc/apache2/apache2.conf \
-        /etc/apache2/conf-available/*.conf
+# Replace the default VirtualHost with one that points to Laravel's public/
+# directory and enables .htaccess overrides — no sed patching of core configs
+# needed, which avoids the "More than one MPM loaded" conflict.
+COPY docker/apache/laravel.conf /etc/apache2/sites-available/000-default.conf
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
