@@ -1,0 +1,18 @@
+{
+    admin off
+}
+
+:80 {
+    root * /var/www/html/public
+
+    # Serve static files directly; fall back to index.php
+    try_files {path} /index.php?{query}
+
+    # Pass PHP requests to PHP-FPM
+    php_fastcgi localhost:9000
+
+    # Compress responses
+    encode gzip
+
+    file_server
+}
