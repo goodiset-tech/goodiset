@@ -1,12 +1,10 @@
 #!/bin/sh
-set -xe
+set -e
 
-# Start PHP-FPM in the background
-php-fpm -D || { echo "ERROR: php-fpm failed to start" >&2; exit 1; }
+# Run Laravel bootstrap tasks
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
-# Give PHP-FPM a moment to fully initialise before nginx starts accepting
-# requests and forwarding them via FastCGI.
-sleep 1
-
-# Start nginx in the foreground — this keeps the container alive.
-exec nginx -g 'daemon off;'
+# Start PHP's built-in server on all interfaces at port 80
+exec php artisan serve --host=0.0.0.0 --port=80

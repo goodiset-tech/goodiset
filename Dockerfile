@@ -1,8 +1,7 @@
 FROM php:8.2-fpm-alpine
 
-# Install system dependencies and nginx
+# Install system dependencies (no nginx)
 RUN apk add --no-cache \
-        nginx \
         freetype-dev \
         libjpeg-turbo-dev \
         libpng-dev \
@@ -27,9 +26,6 @@ RUN docker-php-ext-configure gd \
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy startup script
 COPY start.sh /start.sh
