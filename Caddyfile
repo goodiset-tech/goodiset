@@ -1,6 +1,0 @@
-:80 {
-	root * /var/www/html/public
-	encode gzip
-	try_files {path} /index.php?{query}
-	reverse_proxy localhost:9000
-}
