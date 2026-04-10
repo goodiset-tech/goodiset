@@ -1,22 +1,6 @@
-{
-	admin off
-}
-
 :80 {
 	root * /var/www/html/public
-
-	# Compress responses
 	encode gzip
-
-	# Serve static files directly; pass PHP requests to PHP-FPM.
-	# php_fastcgi includes try_files {path} /index.php?{query} by default,
-	# which handles Laravel's front-controller routing correctly.
-	php_fastcgi localhost:9000
-
-	file_server
-
-	log {
-		output stderr
-		level  ERROR
-	}
+	try_files {path} /index.php?{query}
+	reverse_proxy localhost:9000
 }
