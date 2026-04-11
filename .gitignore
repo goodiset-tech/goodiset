@@ -8,8 +8,7 @@
 
 /vendor
 .htaccess
-.env.backup
-.env.production
+
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -29,5 +28,4 @@ composer.lock
 resources/lang/ar.json
 resources/lang/en.json
 public/front/assets/sass/main.css.map
-.env 
-.env
+
