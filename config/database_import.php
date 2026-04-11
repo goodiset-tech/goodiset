@@ -37,7 +37,13 @@ return [
     |--------------------------------------------------------------------------
     | Paths
     |--------------------------------------------------------------------------
+    |
+    | backup1.sql is gitignored (dumps often contain API keys). Keep the file locally
+    | or on a Railway volume and set an absolute path here when not using the default.
+    |
     */
+
+    'backup_sql_path' => database_path('seeders/backup1.sql'),
 
     'psql_binary' => null,
 

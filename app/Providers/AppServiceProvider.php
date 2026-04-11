@@ -19,7 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        config([
+            'database.backup_sql.path' => config(
+                'database_import.backup_sql_path',
+                database_path('seeders/backup1.sql')
+            ),
+        ]);
     }
 
     /**
