@@ -33,8 +33,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy nginx and startup configuration
+# Copy nginx, PHP-FPM pool, and startup configuration
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
