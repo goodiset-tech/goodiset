@@ -16,3 +16,11 @@ mix.js('resources/js/app.js', 'public/js')
         //
     ])
     .sass('public/front/assets/sass/main.scss', 'public/front/assets/sass');
+
+mix.override((webpackConfig) => {
+    if (webpackConfig.plugins) {
+        webpackConfig.plugins = webpackConfig.plugins.filter(
+            (plugin) => !(plugin.constructor && plugin.constructor.name === 'WebpackBarPlugin')
+        );
+    }
+});
