@@ -5,6 +5,7 @@
 /public/hot
 /public/storage
 /storage/*.key
+
 /vendor
 .htaccess
 .env.backup
@@ -28,3 +29,4 @@ composer.lock
 resources/lang/ar.json
 resources/lang/en.json
 public/front/assets/sass/main.css.map
+.env 
