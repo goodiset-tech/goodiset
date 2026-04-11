@@ -14,9 +14,7 @@ $Site = Setting::where(['id' => '1'])->first();
 
 <body id="body" class="{{ in_array(app()->getLocale(), ['ar', 'ur', 'fa', 'he']) ? 'rtl' : 'ltr' }}">
 
-    <!-- Elfsight Website Translator | Untitled Website Translator 4 -->
-    <script src="https://elfsightcdn.com/platform.js" async></script>
-    <div class="elfsight-app-38cf2af6-0dfe-48a5-9c6a-e62f1ba0a864" data-elfsight-app-lazy></div>
+   
 
     @include('layout.partials.third-party-body')
 
