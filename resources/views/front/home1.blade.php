@@ -360,6 +360,9 @@
             <script src="https://static.elfsight.com/platform/platform.js" async></script>
             <div class="elfsight-app-ee40795a-f343-4594-9c97-f198aaa97527" style="height:460px" data-elfsight-app-lazy>
             </div>
+
+            <script src="https://elfsightcdn.com/platform.js" async></script>
+            <div class="elfsight-app-b5966e63-eb25-4f04-9b6a-3c5fbaa10992" data-elfsight-app-lazy></div>
         </div>
     </section>
 
