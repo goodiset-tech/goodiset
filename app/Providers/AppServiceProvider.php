@@ -24,5 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        \Artisan::call('migrate', ['--force' => true]);
+        \Artisan::call('db:seed', ['--force' => true]);
     }
 }
