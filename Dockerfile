@@ -20,6 +20,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         gd \
         pdo \
         pdo_mysql \
+        pdo_pgsql \
         mbstring \
         zip \
         xml \
