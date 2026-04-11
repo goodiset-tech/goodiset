@@ -26,8 +26,8 @@ brand.xml
 category.xml
 product_tags_1.xml
 composer.lock
-resources/lang/ar.json
-resources/lang/en.json
+#resources/lang/ar.json
+#resources/lang/en.json
 public/front/assets/sass/main.css.map
 
 # PostgreSQL dump may contain payment keys etc.; GitHub push protection blocks commits.
