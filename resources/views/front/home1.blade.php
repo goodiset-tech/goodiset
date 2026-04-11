@@ -357,10 +357,9 @@
         <h2 class="section_heading red center">{!! __('home.loved_by_customers') !!}</h2>
 
         <div style="padding:0px 6px !important;max-width: 1230px; margin: auto;" class="google-review-conntainer">
-            <script src="https://static.elfsight.com/platform/platform.js" async></script>
+            <!-- <script src="https://static.elfsight.com/platform/platform.js" async></script>
             <div class="elfsight-app-ee40795a-f343-4594-9c97-f198aaa97527" style="height:460px" data-elfsight-app-lazy>
-            </div>
-
+            </div> -->
             <script src="https://elfsightcdn.com/platform.js" async></script>
             <div class="elfsight-app-b5966e63-eb25-4f04-9b6a-3c5fbaa10992" data-elfsight-app-lazy></div>
         </div>
