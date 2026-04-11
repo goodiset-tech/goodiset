@@ -32,6 +32,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '247-5116',
@@ -50,6 +51,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-12109',
@@ -68,6 +70,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-15532',
@@ -86,6 +89,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-9811',
@@ -104,6 +108,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-32102',
@@ -122,6 +127,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-321280',
@@ -140,6 +146,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-321551',
@@ -158,6 +165,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-380930',
@@ -176,6 +184,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-381070',
@@ -193,6 +202,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'melonnappar-sura-3k-35-381070',
             ],
             [
@@ -211,6 +221,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'colanappar-söta-3k-35-616040',
             ],
             [
@@ -229,6 +240,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'dummies-mini-sour-3k-74-50565',
             ],
             [
@@ -247,6 +259,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'jordgubbar-mini-sura-3k-74-50568',
             ],
             [
@@ -265,6 +278,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'skittles-fruits-4x1.6k-625-101697',
             ],
             [
@@ -283,6 +297,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'pearls-2.75k-225-2095',
             ],
             [
@@ -301,6 +316,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'pasta-frutta-2k-225-8066',
             ],
             [
@@ -319,6 +335,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'karmella-stor-3k-590-250700',
             ],
             [
@@ -337,6 +354,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'häxvrål-stora-3k-590-467625',
             ],
             [
@@ -355,6 +373,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'chokofanter-stora-2k-590-467760',
             ],
             [
@@ -373,6 +392,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'karmella-2.1k-dk-590-467960'
             ],
             [
@@ -391,6 +411,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'rabarberbitar-stora-3k-590-469325'
             ],
             [
@@ -409,6 +430,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'salta-hallon-3k-590-470000'
             ],
             [
@@ -427,6 +449,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'ferraribitar-stora-3k-590-665400',
             ],
             [
@@ -445,6 +468,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'melonbit-sur-mega-3.2k-590-671250',
             ],
             [
@@ -463,6 +487,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'colabit-sur-mega-3.2k-590-675000',
             ],
             [
@@ -481,6 +506,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'jordgubbsbit-sur-mega3.2k-590-675525',
             ],
             [
@@ -499,6 +525,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'red-ammo-3k-590-681000',
             ],
             [
@@ -517,6 +544,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'jordgubbskabel-2.5k-590-687400',
             ],
             [
@@ -535,6 +563,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'kolaskruvar-stora-2.7k-590-691000',
             ],
             [
@@ -553,6 +582,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'smultron-stor-sur-3k-590-740700',
             ],
             [
@@ -571,6 +601,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'toms-kokosdröm-3k-590-741200',
             ],
             [
@@ -589,6 +620,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'geisha-3k-137-402104',
             ],
             [
@@ -607,6 +639,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'tutti-frutti-rings-1.7k-137-403104',
             ],
             [
@@ -625,6 +658,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'söta-katten-2.2k-137-403118',
             ],
             [
@@ -643,6 +677,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'sura-katten-2.2k-137-403120',
             ],
             [
@@ -661,6 +696,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'tutti-frutti-sour-2k-137-403124',
             ],
             [
@@ -679,6 +715,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
                 'slug' => 'remix-soda-cans-2.3k-137-403128',
             ],
             [
@@ -698,6 +735,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '137-403242',
@@ -716,6 +754,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '137-403831',
@@ -734,6 +773,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '137-404905',
@@ -752,6 +792,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '74-121',
@@ -770,6 +811,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '74-140',
@@ -788,6 +830,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '74-142',
@@ -806,6 +849,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '74-148',
@@ -824,6 +868,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-80264',
@@ -842,6 +887,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '130-332612',
@@ -860,6 +906,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '130-391145',
@@ -878,6 +925,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '130-430592',
@@ -896,6 +944,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '225-8218',
@@ -914,6 +963,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '225-9454',
@@ -932,6 +982,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '225-9459',
@@ -950,6 +1001,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-10377',
@@ -968,6 +1020,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-12289',
@@ -986,6 +1039,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-13861',
@@ -1004,6 +1058,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-14842',
@@ -1022,6 +1077,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-17077',
@@ -1040,6 +1096,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-17668',
@@ -1058,6 +1115,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-17669',
@@ -1076,6 +1134,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-9322',
@@ -1094,6 +1153,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-9449',
@@ -1112,6 +1172,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-368000',
@@ -1130,6 +1191,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-38114',
@@ -1148,6 +1210,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '438-127218',
@@ -1166,6 +1229,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '438-127332',
@@ -1184,6 +1248,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '438-224',
@@ -1202,6 +1267,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '438-711',
@@ -1220,6 +1286,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-8509',
@@ -1238,6 +1305,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '166-4075',
@@ -1256,6 +1324,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-4565',
@@ -1274,6 +1343,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-4566',
@@ -1292,6 +1362,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-1159',
@@ -1310,6 +1381,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '30-160',
@@ -1328,6 +1400,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '30-20',
@@ -1346,6 +1419,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-57011',
@@ -1364,6 +1438,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-57012',
@@ -1382,6 +1457,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-927253',
@@ -1400,6 +1476,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '530-2301',
@@ -1418,6 +1495,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '530-2302',
@@ -1436,6 +1514,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '74-22305',
@@ -1454,6 +1533,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-10370',
@@ -1472,6 +1552,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-10405',
@@ -1490,6 +1571,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-11480',
@@ -1508,6 +1590,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-14947',
@@ -1526,6 +1609,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-15628',
@@ -1544,6 +1628,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-16739',
@@ -1562,6 +1647,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-2440',
@@ -1580,6 +1666,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-40',
@@ -1598,6 +1685,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-4526',
@@ -1616,6 +1704,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-6454',
@@ -1634,6 +1723,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '315-900211',
@@ -1652,6 +1742,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '225-9063',
@@ -1670,6 +1761,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '225-9067',
@@ -1688,6 +1780,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '225-9075',
@@ -1706,6 +1799,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '247-15127',
@@ -1724,6 +1818,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '247-15128',
@@ -1742,6 +1837,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '247-15129',
@@ -1760,6 +1856,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '294-104954',
@@ -1778,6 +1875,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '294-105013',
@@ -1796,6 +1894,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '294-11445',
@@ -1814,6 +1913,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '438-55553',
@@ -1832,6 +1932,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '438-55556',
@@ -1850,6 +1951,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '438-55560',
@@ -1868,6 +1970,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '438-55561',
@@ -1886,6 +1989,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '76-34190',
@@ -1904,6 +2008,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '76-34192',
@@ -1922,6 +2027,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '76-34579',
@@ -1940,6 +2046,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '76-34593',
@@ -1958,6 +2065,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-784760',
@@ -1976,6 +2084,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '185-13015',
@@ -1994,6 +2103,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '185-14525',
@@ -2012,6 +2122,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '185-14615',
@@ -2030,6 +2141,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '185-14625',
@@ -2048,6 +2160,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '185-14645',
@@ -2066,6 +2179,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '185-22305',
@@ -2084,6 +2198,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '185-33055',
@@ -2102,6 +2217,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-916306',
@@ -2120,6 +2236,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '310-229121',
@@ -2138,6 +2255,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '310-229291',
@@ -2156,6 +2274,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '400-224',
@@ -2174,6 +2293,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '400-301',
@@ -2192,6 +2312,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '400-308',
@@ -2210,6 +2331,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '400-332',
@@ -2228,6 +2350,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '400-360',
@@ -2246,6 +2369,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '400-370',
@@ -2264,6 +2388,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-26055',
@@ -2282,6 +2407,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-26105',
@@ -2300,6 +2426,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-26595',
@@ -2318,6 +2445,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-30052',
@@ -2336,6 +2464,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-30182',
@@ -2354,6 +2483,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-30352',
@@ -2372,6 +2502,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '47-16117',
@@ -2390,6 +2521,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-26595',
@@ -2408,6 +2540,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-30052',
@@ -2426,6 +2559,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-30182',
@@ -2444,6 +2578,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '424-30352',
@@ -2462,6 +2597,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '47-16117',
@@ -2480,6 +2616,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '47-17147',
@@ -2498,6 +2635,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '530-66906',
@@ -2516,6 +2654,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-600410',
@@ -2534,6 +2673,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-600610',
@@ -2552,6 +2692,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-600710',
@@ -2570,6 +2711,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-601410',
@@ -2588,6 +2730,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-830110',
@@ -2606,6 +2749,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-830550',
@@ -2624,6 +2768,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-840010',
@@ -2642,6 +2787,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-850110',
@@ -2660,6 +2806,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '659-850410',
@@ -2678,6 +2825,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '74-50813',
@@ -2696,6 +2844,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '166-5020',
@@ -2714,6 +2863,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-500217',
@@ -2732,6 +2882,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-500221',
@@ -2750,6 +2901,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-500224',
@@ -2768,6 +2920,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-911200',
@@ -2786,6 +2939,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '591-980',
@@ -2804,6 +2958,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-1881',
@@ -2822,6 +2977,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-327001',
@@ -2840,6 +2996,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-991667',
@@ -2858,6 +3015,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-994948',
@@ -2876,6 +3034,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-994962',
@@ -2894,6 +3053,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-994963',
@@ -2912,6 +3072,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-999154',
@@ -2930,6 +3091,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '7.39308E+12',
@@ -2948,6 +3110,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-999229',
@@ -2966,6 +3129,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '95-2874',
@@ -2984,6 +3148,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '95-3086',
@@ -3002,6 +3167,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '76-11422',
@@ -3020,6 +3186,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-33203',
@@ -3038,6 +3205,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-33204',
@@ -3056,6 +3224,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-33205',
@@ -3074,6 +3243,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-33206',
@@ -3092,6 +3262,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '35-33230',
@@ -3110,6 +3281,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-242199',
@@ -3128,6 +3300,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-248622',
@@ -3146,6 +3319,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-28163',
@@ -3164,6 +3338,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-309248',
@@ -3182,6 +3357,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-309626',
@@ -3200,6 +3376,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-309656',
@@ -3218,6 +3395,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-70573',
@@ -3236,6 +3414,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-70578',
@@ -3254,6 +3433,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-70584',
@@ -3272,6 +3452,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-241116',
@@ -3290,6 +3471,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-975667',
@@ -3308,6 +3490,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-975673',
@@ -3326,6 +3509,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-40902',
@@ -3344,6 +3528,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-74466',
@@ -3362,6 +3547,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-12115',
@@ -3380,6 +3566,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-12575',
@@ -3398,6 +3585,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-279275',
@@ -3416,6 +3604,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-302873',
@@ -3434,6 +3623,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-302908',
@@ -3452,6 +3642,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-302909',
@@ -3470,6 +3661,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-302913',
@@ -3488,6 +3680,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-302921',
@@ -3506,6 +3699,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-302922',
@@ -3524,6 +3718,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '1-75347',
@@ -3542,6 +3737,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ],
             [
                 'sku' => '3309-2101',
@@ -3560,6 +3756,7 @@ class ProductSeeder extends Seeder
                 'shipping_price' => 2,
                 'image_one' => 'no_product_image.png',
                 'thumb' => 'no_product_image.png',
+'name_sw'=> '',
             ]
         ];
         foreach ($products as $product) {
