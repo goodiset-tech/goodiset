@@ -26,5 +26,8 @@ class AppServiceProvider extends ServiceProvider
         //
         // \Artisan::call('migrate', ['--force' => true]);
         // \Artisan::call('db:seed', ['--force' => true]);
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
