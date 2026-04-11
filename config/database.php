@@ -104,6 +104,17 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Backup SQL restore (see BackupSqlSeeder, config/database_import.php)
+    |--------------------------------------------------------------------------
+    */
+
+    'backup_sql' => [
+        'path' => database_path('seeders/backup1.sql'),
+        'skip_wipe' => false,
+    ],
+
     'migrations' => 'migrations',
 
     /*

@@ -3,6 +3,7 @@ FROM php:8.2-fpm
 # Install system dependencies and nginx
 RUN apt-get update && apt-get install -y \
         nginx \
+        postgresql-client \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libpng-dev \

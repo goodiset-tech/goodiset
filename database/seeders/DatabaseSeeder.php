@@ -13,16 +13,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        if (config('database_import.database_seeder_backup_only', false)) {
+            $this->call(BackupSqlSeeder::class);
+
+            return;
+        }
+
         // \App\Models\User::factory(10)->create();
         $this->call([
 
-           # AdminSeeder::class,
-           # SettingSeeder::class,
-           # UserSeeder::class,
-            // PermissionSeeder::class,
-            // CountrySeeder::class,
-            // FormatSeeder::class,
-            // FlavorSeeder::class,
+            AdminSeeder::class,
+            SettingSeeder::class,
+            UserSeeder::class,
+            PermissionSeeder::class,
+            CountrySeeder::class,
+            FormatSeeder::class,
+            FlavorSeeder::class,
             ProductSeeder::class,
             ProductUpdateSeeder::class,
             PaymentMethodsSeeder::class,

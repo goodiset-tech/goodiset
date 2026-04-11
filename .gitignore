@@ -29,3 +29,6 @@ composer.lock
 resources/lang/ar.json
 resources/lang/en.json
 public/front/assets/sass/main.css.map
+
+# PostgreSQL dump may contain payment keys etc.; GitHub push protection blocks commits.
+/database/seeders/backup1.sql
