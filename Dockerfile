@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
         zip \
         unzip \
         curl \
+        libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install and configure PHP extensions
@@ -20,6 +21,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         gd \
         pdo \
         pdo_mysql \
+        pdo_pgsql \
         mbstring \
         zip \
         xml \
@@ -31,8 +33,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy nginx and startup configuration
+# Copy nginx, PHP-FPM pool, and startup configuration
 COPY nginx.conf /etc/nginx/nginx.conf
+
+COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
