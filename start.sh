@@ -1,11 +1,8 @@
 #!/bin/sh
 set -e
 
-mkdir -p /run
-mkdir -p /run/php
-mkdir -p /var/log/nginx
-
-envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
-
+# Start PHP-FPM in the background
 php-fpm -D
-nginx -g 'daemon off;'
+
+# Start nginx in the foreground (exec replaces the shell, making nginx PID 1)
+exec nginx -g "daemon off;"
