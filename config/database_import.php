@@ -16,6 +16,10 @@ return [
     | Set prepare_on_boot back to false after a successful import so you do not
     | wipe production on every request.
     |
+    | Large restores need long HTTP timeouts (nginx fastcgi_read_timeout, PHP-FPM
+    | request_terminate_timeout). If Railway still shows TCP_ABORT_ON_DATA to Postgres,
+    | run the import once via SSH instead: php artisan db:seed --class=BackupSqlSeeder
+    |
     */
 
     'prepare_on_boot' => false,
