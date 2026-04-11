@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @font-face {
   font-family: currencyFontStyle;
-  src: url(/fonts/currency.woff2?b421542acdf5486ae2e0bef218a63a13) format("woff2");
+  src: url(../../font/currency.woff2) format("woff2");
   font-display: swap;
   font-weight: 600;
   font-style: normal;
@@ -213,7 +213,7 @@ select {
   font-size: inherit; /* Match font size */
   color: inherit;
   border-radius: 8px;
-  background: url(/images/arrow.svg?afa359fd9136e0c1411be5d80941b0b3), white;
+  background: url("../../images/arrow.svg"), white;
 }
 
 .n_m_b {
@@ -1325,7 +1325,7 @@ button.slick-prev.slick-arrow {
           text-decoration-skip-ink: none;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url(/images/bgFlavour.jpeg?77d9d6f899b28f972bb8449f3794db2a);
+  background-image: url(../images/bgFlavour.jpeg);
   background-blend-mode: soft-light;
 }
 .mega-dropdown .mega-dropdown-menu .menu-right .view_all {
@@ -3789,7 +3789,7 @@ body[lang=ar] .faq-item h3::after {
   position: relative;
   max-width: 400px;
   width: 90%;
-  background-image: url(/images/Desktop-Pop-up-Size-Width--400–600px.png?127c5eb668dd32750c5a78f4a1cea01d);
+  background-image: url(../images/Desktop-Pop-up-Size-Width--400–600px.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -5145,7 +5145,7 @@ body[lang=ar] .faq-item h3::after {
 }
 
 .celebration_card {
-  background: url(/images/christmas-decoration-candies.png?69014bea7f05fee01a3ab7ca9ad85283), linear-gradient(0deg, rgba(0, 0, 0, 0.5) 38.45%, rgba(178, 178, 178, 0) 102.86%);
+  background: url("../images/christmas-decoration-candies.png"), linear-gradient(0deg, rgba(0, 0, 0, 0.5) 38.45%, rgba(178, 178, 178, 0) 102.86%);
   background-repeat: no-repeat !important;
   background-size: cover !important;
   max-width: 330px;
@@ -5357,7 +5357,7 @@ body[lang=ar] .faq-item h3::after {
   display: block;
 }
 .contactus-container .contactus-infos {
-  background-image: url(/images/contactushero2.png?426d0930fe77265b5102db8d99090dcb);
+  background-image: url("../../images/contactushero2.png");
   background-size: cover;
   background-position: center;
   width: 600px;
@@ -7412,7 +7412,7 @@ body[lang=ar] .add_cart_container .content1 .added_products .product .detail .in
 
 .welcome-retailers {
   width: 100%;
-  background-image: url(/images/formbg.jpg?706b32d51edfe672046bdab1e2c69d07);
+  background-image: url("../images/formbg.jpg");
   background-size: cover;
   background-position: center;
 }
@@ -7499,7 +7499,7 @@ body[lang=ar] .add_cart_container .content1 .added_products .product .detail .in
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-image: url(/images/FormBGM.png?712488c4cb42b683e131e409f4f64a11);
+    background-image: url("../images/FormBGM.png");
     background-size: cover;
     padding-bottom: 350px;
   }
@@ -7519,7 +7519,7 @@ body[lang=ar] .add_cart_container .content1 .added_products .product .detail .in
   overflow: hidden;
 }
 .contact_us_wrapper .side_image {
-  background: url(/images/Signup.jpg?275cdd3f0cd3b0f9e46ac4e687a19e0e);
+  background: url(../../assets/images/Signup.jpg);
   overflow: hidden;
   background-size: cover;
 }
@@ -8699,7 +8699,7 @@ body[lang=ar] .add_cart_container .content1 .added_products .product .detail .in
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  background: url(/images/product1.png?52c1a6508a86d961d20f34e939065533), red;
+  background: url("../../images/product1.png"), red;
   background-blend-mode: multiply;
   border-radius: 24px;
 }
@@ -9621,4 +9621,4 @@ body[lang=ar] .add_cart_container .content1 .added_products .product .detail .in
 .featured-blog .featured-content .featured-text .btn-read-more:hover {
   background: rgb(200.5714285714, 21.3571428571, 20.4285714286);
   transform: translateY(-2px);
-}
+}/*# sourceMappingURL=main.css.map */
