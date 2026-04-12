@@ -1,3 +1,22 @@
+# -----------------------------------------------------------------------------
+# Frontend assets (Laravel Mix)
+# -----------------------------------------------------------------------------
+FROM node:20-bookworm-slim AS frontend
+
+WORKDIR /build
+
+COPY package.json package-lock.json* ./
+RUN npm ci 2>/dev/null || npm install
+
+COPY webpack.mix.js ./
+COPY resources ./resources
+COPY public ./public
+
+RUN npm run prod
+
+# -----------------------------------------------------------------------------
+# Application
+# -----------------------------------------------------------------------------
 FROM php:8.2-fpm
 
 # Install system dependencies and nginx
@@ -58,6 +77,9 @@ RUN composer install \
 
 # Copy the rest of the application source
 COPY . .
+
+# Compiled Mix assets from frontend stage (overwrites public/js, public/css, mix-manifest, etc.)
+COPY --from=frontend /build/public /var/www/html/public
 
 # Generate optimised autoloader and run post-install scripts
 RUN composer dump-autoload --optimize \

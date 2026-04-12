@@ -18,7 +18,8 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'file'),
+    // Use database on production so sessions survive deploys and work with multiple instances (Railway).
+    'driver' => env('SESSION_DRIVER', env('APP_ENV') === 'production' ? 'database' : 'file'),
 
     /*
     |--------------------------------------------------------------------------
@@ -168,7 +169,10 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    // null in .env + no trust proxy used to break HTTPS cookies on Railway; default secure in production.
+    'secure' => env('SESSION_SECURE_COOKIE') !== null
+        ? filter_var(env('SESSION_SECURE_COOKIE'), FILTER_VALIDATE_BOOL)
+        : env('APP_ENV') === 'production',
 
     /*
     |--------------------------------------------------------------------------
