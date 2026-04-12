@@ -4454,7 +4454,7 @@ class FrontController extends Controller
                     'minOrder' => (int)$city->min_order,
                     'shippingCost' => (int)$city->shipping_cost,
                     'freeShippingThreshold' => (int)$city->free_shipping,
-                    'discount' => Session::get('cart')['discount'],
+                    'discount' => Session::get('cart.discount', 0),
                 ]);
                 exit;
             }
@@ -4467,7 +4467,7 @@ class FrontController extends Controller
                     'minOrder' => (int)$country->min_order,
                     'shippingCost' => (int)$country->shipping_cost,
                     'freeShippingThreshold' => (int)$country->free_shipping,
-                    'discount' => Session::get('cart')['discount'],
+                    'discount' => Session::get('cart.discount', 0),
                 ]);
                 exit;
             }
@@ -4484,7 +4484,11 @@ class FrontController extends Controller
     public function getCities($country_id)
     {
         $country = Countries::where('name', $country_id)->first();
+        if (! $country) {
+            return response()->json([]);
+        }
         $cities = City::where('country_id', $country->id)->where('status', 1)->get();
+
         return response()->json($cities);
     }
 
