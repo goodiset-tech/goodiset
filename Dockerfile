@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
         libzip-dev \
         libonig-dev \
         libxml2-dev \
+        libicu-dev \
+        libcurl4-openssl-dev \
         zip \
         unzip \
         curl \
@@ -27,6 +29,9 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         zip \
         xml \
         bcmath \
+        curl \
+        intl \
+        exif \
         opcache
 
 # Install Composer
