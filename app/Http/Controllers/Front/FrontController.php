@@ -532,7 +532,7 @@ class FrontController extends Controller
             'remoteip' => $req->ip()
         ])->json();
 
-        print_r($verifyResponse);die;
+        // print_r($verifyResponse);die;
 
         if (!$verifyResponse['success']) {
             return redirect('/login')->with([
