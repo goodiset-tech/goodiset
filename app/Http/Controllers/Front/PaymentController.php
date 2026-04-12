@@ -24,7 +24,7 @@ class PaymentController extends Controller
                 'redirectUrl' => env('NGENIUS_REDIRECT_URL'),
             ],
         ]);
-        dd($response);
+        //dd($response);
 
         if ($response->successful()) {
             $data = $response->json();
