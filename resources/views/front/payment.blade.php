@@ -1081,7 +1081,9 @@ use App\Models\Admins\Rating;
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Accept": "application/json",
+                            "X-Requested-With": "XMLHttpRequest",
                         },
                         body: JSON.stringify({
                             amount: finalTotal,
@@ -1092,7 +1094,7 @@ use App\Models\Admins\Rating;
 
                     const {
                         clientSecret
-                    } = await response.json();
+                    } = await parseJsonResponse(response);
                     if (!clientSecret) throw new Error("Missing clientSecret");
                     const elements = stripe.elements({
                         clientSecret: clientSecret
@@ -1194,8 +1196,13 @@ use App\Models\Admins\Rating;
 
             async function getPaymentMethod(paymentMethodId) {
                 try {
-                    const response = await fetch(`/get-payment-method/${paymentMethodId}`);
-                    const paymentMethod = await response.json();
+                    const response = await fetch(`/get-payment-method/${paymentMethodId}`, {
+                        headers: {
+                            "Accept": "application/json",
+                            "X-Requested-With": "XMLHttpRequest",
+                        },
+                    });
+                    const paymentMethod = await parseJsonResponse(response);
 
                     if (paymentMethod.card && paymentMethod.card.wallet) {
                         if (paymentMethod.card.wallet.type === "apple_pay") {
@@ -1263,18 +1270,36 @@ use App\Models\Admins\Rating;
                 });
             });
 
+            async function parseJsonResponse(response) {
+                const text = await response.text();
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('Non-JSON HTTP response', response.status, text.substring(0, 500));
+                    if (response.status === 419) {
+                        throw new Error('Session or security token expired. Refresh this page and try again.');
+                    }
+                    if (response.status >= 500) {
+                        throw new Error('Server error. Please try again later.');
+                    }
+                    throw new Error('Unexpected server response (not JSON). Often a crash, wrong URL, or session issue—refresh and check server logs.');
+                }
+            }
+
             // Submit Order
             async function submitOrderdraft(formData) {
                 try {
                     const response = await fetch("{{ route('draft_order_submit') }}", {
                         method: "POST",
                         headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Accept": "application/json",
+                            "X-Requested-With": "XMLHttpRequest",
                         },
                         body: formData
                     });
 
-                    const data = await response.json();
+                    const data = await parseJsonResponse(response);
 
                     if (data.success) {
 
@@ -1308,12 +1333,14 @@ use App\Models\Admins\Rating;
                     const response = await fetch("{{ route('order_submit') }}", {
                         method: "POST",
                         headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Accept": "application/json",
+                            "X-Requested-With": "XMLHttpRequest",
                         },
                         body: formData
                     });
 
-                    const data = await response.json();
+                    const data = await parseJsonResponse(response);
 
                     if (data.success) {
                         try {
@@ -1401,14 +1428,16 @@ use App\Models\Admins\Rating;
                                 method: "POST",
                                 headers: {
                                     "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                    "Content-Type": "application/json"
+                                    "Content-Type": "application/json",
+                                    "Accept": "application/json",
+                                    "X-Requested-With": "XMLHttpRequest",
                                 },
                                 body: JSON.stringify({
                                     order_no: data.order_no
                                 })
                             });
 
-                            const ngeniusData = await ngeniusResponse.json();
+                            const ngeniusData = await parseJsonResponse(ngeniusResponse);
                             $('#submitOrder').prop('disabled', false);
                             $('#spinner').hide();
                             $('#loader_container').hide();
@@ -1518,7 +1547,9 @@ use App\Models\Admins\Rating;
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "Accept": "application/json",
+                                "X-Requested-With": "XMLHttpRequest",
                             },
                             body: JSON.stringify({
                                 amount: finalTotal,
@@ -1528,7 +1559,7 @@ use App\Models\Admins\Rating;
                             })
                         });
 
-                        const data = await response.json();
+                        const data = await parseJsonResponse(response);
 
                         if (data.error) {
                             document.getElementById('card-errors').textContent = data.error;
