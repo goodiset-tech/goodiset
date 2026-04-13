@@ -8,6 +8,7 @@
 
         @php
             $ttUserData = TikTokTracking::getHashedUserData();
+            
         @endphp
 
         // User identification

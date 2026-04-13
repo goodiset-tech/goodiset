@@ -12,8 +12,7 @@ $Site = Setting::where(['id' => '1'])->first();
     @include('layout.partials.links')
 </head>
 
-<body id="body" class="{{ in_array(app()->getLocale(), ['ar', 'ur', 'fa', 'he']) ? 'rtl' : 'ltr' }}">
-
+<body id="body" class="{{ in_array(app()->getLocale(), ['ar', 'ur', 'fa', 'he']) ? 'rtl' : 'ltr' }}">       
    
 
     @include('layout.partials.third-party-body')
