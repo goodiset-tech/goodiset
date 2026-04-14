@@ -46,7 +46,7 @@
   &__link {
     position: absolute;
     inset: 0;
-    z-index: 0;
+    z-index: 5; // above .card-content (3) / .card-btn (4) so the whole card hits the same URL as Shop now
   }
 
   /* Default state (circle can) */
@@ -248,6 +248,17 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    // Button visual matches direct .card-btn:hover when pointer is anywhere on the card
+    .card-content .card-btn {
+      background: $priColor;
+      color: #ffffff;
+    }
+  }
+
+  &:focus-within .card-content .card-btn {
+    background: $priColor;
+    color: #ffffff;
   }
 }
 

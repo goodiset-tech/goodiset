@@ -38,8 +38,8 @@
             @if ($sliders)
                 @foreach ($sliders as $slide)
                     <div class="container">
-                        @if (empty($slide->button) && empty($slide->button_ar))
-                            <a href="{{ $slide->cid }}" title="hero_slider">
+                        @if (!empty($slide->cid))
+                            <a href="{{ $slide->cid }}" class="hero_slide_link" title="hero_slider">
                         @endif
                         <div class="hero_slide">
 
@@ -62,7 +62,7 @@
                                 @endif
                             </div> --}}
                         </div>
-                        @if (empty($slide->button) && empty($slide->button_ar))
+                        @if (!empty($slide->cid))
                             </a>
                         @endif
                     </div>
@@ -109,7 +109,8 @@
                         <div class="product-card" aria-label="{{ app()->isLocale('ar') ? $v->name_ar : $v->name }}"
                             style="background-color: {{ $v->color }};">
                             <a href="{{ url('/') }}/category/{{ $v->slug }}" class="product-card__link"
-                                title="{{ app()->isLocale('ar') ? $v->name_ar : $v->name }}"></a>
+                                title="{{ app()->isLocale('ar') ? $v->name_ar : $v->name }}"
+                                aria-label="{{ trim((app()->isLocale('ar') ? $v->name_ar : $v->name) . ' — ' . __('home.cate.button')) }}"></a>
 
                             <!-- Default state -->
                             <div class="card-default">
@@ -140,9 +141,7 @@
                             <div class="card-content">
                                 <h2 class="card-subtitle">{{ app()->isLocale('ar') ? $v->name_ar : $v->name }}</h2>
                                 <p class="card-text">{{ app()->isLocale('ar') ? $v->sub_title_ar : $v->sub_title }}</p>
-                                <a class="card-btn" href="{{ url('/') }}/category/{{ $v->slug }}"
-                                    title="{{ app()->isLocale('ar') ? $v->name_ar : $v->name }}">
-                                    {{ __('home.cate.button') }} </a>
+                                <span class="card-btn">{{ __('home.cate.button') }}</span>
                             </div>
                         </div>
                     </div>

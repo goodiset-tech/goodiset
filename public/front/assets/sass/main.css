@@ -559,6 +559,11 @@ button.slick-prev.slick-arrow {
   height: 100%;
   display: block;
 }
+.hero_section .hero_slider .hero_slide_link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
 .hero_section .hero_slider .hero_slide {
   margin: 48px auto;
 }
@@ -3155,7 +3160,7 @@ footer .footer-bottom {
 .product-card__link {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 5;
 }
 .product-card {
   /* Default state (circle can) */
@@ -3348,6 +3353,14 @@ footer .footer-bottom {
 .product-card:hover .card-content {
   opacity: 1;
   transform: translateY(0);
+}
+.product-card:hover .card-content .card-btn {
+  background: #e92827;
+  color: #ffffff;
+}
+.product-card:focus-within .card-content .card-btn {
+  background: #e92827;
+  color: #ffffff;
 }
 
 .about-section {

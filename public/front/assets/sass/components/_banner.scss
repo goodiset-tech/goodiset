@@ -45,6 +45,12 @@
   }
 
   .hero_slider {
+    .hero_slide_link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
     .hero_slide {
       // max-width: 1290px;
       margin: 48px auto;
