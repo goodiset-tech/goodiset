@@ -852,4 +852,28 @@ class Cart
 
         Session::put('cart', $cart);
     }
+
+    /**
+     * Store validated checkout contact on the cart session for guest tracking (pixels, hashed identifiers, etc.).
+     */
+    public static function mergeGuestContact(?string $email, ?string $phone, ?string $country = null): void
+    {
+        if (!Session::has('cart')) {
+            return;
+        }
+        $cart = Session::get('cart');
+        if (!is_array($cart)) {
+            return;
+        }
+        if ($email !== null && $email !== '') {
+            $cart['email'] = trim($email);
+        }
+        if ($phone !== null && $phone !== '') {
+            $cart['phone'] = trim((string) $phone);
+        }
+        if ($country !== null && $country !== '') {
+            $cart['country'] = trim((string) $country);
+        }
+        Session::put('cart', $cart);
+    }
 }

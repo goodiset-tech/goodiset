@@ -2626,7 +2626,7 @@ class FrontController extends Controller
                     'city' => 'required',
                 ]);
 
-
+                Cart::mergeGuestContact($request->email, $request->phone, $request->country);
 
                 // Process payment
                 $payment_status = 'unpaid';
@@ -2815,6 +2815,8 @@ class FrontController extends Controller
                     'address' => 'required',
                     'city' => 'required',
                 ]);
+
+                Cart::mergeGuestContact($request->email, $request->phone, $request->country);
 
                 // Process payment
                 $payment_status = 'pending';
