@@ -768,45 +768,112 @@ use App\Helpers\TikTokTracking;
 
 
         <script>
-            if (typeof fbq === 'function') {
+            (function() {
                 @if (isset($item) && !empty($item->id) && is_numeric($item->discount_price))
-                    fbq('track', 'ViewContent', {
-                        content_ids: ['{{ $item->id }}'],
-                        content_type: 'product',
-                        value: {{ $item->discount_price }},
-                        currency: '{{ getSetting('currency') }}'
-                    });
-                @else
-                    console.error('Meta ViewContent not fired: Invalid item data', {
-                        id: '{{ $item->id ?? 'undefined' }}',
-                        discount_price: '{{ $item->discount_price ?? 'undefined' }}'
-                    });
-                @endif
-            } else {
-                console.error('Meta Pixel not loaded: fbq is not defined');
-            }
-            snaptr('track', 'VIEW_CONTENT', {
-                'price': {{ $item->discount_price }},
-                'currency': '{{ getSetting('currency') }}',
-                'item_ids': ['{{ $item->id }}'],
-                'user_email': '{{ session()->has('user') ? session('user')['email'] : session('cart')['email'] ?? '' }}',
-                'user_phone_number': '{{ session()->has('user') ? session('user')['phone'] : session('cart')['phone'] ?? '' }}'
-            })
+                var metaViewPayload = {
+                    content_ids: ['{{ $item->id }}'],
+                    content_type: 'product',
+                    value: {{ $item->discount_price }},
+                    currency: @json(pixelCurrency())
+                };
 
-            // TikTok ViewContent Event
-            if (typeof ttq !== 'undefined') {
-                ttq.track('ViewContent', {
-                    "contents": [{
-                        "content_id": "{{ $item->id }}",
-                        "content_type": "product",
-                        "content_name": "{{ addslashes($item->product_name) }}"
-                    }],
-                    "value": {{ $item->discount_price }},
-                    "currency": "{{ getSetting('currency') }}"
-                }, {
-                    "event_id": "{{ TikTokTracking::generateEventId() }}"
+                var metaViewSent = false;
+
+                function fireMetaViewContent() {
+                    if (metaViewSent || typeof fbq !== 'function') {
+                        return metaViewSent;
+                    }
+                    fbq('track', 'ViewContent', metaViewPayload);
+                    metaViewSent = true;
+                    return true;
+                }
+
+                if (!fireMetaViewContent()) {
+                    window.addEventListener('meta-pixel-ready', function onMetaReady() {
+                        fireMetaViewContent();
+                    }, {
+                        once: true
+                    });
+                    var attempts = 0;
+                    var poll = setInterval(function() {
+                        if (fireMetaViewContent() || ++attempts >= 120) {
+                            clearInterval(poll);
+                        }
+                    }, 250);
+                }
+                @else
+                console.error('Meta ViewContent not fired: Invalid item data', {
+                    id: '{{ $item->id ?? 'undefined' }}',
+                    discount_price: '{{ $item->discount_price ?? 'undefined' }}'
                 });
-            }
+                @endif
+
+                var snapViewSent = false;
+
+                function fireSnapProductViewContent() {
+                    if (snapViewSent || typeof snaptr !== 'function') {
+                        return snapViewSent;
+                    }
+                    snaptr('track', 'VIEW_CONTENT', {
+                        'price': {{ isset($item->discount_price) && is_numeric($item->discount_price) ? $item->discount_price : 0 }},
+                        'currency': @json(pixelCurrency()),
+                        'item_ids': ['{{ $item->id }}'],
+                        'user_email': '{{ session()->has('user') ? session('user')['email'] : session('cart')['email'] ?? '' }}',
+                        'user_phone_number': '{{ session()->has('user') ? session('user')['phone'] : session('cart')['phone'] ?? '' }}'
+                    });
+                    snapViewSent = true;
+                    return true;
+                }
+
+                if (!fireSnapProductViewContent()) {
+                    window.addEventListener('third-party-pixel-ready', function onSnapReady() {
+                        fireSnapProductViewContent();
+                    }, {
+                        once: true
+                    });
+                    var snapAttempts = 0;
+                    var snapPoll = setInterval(function() {
+                        if (fireSnapProductViewContent() || ++snapAttempts >= 120) {
+                            clearInterval(snapPoll);
+                        }
+                    }, 250);
+                }
+
+                var tiktokViewSent = false;
+
+                function fireTikTokViewContent() {
+                    if (tiktokViewSent || typeof ttq === 'undefined') {
+                        return tiktokViewSent;
+                    }
+                    ttq.track('ViewContent', {
+                        contents: [{
+                            content_id: "{{ $item->id }}",
+                            content_type: 'product',
+                            content_name: "{{ addslashes($item->product_name) }}"
+                        }],
+                        value: {{ isset($item->discount_price) && is_numeric($item->discount_price) ? $item->discount_price : 0 }},
+                        currency: @json(pixelCurrency())
+                    }, {
+                        event_id: "{{ TikTokTracking::generateEventId() }}"
+                    });
+                    tiktokViewSent = true;
+                    return true;
+                }
+
+                if (!fireTikTokViewContent()) {
+                    window.addEventListener('third-party-pixel-ready', function onTikTokReady() {
+                        fireTikTokViewContent();
+                    }, {
+                        once: true
+                    });
+                    var ttqAttempts = 0;
+                    var ttqPoll = setInterval(function() {
+                        if (fireTikTokViewContent() || ++ttqAttempts >= 120) {
+                            clearInterval(ttqPoll);
+                        }
+                    }, 250);
+                }
+            })();
         </script>
     @endforeach
 

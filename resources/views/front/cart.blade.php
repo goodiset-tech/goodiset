@@ -1507,7 +1507,8 @@ use App\Models\Admins\Rating;
             $userEmail = session('user')['email'] ?? session('cart')['email'] ?? '';
             $userPhone = session('user')['phone'] ?? session('cart')['phone'] ?? '';
             $hashedEmail = $userEmail ? TikTokTracking::hashEmail($userEmail) : '';
-            $hashedPhone = $userPhone ? TikTokTracking::hashPhoneNumber($userPhone) : '';
+            $countryHint = session('cart')['country'] ?? null;
+            $hashedPhone = $userPhone ? TikTokTracking::hashPhoneNumber($userPhone, $countryHint) : '';
             
             if (!empty($cartItems)) {
                 foreach ($cartItems as $item) {

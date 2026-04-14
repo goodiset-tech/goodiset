@@ -67,7 +67,9 @@
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '4013696122240068');
             fbq('track', 'PageView');
-            
+            try {
+                window.dispatchEvent(new CustomEvent('meta-pixel-ready'));
+            } catch (e) {}
 
         // Snap Pixel Code
         (function(e, t, n) {
@@ -109,6 +111,10 @@
             ttq.load('D6M0V7BC77UE81ODJ4NG');
             ttq.page();
             }(window, document, 'ttq');
+
+        try {
+            window.dispatchEvent(new CustomEvent('third-party-pixel-ready'));
+        } catch (e) {}
 
     }
 

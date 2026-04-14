@@ -887,17 +887,60 @@
 
             // AddToCart event (working, included for reference)
             function addToCart(productId, price) {
-                fbq('track', 'AddToCart', {
+                var addPayload = {
                     content_ids: [productId],
                     content_type: 'product',
                     value: price,
-                    currency: '{{ getSetting('currency') }}'
+                    currency: @json(pixelCurrency())
+                };
+
+                function sendAddToCart() {
+                    if (typeof fbq !== 'function') {
+                        return false;
+                    }
+                    fbq('track', 'AddToCart', addPayload);
+                    return true;
+                }
+
+                if (sendAddToCart()) {
+                    return;
+                }
+                window.addEventListener('meta-pixel-ready', function() {
+                    sendAddToCart();
+                }, {
+                    once: true
                 });
-                // Your add-to-cart logic (e.g., AJAX call to add item to cart)
+                var addAttempts = 0;
+                var addPoll = setInterval(function() {
+                    if (sendAddToCart() || ++addAttempts >= 40) {
+                        clearInterval(addPoll);
+                    }
+                }, 100);
             }
 
             // AddToCart event (working, included for reference)
             function InitiateCheckout() {
-                fbq('track', 'InitiateCheckout');
+                function sendInitiateCheckout() {
+                    if (typeof fbq !== 'function') {
+                        return false;
+                    }
+                    fbq('track', 'InitiateCheckout');
+                    return true;
+                }
+
+                if (sendInitiateCheckout()) {
+                    return;
+                }
+                window.addEventListener('meta-pixel-ready', function() {
+                    sendInitiateCheckout();
+                }, {
+                    once: true
+                });
+                var icAttempts = 0;
+                var icPoll = setInterval(function() {
+                    if (sendInitiateCheckout() || ++icAttempts >= 40) {
+                        clearInterval(icPoll);
+                    }
+                }, 100);
             }
         </script>

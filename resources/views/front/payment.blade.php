@@ -345,7 +345,7 @@ use App\Models\Admins\Rating;
                                         <div class="field">
                                             <label for="phone">{{ __('checkout.contact.phone') }} *</label>
                                             <input type="tel" name="phone" id="phoneField"
-                                                value="{{ Session::get('user') ? Session::get('user')['phone'] : '' }}"
+                                                value="{{ session()->has('user') ? session('user')['phone'] : (session('cart')['phone'] ?? '') }}"
                                                 required placeholder="{{ __('checkout.contact.phone') }}">
                                         </div>
                                     </div>

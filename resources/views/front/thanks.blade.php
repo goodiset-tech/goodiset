@@ -142,100 +142,111 @@
         </div>
     </div>
 
-    <!-- TikTok Purchase Event -->
-    <script>
-        @php
-            use App\Helpers\TikTokTracking;
-            $currency = 'aed';
-            $totalValue = $order->amount ?? 0;
-            $purchaseContents = [];
-            
-            // Debug: Log what data we have
-            \Log::info('TikTok Purchase Tracking Debug', [
-                'order_id' => $order->id ?? 'N/A',
-                'email_field' => $order->email ?? 'MISSING',
-                'phone_field' => $order->phone ?? 'MISSING',
-            ]);
-            
-            // Get order email and phone - use direct field access
-            $userEmail = trim($order->email ?? '');
-            $userPhone = trim($order->phone ?? '');
-            
-            // Hash the data
-            $hashedEmail = !empty($userEmail) ? TikTokTracking::hashEmail($userEmail) : '';
-            $hashedPhone = !empty($userPhone) ? TikTokTracking::hashPhoneNumber($userPhone) : '';
-            
-            $products = json_decode($order->product_detail);
-            if ($products) {
-                foreach ($products as $product) {
-                    if ($product->id != null) {
-                        $purchaseContents[] = [
-                            'content_id' => $product->id,
-                            'content_type' => 'product',
-                            'content_name' => $product->name ?? '',
-                            'quantity' => $product->qty ?? 1,
-                            'price' => $product->price ?? 0
-                        ];
+    @isset($order)
+        <!-- TikTok CompletePayment (purchase) + advanced matching -->
+        <script>
+            @php
+                use App\Helpers\TikTokTracking;
+
+                $currencyIso = strtoupper(pixelCurrency());
+                $totalValue = (float) ($order->amount ?? 0);
+                $purchaseContents = [];
+
+                $emailPlain = strtolower(trim((string) ($order->email ?? '')));
+                $externalRaw = null;
+                if (isset($order->user_id) && $order->user_id !== null && (string) $order->user_id !== '') {
+                    $externalRaw = (string) $order->user_id;
+                } elseif (isset($order->uid) && (int) $order->uid > 0) {
+                    $externalRaw = (string) $order->uid;
+                } else {
+                    $externalRaw = (string) $order->id;
+                }
+
+                $hashedEmail = $emailPlain !== '' ? TikTokTracking::hashEmail($emailPlain) : '';
+                $hashedPhone = TikTokTracking::hashPhoneNumber($order->phone ?? null, $order->country ?? null);
+                $hashedExternalId = $externalRaw !== '' ? TikTokTracking::hashExternalId($externalRaw) : '';
+
+                $products = json_decode($order->product_detail);
+                if (is_array($products) || is_object($products)) {
+                    foreach ($products as $product) {
+                        if (isset($product->id) && $product->id !== null && $product->id !== '') {
+                            $purchaseContents[] = [
+                                'content_id' => (string) $product->id,
+                                'content_type' => 'product',
+                                'content_name' => (string) ($product->name ?? ''),
+                                'quantity' => (int) ($product->qty ?? 1),
+                                'price' => (float) ($product->price ?? 0),
+                            ];
+                        }
                     }
                 }
-            }
-            $eventId = TikTokTracking::generateEventId();
-        @endphp
 
-        @if (!empty($purchaseContents) && $totalValue > 0)
-            function trackTikTokPurchase() {
-                try {
-                    console.log("🔍 TikTok pixel check - ttq defined:", typeof ttq !== 'undefined');
-                    
-                    if (typeof ttq !== 'undefined') {
-                        const tiktokPayload = {
-                            "contents": {!! json_encode($purchaseContents) !!},
-                            "value": {{ $totalValue }},
-                            "currency": "{{ $currency }}"
-                        };
-                        
-                        @if (!empty($hashedEmail))
-                        if (!tiktokPayload.user_data) tiktokPayload.user_data = {};
-                        tiktokPayload.user_data.em = "{{ $hashedEmail }}";
-                        console.log("📧 Email hashed and added:", "{{ $hashedEmail }}".substring(0, 10) + "...");
-                        @else
-                        console.warn("⚠️ No email available for TikTok tracking");
+                $eventId = TikTokTracking::generateEventId();
+            @endphp
+
+            @if (!empty($purchaseContents) && $totalValue > 0)
+                (function() {
+                    var contents = {!! json_encode($purchaseContents) !!};
+                    var payload = {
+                        contents: contents,
+                        value: {{ json_encode($totalValue) }},
+                        currency: @json($currencyIso),
+                        @if ($hashedEmail !== '')
+                            email: @json($hashedEmail),
                         @endif
-                        
-                        @if (!empty($hashedPhone))
-                        if (!tiktokPayload.user_data) tiktokPayload.user_data = {};
-                        tiktokPayload.user_data.ph = "{{ $hashedPhone }}";
-                        console.log("📱 Phone hashed and added:", "{{ $hashedPhone }}".substring(0, 10) + "...");
-                        @else
-                        console.warn("⚠️ No phone available for TikTok tracking");
+                        @if ($hashedPhone !== '')
+                            phone_number: @json($hashedPhone),
                         @endif
-                        
-                        const tiktokOptions = {
-                            "event_id": "{{ $eventId }}"
-                        };
-                        
-                        console.log("📊 TikTok Purchase Event Payload:", tiktokPayload);
-                        console.log("🎯 TikTok Event Options:", tiktokOptions);
-                        
-                        ttq.track('Purchase', tiktokPayload, tiktokOptions);
-                        console.log("✅ TikTok Purchase tracked successfully with {{ count($purchaseContents) }} items, Total: {{ $totalValue }} {{ strtoupper($currency) }}");
-                    } else {
-                        console.warn("⚠️ TikTok ttq is NOT defined yet - retrying in 500ms");
-                        setTimeout(trackTikTokPurchase, 500);
+                        @if ($hashedExternalId !== '')
+                            external_id: @json($hashedExternalId),
+                        @endif
+                    };
+                    var options = {
+                        event_id: @json($eventId)
+                    };
+
+                    function sendCompletePayment() {
+                        if (typeof ttq === 'undefined') {
+                            return false;
+                        }
+                        try {
+                            @if ($hashedEmail !== '' || $hashedPhone !== '' || $hashedExternalId !== '')
+                                var identifyPayload = {};
+                                @if ($hashedEmail !== '')
+                                    identifyPayload.email = @json($hashedEmail);
+                                @endif
+                                @if ($hashedPhone !== '')
+                                    identifyPayload.phone_number = @json($hashedPhone);
+                                @endif
+                                @if ($hashedExternalId !== '')
+                                    identifyPayload.external_id = @json($hashedExternalId);
+                                @endif
+                                if (Object.keys(identifyPayload).length) {
+                                    ttq.identify(identifyPayload);
+                                }
+                            @endif
+                            ttq.track('CompletePayment', payload, options);
+                        } catch (e) {
+                            console.error('TikTok CompletePayment error:', e);
+                        }
+                        return true;
                     }
-                } catch (e) {
-                    console.error("❌ Error tracking TikTok Purchase event:", e);
-                }
-            }
 
-            // Wait for DOM to be ready, then track
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', trackTikTokPurchase);
-            } else {
-                trackTikTokPurchase();
-            }
-        @else
-            console.log("ℹ️ No purchase data to track");
-        @endif
-    </script>
+                    if (!sendCompletePayment()) {
+                        window.addEventListener('third-party-pixel-ready', function() {
+                            sendCompletePayment();
+                        }, {
+                            once: true
+                        });
+                        var n = 0;
+                        var t = setInterval(function() {
+                            if (sendCompletePayment() || ++n >= 120) {
+                                clearInterval(t);
+                            }
+                        }, 250);
+                    }
+                })();
+            @endif
+        </script>
+    @endisset
 @endsection

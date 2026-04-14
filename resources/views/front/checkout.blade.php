@@ -436,7 +436,7 @@ use App\Models\Admins\Rating;
                                         <div class="field">
                                             <label for="phone">{{ __('checkout.contact.phone') }} *</label>
                                             <input type="tel" name="phone" id="phoneField"
-                                                value="{{ Session::get('user') ? Session::get('user')['phone'] : '' }}"
+                                                value="{{ session()->has('user') ? session('user')['phone'] : (session('cart')['phone'] ?? '') }}"
                                                 required placeholder="{{ __('checkout.contact.phone') }}">
                                         </div>
 
@@ -1107,11 +1107,6 @@ use App\Models\Admins\Rating;
 
     </div>
     <script>
-        if (typeof fbq === 'function') {
-            fbq('track', 'InitiateCheckout');
-        } else {
-            console.error('Meta Pixel not loaded: fbq is not defined');
-        }
         // Shared data (available to both blocks)
         const productDetail = @json(Session::get('cart')['items'] ?? []);
         const cartAmount = {{ Session::get('cart')['amount'] ?? 0 }};
@@ -1123,6 +1118,38 @@ use App\Models\Admins\Rating;
         const itemIds = productDetail.map(i => i?.id).filter(Boolean);
         // Snap's "number_items" is best as total quantity in cart (sum of qty)
         const numberItems = productDetail.reduce((sum, i) => sum + (Number(i?.qty) || 0), 0);
+
+        (function() {
+            var metaInitiateSent = false;
+            var initiatePayload = {
+                content_ids: itemIds,
+                value: cartAmount,
+                currency: @json(pixelCurrency())
+            };
+
+            function fireMetaInitiateCheckout() {
+                if (metaInitiateSent || typeof fbq !== 'function') {
+                    return metaInitiateSent;
+                }
+                fbq('track', 'InitiateCheckout', initiatePayload);
+                metaInitiateSent = true;
+                return true;
+            }
+
+            if (!fireMetaInitiateCheckout()) {
+                window.addEventListener('meta-pixel-ready', function() {
+                    fireMetaInitiateCheckout();
+                }, {
+                    once: true
+                });
+                var icAttempts = 0;
+                var icPoll = setInterval(function() {
+                    if (fireMetaInitiateCheckout() || ++icAttempts >= 120) {
+                        clearInterval(icPoll);
+                    }
+                }, 250);
+            }
+        })();
 
         // Optional: try to read Snap's uuid_c1 cookie if present
         const uuidC1Match = document.cookie.match(/(?:^|;\s*)uuid_c1=([^;]+)/);
