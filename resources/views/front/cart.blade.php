@@ -1503,7 +1503,7 @@ use App\Models\Admins\Rating;
     </script>
 
     <!-- TikTok AddToCart Event -->
-    <script>
+    <!-- <script>
         @php
             use App\Helpers\TikTokTracking;
             $cartItems = App\Helpers\Cart::products() ?? [];
@@ -1582,6 +1582,6 @@ use App\Models\Admins\Rating;
         @else
             console.log("ℹ️ No cart items to track");
         @endif
-    </script>
+    </script> -->
 
 @endsection
