@@ -184,12 +184,6 @@
                 item.addEventListener('click', () => item.classList.toggle('active'));
             });
 
-            if (typeof fbq === 'function') {
-                fbq('track', 'Main Page');
-            } else {
-                console.log('Meta Pixel not loaded: fbq is not defined');
-            }
-
             $(document).ready(function() {
                 $('#subscribeForm').on('submit', function(e) {
                     e.preventDefault(); // Prevent the form from submitting normally
@@ -904,6 +898,6 @@
 
             // AddToCart event (working, included for reference)
             function InitiateCheckout() {
-                fbq('track', 'Initiate Checkout');
+                fbq('track', 'InitiateCheckout');
             }
         </script>

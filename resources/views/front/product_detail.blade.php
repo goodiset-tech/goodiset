@@ -770,14 +770,14 @@ use App\Helpers\TikTokTracking;
         <script>
             if (typeof fbq === 'function') {
                 @if (isset($item) && !empty($item->id) && is_numeric($item->discount_price))
-                    fbq('track', 'ViewItemContent', {
+                    fbq('track', 'ViewContent', {
                         content_ids: ['{{ $item->id }}'],
                         content_type: 'product',
                         value: {{ $item->discount_price }},
                         currency: '{{ getSetting('currency') }}'
                     });
                 @else
-                    console.error('ViewContent event not fired: Invalid item data', {
+                    console.error('Meta ViewContent not fired: Invalid item data', {
                         id: '{{ $item->id ?? 'undefined' }}',
                         discount_price: '{{ $item->discount_price ?? 'undefined' }}'
                     });

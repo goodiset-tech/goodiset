@@ -1108,7 +1108,7 @@ use App\Models\Admins\Rating;
     </div>
     <script>
         if (typeof fbq === 'function') {
-            fbq('track', 'Initiate Checkout');
+            fbq('track', 'InitiateCheckout');
         } else {
             console.error('Meta Pixel not loaded: fbq is not defined');
         }

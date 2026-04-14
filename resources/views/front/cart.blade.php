@@ -649,14 +649,6 @@ use App\Models\Admins\Rating;
         </div>
     </div> --}}
 
-    <script>
-        if (typeof fbq === 'function') {
-            fbq('track', 'ViewCart');
-        } else {
-            console.error('Meta Pixel not loaded: fbq is not defined');
-        }
-    </script>
-
     <script src="{{ asset('') }}front/addCart.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script>

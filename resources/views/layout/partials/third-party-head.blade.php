@@ -55,7 +55,7 @@
         // Tracking ownership note:
         // Meta and TikTok pixels are intentionally managed directly in this file.
         // To prevent duplicate PageView/events, keep Meta/TikTok tags disabled in GTM.
-        // //Meta tag manager
+        // Meta tag manager
         
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
