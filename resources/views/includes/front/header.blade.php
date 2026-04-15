@@ -244,7 +244,7 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
                                                         ->where('category_id', $v->id)
                                                         ->select('type', 'condition', 'condition_value')
                                                         ->get();
-                                                    $product = DB::table('products');
+                                                    $product = \App\Models\Admins\Product::query();
                                                     if (isset($v->is_manual) && $v->is_manual == 2) {
                                                         if ($searchObj->count() > 0) {
                                                             foreach ($searchObj as $val) {
