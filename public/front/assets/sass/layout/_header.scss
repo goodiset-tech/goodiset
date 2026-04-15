@@ -1,6 +1,7 @@
 .main_header {
     top: 0;
-    z-index: 5;
+    /* Above page content (e.g. product cards with z-index / transforms) so mega menus stay clickable */
+    z-index: 5000;
     position: sticky;
     width: 100%;
     border-bottom: 1px solid #8d8d8d52;
@@ -34,27 +35,34 @@
     }
 }
 
-.logo-wrapper {
+.navbar_brand {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 24px;
+    flex: 0 0 auto;
+}
 
+.navbar_trailing {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
 }
 
 .navbar_container {
     width: 100%;
     background-color: $white;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
     margin: auto;
     position: relative;
     box-sizing: border-box;
-    // padding: 16px 10px;
-    gap: 10px;
+    gap: 16px;
+
+    @include rtl {
+        flex-direction: row-reverse;
+    }
 
     .logo {
         width: 140px;
@@ -66,8 +74,16 @@
     }
 
     .nav-ul {
+        flex: 1 1 auto;
         display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 0;
         list-style: none;
+        min-width: 0;
+        gap: 0;
 
         @media (max-width: 1200px) {
             display: none;
@@ -275,7 +291,8 @@
     position: fixed;
     top: 0px;
     left: 0px;
-    z-index: 200;
+    /* Above desktop header mega menus; below search overlay */
+    z-index: 6200;
 
     .mbl_nav_body {
         overflow-y: auto;

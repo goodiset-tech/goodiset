@@ -18,47 +18,53 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-const menuToggle = document.querySelector(".mega-dropdown-toggle");
-const dropdownMenu = document.querySelector(".mega-dropdown-menu");
-const categoriesItems = document.querySelectorAll(".category_item");
-const menuRightItems = document.querySelectorAll(".menu-right");
+document.querySelectorAll(".mega-dropdown").forEach((navbarContainer) => {
+    const menuToggle = navbarContainer.querySelector(".mega-dropdown-toggle");
+    const dropdownMenu = navbarContainer.querySelector(".mega-dropdown-menu");
+    if (!menuToggle || !dropdownMenu) {
+        return;
+    }
+    const categoriesItems = navbarContainer.querySelectorAll(".category_item");
+    const menuRightItems = navbarContainer.querySelectorAll(".menu-right");
 
-if (menuToggle && dropdownMenu) {
     menuToggle.addEventListener("mouseenter", () => {
         dropdownMenu.style.display = "flex";
         menuRightItems.forEach((menu) => menu.classList.remove("active"));
-        categoriesItems.forEach((e) => e.classList.remove("active"));
-        const zeroCat = document.querySelector(".zero_category");
-        if (zeroCat) zeroCat.classList.add("active");
-    });
-}
-
-categoriesItems.forEach((item) => {
-    item.addEventListener("mouseenter", (e) => {
-        const element = e.target;
-        const elementId = element.id.trim();
-        document.querySelectorAll(".menu-right").forEach((menu) => {
-            menu.classList.remove("active");
-        });
-        categoriesItems.forEach((e) => {
-            e.classList.remove("active");
-        });
-        const correspondingMenu = document.querySelector(`.menu-right.${elementId}`);
-        if (correspondingMenu) {
-            correspondingMenu.classList.add("active");
-            element.classList.add("active");
+        categoriesItems.forEach((el) => el.classList.remove("active"));
+        const zeroCat = navbarContainer.querySelector(".zero_category");
+        if (zeroCat) {
+            zeroCat.classList.add("active");
         }
     });
-});
-// Replace global mouseover with mouseleave on navigation container if exists
-const navbarContainer = document.querySelector(".mega-dropdown"); // Assuming this wraps the toggle and menu
-if (navbarContainer && dropdownMenu) {
+
+    categoriesItems.forEach((item) => {
+        item.addEventListener("mouseenter", (e) => {
+            const element = e.currentTarget;
+            const elementId = (element.id || "").trim();
+            if (!elementId) {
+                return;
+            }
+            navbarContainer.querySelectorAll(".menu-right").forEach((menu) => {
+                menu.classList.remove("active");
+            });
+            categoriesItems.forEach((el) => {
+                el.classList.remove("active");
+            });
+            const safeId = typeof CSS !== "undefined" && CSS.escape ? CSS.escape(elementId) : elementId;
+            const correspondingMenu = navbarContainer.querySelector(`.menu-right.${safeId}`);
+            if (correspondingMenu) {
+                correspondingMenu.classList.add("active");
+                element.classList.add("active");
+            }
+        });
+    });
+
     navbarContainer.addEventListener("mouseleave", () => {
         dropdownMenu.style.display = "none";
         menuRightItems.forEach((menu) => menu.classList.remove("active"));
-        categoriesItems.forEach((e) => e.classList.remove("active"));
+        categoriesItems.forEach((el) => el.classList.remove("active"));
     });
-}
+});
 document.getElementById("open_search").addEventListener("click", () => {
     document.getElementsByClassName("search_bar_overlay")[0].style.display = "flex";
     document.querySelector(".body-container").style.overflowY = "hidden";
@@ -79,9 +85,14 @@ document.getElementById("close_mbl_menu").addEventListener("click", () => {
     document.getElementById("mbl_nav_container").style.display = "none";
     document.getElementsByTagName("body")[0].style.overflowY = "unset";
 });
-document.getElementsByClassName("mbl_shop_toggle")[0].addEventListener("click", () => {
-    document.getElementsByClassName("mbl_dropdown")[0].style.display =
-        document.getElementsByClassName("mbl_dropdown")[0].style.display === "block" ? "none" : "block";
+document.querySelectorAll(".mbl_shop_toggle").forEach((toggle) => {
+    toggle.addEventListener("click", () => {
+        const dd = toggle.nextElementSibling;
+        if (!dd || !dd.classList.contains("mbl_dropdown")) {
+            return;
+        }
+        dd.style.display = dd.style.display === "block" ? "none" : "block";
+    });
 });
 const sliderState = { currentIndex: 0 };
 function showNextImage() {

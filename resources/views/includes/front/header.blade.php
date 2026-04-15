@@ -9,9 +9,26 @@ use App\Models\TopAnnouncementBar;
 $trending = Product::where('is_trending', 1)->limit(7)->get();
 $setting = DB::table('setting')->where('id', '=', '1')->first();
 $cate_des = DB::table('categories')->where('menu', 1)->limit(3)->orderBy('id', 'desc')->get();
-$pages_des = DB::table('pages')->where('is_show_in_header', 1)->limit(5)->orderBy('sort_no', 'asc')->get();
+$pages_des = DB::table('pages')
+    ->where('is_show_in_header', 1)
+    ->where(function ($q) {
+        $q->whereNull('page_type')
+            ->orWhere('page_type', '')
+            ->orWhere('page_type', '<>', 'partner');
+    })
+    ->limit(5)
+    ->orderBy('sort_no', 'asc')
+    ->get();
 $cate = DB::table('categories')->where('show_no_mob', 1)->orderBy('sort_no', 'asc')->get();
 $mega_menu = DB::table('categories')->where('mega_menu', 1)->orderBy('sort_no', 'asc')->get();
+$partner_menu_pages = DB::table('pages')
+    ->where('page_type', 'partner')
+    ->where('status', 1)
+    ->orderBy('sort_no', 'asc')
+    ->get();
+$partner_hub_url = $partner_menu_pages->isNotEmpty()
+    ? url('/' . ltrim($partner_menu_pages->first()->slug, '/'))
+    : null;
 $categories = DB::table('categories')->where('home_cat', 1)->orderBy('sort_no', 'asc')->limit(4)->get();
 $slider = DB::table('sliders')->first();
 $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get() : '';
@@ -87,11 +104,13 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
     {{-- desktop nav --}}
     <div class="container">
         <nav class="navbar_container">
-            <div class="logo-wrapper"> <a href="{{ url('/') }}" title="des_logo"> <img
-                        src="{{ asset('') }}{{ $setting->logo }}" width="165" height="72"
+            <div class="navbar_brand">
+                <a href="{{ url('/') }}" title="des_logo">
+                    <img src="{{ asset('') }}{{ $setting->logo }}" width="165" height="72"
                         alt="{{ getSetting('site_title') }}" title="{{ getSetting('site_title') }}" class="logo">
                 </a>
-                <ul class="nav-ul">
+            </div>
+            <ul class="nav-ul">
                     <li> {{-- mega menu --}}
                         <div class="mega-dropdown">
                             <button class="mega-dropdown-toggle nav_item" title="mega_menu_button">
@@ -407,6 +426,30 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
                             </div>
                         </div>
                     </li>
+                    @if ($partner_hub_url)
+                        <li>
+                            <div class="mega-dropdown partner-mega-dropdown">
+                                <a href="{{ $partner_hub_url }}" class="mega-dropdown-toggle nav_item partner-mega-toggle">
+                                    <span>{{ __('header.mega.partner') }}</span>
+                                    <i class="fa-solid fa-angle-down mega_menu_arrow"></i>
+                                </a>
+                                <div class="mega-dropdown-menu partner-mega-dropdown-menu">
+                                    <div class="partner_menu_dropdown_inner">
+                                        <ul class="partner_menu_link_list">
+                                            @foreach ($partner_menu_pages as $index => $partnerPage)
+                                             @if($index > 0)
+                                                <li>
+                                                    <a 
+                                                        href="{{ url('/') }}/{{ $partnerPage->slug }}">{{ app()->isLocale('ar') ? $partnerPage->name_ar : $partnerPage->name }}</a>
+                                                </li>
+                                             @endif
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    @endif
                     @foreach ($pages_des as $v)
                         <li class="pick&mix {{ Session::get('title') == $v->name ? 'active_tab' : '' }}">
                             <a class="nav_item" href="<?php echo url('/'); ?>/{{ $v->slug }}">
@@ -414,11 +457,10 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
                             </a>
                         </li>
                     @endforeach
-                </ul>
+            </ul>
+            <div class="navbar_trailing">
                 <div class="elfsight-app-38cf2af6-0dfe-48a5-9c6a-e62f1ba0a864" data-elfsight-app-lazy></div>
-            </div>
-
-            <div class="nav_options"> {{-- Language switcher with SVG flags --}}
+                <div class="nav_options"> {{-- Language switcher with SVG flags --}}
                 {{-- <div id="lang-selector" class="lang-selector">
 
                     <button id="selector-btn" class="selector-btn" title="language_selector">
@@ -506,6 +548,7 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
                             d="M3.59961 5.9998C3.59961 5.33605 4.13586 4.7998 4.79961 4.7998H19.1996C19.8634 4.7998 20.3996 5.33605 20.3996 5.9998C20.3996 6.66355 19.8634 7.1998 19.1996 7.1998H4.79961C4.13586 7.1998 3.59961 6.66355 3.59961 5.9998ZM3.59961 11.9998C3.59961 11.3361 4.13586 10.7998 4.79961 10.7998H19.1996C19.8634 10.7998 20.3996 11.3361 20.3996 11.9998C20.3996 12.6636 19.8634 13.1998 19.1996 13.1998H4.79961C4.13586 13.1998 3.59961 12.6636 3.59961 11.9998ZM20.3996 17.9998C20.3996 18.6636 19.8634 19.1998 19.1996 19.1998H4.79961C4.13586 19.1998 3.59961 18.6636 3.59961 17.9998C3.59961 17.3361 4.13586 16.7998 4.79961 16.7998H19.1996C19.8634 16.7998 20.3996 17.3361 20.3996 17.9998Z" />
                     </svg>
                 </button>
+                </div>
             </div>
         </nav>
     </div>
@@ -633,6 +676,22 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
                     @endforeach
                 </ul>
             </li>
+
+            @if ($partner_hub_url)
+                <li class="mbl_shop_dropdown">
+                    <div class="mbl_shop_toggle">
+                        {{ __('header.mega.partner') }}
+                        <div class="arrow"></div>
+                    </div>
+                    <ul class="mbl_dropdown" style="display:none">
+                        @foreach ($partner_menu_pages as $partnerPage)
+                            <li><a
+                                    href="{{ url('/') }}/{{ $partnerPage->slug }}">{{ app()->isLocale('ar') ? $partnerPage->name_ar : $partnerPage->name }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
+            @endif
 
             @foreach ($pages_des as $v)
                 <li class="pick&mix {{ Session::get('title') == $v->name ? 'active_tab' : '' }}">

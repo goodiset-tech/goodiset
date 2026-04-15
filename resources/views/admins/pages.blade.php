@@ -40,6 +40,7 @@ use App\Models\Admins\Brand;
                                         <th>Page</th>
                                         <th>Visits</th>
                                         <th>Show in Header</th> {{-- NEW --}}
+                                        <th>Page type</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -66,6 +67,8 @@ use App\Models\Admins\Brand;
                                                     </div>
                                                 </div>
                                             </td>
+
+                                            <td>{{ $page->page_type ?: '—' }}</td>
 
                                             <td>
                                                 <a href="{{ route('admins.page_form', $page->id) }}"

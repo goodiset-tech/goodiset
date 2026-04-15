@@ -3420,6 +3420,7 @@ class AdminController extends Controller
                     $page->name = $request->name;
                     $page->name_ar = $request->name_ar;
                     $page->slug = $request->slug;
+                    $page->page_type = $request->input('page_type') ?: null;
                     $page->is_show_in_header = $request->is_show_in_header;
                     $page->sort_no = $request->sort_no;
                     $page->sub_title = $request->sub_title;
@@ -3482,6 +3483,7 @@ class AdminController extends Controller
                     $page->name = $request->name;
                     $page->name_ar = $request->name_ar;
                     $page->slug = $request->slug;
+                    $page->page_type = $request->input('page_type') ?: null;
                     $page->is_show_in_header = $request->is_show_in_header;
                     $page->sort_no = $request->sort_no;
                     $page->sub_title = $request->sub_title;

@@ -4299,6 +4299,7 @@ class FrontController extends Controller
         Session::put('title', 'Be Come Partner');
         return view('front.becomepartner');
     }
+
     public function faqs()
     {
         $page = Pages::where(['slug' => 'faqs'])->first();

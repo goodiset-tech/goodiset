@@ -37,7 +37,8 @@
     background: rgba(0, 0, 0, 0.5);
     display: none;
     justify-content: center;
-    z-index: 1000;
+    /* Above header mega menus (5000–5100) when search is open */
+    z-index: 6300;
     padding: 10px;
     .search_input {
         max-width: 1250px;

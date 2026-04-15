@@ -59,6 +59,23 @@
                                         class="form-control" name="slug">
                                 </div>
                             </div>
+                            <div class="form-group"><label class="col-sm-12 control-label">Page type (navigation):</label>
+                                <div class="col-sm-12">
+                                    <select name="page_type" class="form-control">
+                                        <option value=""
+                                            {{ !isset($edit->page_type) || $edit->page_type === null || $edit->page_type === '' ? 'selected' : '' }}>
+                                            Normal — show only in main header if enabled below</option>
+                                        <option value="partner"
+                                            {{ isset($edit->page_type) && $edit->page_type === 'partner' ? 'selected' : '' }}>
+                                            Partner submenu — appears under “Partner” only (not in main header row)</option>
+                                    </select>
+                                    <p class="help-block m-b-none text-muted" style="margin-top:8px;">Partner pages use
+                                        each row’s <strong>slug</strong> as the URL (same as other pages). The
+                                        <strong>lowest Sort No</strong> among partner pages is the main “Partner” click
+                                        target; all partner pages appear in the dropdown. Main header still hides
+                                        <code>page_type = partner</code> from the top page row.</p>
+                                </div>
+                            </div>
                             <div class="form-group"><label class="col-sm-12 control-label">Sort No</label>
                                 <div class="col-sm-12">
                                     <input type="text" value="<?php echo isset($edit->sort_no) ? htmlspecialchars($edit->sort_no) : null; ?>" required class="form-control"
