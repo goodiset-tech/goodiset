@@ -3716,7 +3716,13 @@ class AdminController extends Controller
     public function get_subCategory_html(Request $request)
     {
         $options = "";
-        $sub_categories = SubCategory::where('category_id', $request->category_id)->get();
+        $categoryId = filter_var($request->input('category_id'), FILTER_VALIDATE_INT);
+        if ($categoryId === false || $categoryId < 1) {
+            echo $options;
+
+            return;
+        }
+        $sub_categories = SubCategory::where('category_id', $categoryId)->get();
         $sub_cat_id = $request->sub_category_id;
         if (count($sub_categories) > 0) {
             foreach ($sub_categories as $sub_category) {
