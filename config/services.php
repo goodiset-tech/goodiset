@@ -30,4 +30,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+    | When order/session has no country, national-format phones (no +) are parsed using
+    | this ISO 3166-1 alpha-2 region (e.g. AE). Leave null to send no phone hash instead
+    | of guessing. Set only if your store is single-region.
+    */
+    'tiktok' => [
+        'phone_fallback_region' => env('TIKTOK_PHONE_FALLBACK_REGION'),
+    ],
+
 ];

@@ -146,6 +146,8 @@
         <!-- TikTok CompletePayment (purchase) + advanced matching -->
         <script>
             @php
+                use App\Helpers\TikTokTracking;
+
                 $currencyIso = strtoupper(pixelCurrency());
                 $totalValue = (float) ($order->amount ?? 0);
                 $purchaseContents = [];
@@ -160,9 +162,9 @@
                     $externalRaw = (string) $order->id;
                 }
 
-                $hashedEmail = $emailPlain !== '' ? \App\Helpers\TikTokTracking::hashEmail($emailPlain) : '';
-                $hashedPhone = \App\Helpers\TikTokTracking::hashPhoneNumber($order->phone ?? null, $order->country ?? null);
-                $hashedExternalId = $externalRaw !== '' ? \App\Helpers\TikTokTracking::hashExternalId($externalRaw) : '';
+                $hashedEmail = $emailPlain !== '' ? TikTokTracking::hashEmail($emailPlain) : '';
+                $hashedPhone = TikTokTracking::hashPhoneNumber($order->phone ?? null, $order->country ?? null);
+                $hashedExternalId = $externalRaw !== '' ? TikTokTracking::hashExternalId($externalRaw) : '';
 
                 $products = json_decode($order->product_detail ?? '[]');
                 if (! is_array($products) && ! is_object($products)) {
@@ -181,7 +183,6 @@
                     }
                 }
 
-<<<<<<< HEAD
                 $packagesRaw = json_decode($order->package_detail ?? '[]');
                 if (! is_array($packagesRaw) && ! is_object($packagesRaw)) {
                     $packagesRaw = [];
@@ -225,9 +226,6 @@
                 }
 
                 $eventId = TikTokTracking::generateEventId();
-=======
-                $eventId = \App\Helpers\TikTokTracking::generateEventId();
->>>>>>> 302d2e1b26278fd63520523d22b9be6205aaeb47
             @endphp
 
             @if ($totalValue > 0)
