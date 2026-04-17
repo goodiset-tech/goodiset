@@ -103,20 +103,22 @@
             });
 
             function getSubCats(cat_id, sub_cat_id) {
-                if (cat_id != '') {
-                    $.ajax({
+                var cid = (cat_id === undefined || cat_id === null) ? '' : String(cat_id).trim();
+                if (!cid || cid === 'undefined' || !/^\d+$/.test(cid)) {
+                    return;
+                }
+                $.ajax({
                         url: "{{ route('admins.get_subCategory_html') }}",
                         headers: {
                             'X-CSRF-TOKEN': "{{ csrf_token() }}"
                         },
                         type: "POST",
-                        data: "category_id=" + cat_id + "&sub_category_id=" + sub_cat_id,
+                        data: "category_id=" + cid + "&sub_category_id=" + sub_cat_id,
                         success: function(response) {
                             console.log(response);
                             $('select[name="subcategory_id"]').html("").html(response);
                         }
                     });
-                }
 
             }
 
