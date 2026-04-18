@@ -230,6 +230,12 @@
 
             @if ($totalValue > 0)
                 (function() {
+                    try {
+                        if (typeof loadThirdPartyScripts === 'function') {
+                            loadThirdPartyScripts();
+                        }
+                    } catch (e) {}
+
                     var contents = {!! json_encode($purchaseContents) !!};
                     var payload = {
                         contents: contents,
@@ -252,9 +258,12 @@
                         event_id: @json($eventId)
                     };
 
-                    function sendCompletePayment() {
-                        if (typeof ttq === 'undefined') {
-                            return false;
+                    var purchaseSent = false;
+                    var purchaseScheduleStarted = false;
+
+                    function runCompletePayment() {
+                        if (purchaseSent) {
+                            return;
                         }
                         try {
                             @if ($hashedEmail !== '' || $hashedPhone !== '' || $hashedExternalId !== '')
@@ -273,21 +282,52 @@
                                 }
                             @endif
                             ttq.track('CompletePayment', payload, options);
+                            purchaseSent = true;
                         } catch (e) {
                             console.error('TikTok CompletePayment error:', e);
+                            purchaseScheduleStarted = false;
+                        }
+                    }
+
+                    function scheduleCompletePayment() {
+                        if (typeof ttq === 'undefined') {
+                            return false;
+                        }
+                        if (purchaseScheduleStarted) {
+                            return true;
+                        }
+                        purchaseScheduleStarted = true;
+                        try {
+                            if (typeof ttq.ready === 'function') {
+                                ttq.ready(runCompletePayment);
+                                setTimeout(function() {
+                                    if (!purchaseSent) {
+                                        runCompletePayment();
+                                    }
+                                }, 4000);
+                            } else {
+                                runCompletePayment();
+                            }
+                        } catch (e) {
+                            console.error('TikTok CompletePayment schedule error:', e);
+                            purchaseScheduleStarted = false;
+                            runCompletePayment();
                         }
                         return true;
                     }
 
-                    if (!sendCompletePayment()) {
+                    if (!scheduleCompletePayment()) {
                         window.addEventListener('third-party-pixel-ready', function() {
-                            sendCompletePayment();
+                            scheduleCompletePayment();
                         }, {
                             once: true
                         });
                         var n = 0;
                         var t = setInterval(function() {
-                            if (sendCompletePayment() || ++n >= 120) {
+                            if (!purchaseSent) {
+                                scheduleCompletePayment();
+                            }
+                            if (purchaseSent || ++n >= 160) {
                                 clearInterval(t);
                             }
                         }, 250);

@@ -118,6 +118,15 @@
 
     }
 
+    // Thank-you / conversion pages: load pixels immediately so Purchase (CompletePayment) is not
+    // blocked waiting for interaction or the 5s timer (reduces missed TikTok conversions).
+    try {
+        var __p = (location.pathname || '');
+        if (__p.indexOf('/thanks') !== -1) {
+            loadThirdPartyScripts();
+        }
+    } catch (e) {}
+
     // Trigger on interaction
     ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(event => {
         window.addEventListener(event, loadThirdPartyScripts, {
