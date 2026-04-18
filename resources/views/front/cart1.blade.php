@@ -182,7 +182,7 @@ use App\Models\Admins\Gallerie;
 
       function updateView(response){
         productTotal=parseInt(qty*price);
-          $('#cartValue').html(response.cart.qty);
+          $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(response.cart.qty);
           $('#cartTotal').html(response.cart.amount+250);
           $('#cartTotal1').html(response.cart.amount);
           $('#productTotal'+id).html(productTotal);

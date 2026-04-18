@@ -1929,6 +1929,11 @@ class FrontController extends Controller
 
     public function category_detail($slug)
     {
+        //redirect to  https://www.goodisetsubscription.com
+        if ($slug === 'subscription') {
+            return redirect('https://www.goodisetsubscription.com');
+        }
+
         $Slider = Slider::all();
         // $categories = Category::all();
         $best = Product::select('products.*')->orderBy('view', 'DESC')->limit(3)->get();
@@ -2154,6 +2159,29 @@ class FrontController extends Controller
         $aproducts = Product::select('products.*')->where('status', 1)->where('new_arrival', '1')->orderBy('products.id', 'DESC')->limit(3)->get();
         $countries = Countries::where('status', 1)->get();
         return view('front.cart', compact('aproducts', 'userCountry', 'countries'));
+    }
+
+    /**
+     * HTML fragment for the header mini-cart drawer (no layout wrapper).
+     */
+    public function cartDrawer()
+    {
+        $aproducts = Product::select('products.*')
+            ->where('status', 1)
+            ->where('new_arrival', '1')
+            ->orderBy('products.id', 'DESC')
+            ->limit(8)
+            ->get();
+
+        $cartQty = 0;
+        $cartAmount = 0.0;
+        if (Session::has('cart')) {
+            $c = Session::get('cart');
+            $cartQty = (int) ($c['qty'] ?? 0);
+            $cartAmount = (float) ($c['amount'] ?? 0);
+        }
+
+        return view('includes.front.cart-drawer-inner', compact('aproducts', 'cartQty', 'cartAmount'));
     }
 
     // public function contact(Request $request)

@@ -119,10 +119,33 @@ quantityControls.forEach((controller) => {
     const delBtn = controller.querySelector(".del_btn");
     const plusBtn = controller.querySelector("#plus");
     const quantityDisplay = controller.querySelector(".quantity_cart");
-    const orignalQuantity = quantityDisplay.innerHTML.trim();
+    if (!minusBtn || !delBtn || !plusBtn || !quantityDisplay) {
+        return;
+    }
+    const isGram = controller.dataset.qtyGrams === "1";
+    const readQty = () => {
+        const raw =
+            quantityDisplay.tagName === "INPUT"
+                ? quantityDisplay.value
+                : quantityDisplay.textContent.trim().replace(/\s*g\s*$/i, "");
+        let n = parseInt(raw, 10);
+        if (Number.isNaN(n)) {
+            n = isGram ? 100 : 1;
+        }
+        return n;
+    };
+    const writeQty = (n) => {
+        if (quantityDisplay.tagName === "INPUT") {
+            quantityDisplay.value = String(n);
+        } else if (isGram) {
+            quantityDisplay.textContent = `${n} g`;
+        } else {
+            quantityDisplay.textContent = String(n);
+        }
+    };
     const updateVisibility = () => {
-        let quantity = parseInt(quantityDisplay.innerHTML);
-        if (orignalQuantity.endsWith("g")) {
+        const quantity = readQty();
+        if (isGram) {
             if (quantity > 100) {
                 delBtn.style.display = "none";
                 minusBtn.style.display = "inline";
@@ -142,30 +165,31 @@ quantityControls.forEach((controller) => {
     };
     updateVisibility();
     minusBtn.addEventListener("click", () => {
-        let quantity = parseInt(quantityDisplay.innerHTML);
-        if (orignalQuantity.endsWith("g")) {
+        let quantity = readQty();
+        if (isGram) {
             if (quantity > 100) {
                 quantity -= 100;
-                quantityDisplay.textContent = `${quantity} g`;
-                updateVisibility();
+                writeQty(quantity);
             }
-        } else {
-            quantity--;
-            quantityDisplay.textContent = quantity;
+        } else if (quantity > 1) {
+            quantity -= 1;
+            writeQty(quantity);
         }
         updateVisibility();
     });
     plusBtn.addEventListener("click", () => {
-        let quantity = parseInt(quantityDisplay.innerHTML);
-        console.log(orignalQuantity, orignalQuantity.endsWith("g"), ">>>original quantity");
-        if (orignalQuantity.endsWith("g")) {
-            console.log(">>> ****", quantity);
+        let quantity = readQty();
+        if (isGram) {
             quantity += 100;
-            quantityDisplay.textContent = `${quantity} g`;
         } else {
-            quantity++;
-            quantityDisplay.textContent = quantity;
+            quantity += 1;
         }
+        const maxAttr = quantityDisplay.getAttribute("max");
+        const maxVal = maxAttr !== null ? parseInt(maxAttr, 10) : NaN;
+        if (!Number.isNaN(maxVal) && quantity > maxVal) {
+            quantity = maxVal;
+        }
+        writeQty(quantity);
         updateVisibility();
     });
 });

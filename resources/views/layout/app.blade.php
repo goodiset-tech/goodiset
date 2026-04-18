@@ -13,10 +13,7 @@ $Site = Setting::where(['id' => '1'])->first();
 </head>
 
 <body id="body" class="{{ in_array(app()->getLocale(), ['ar', 'ur', 'fa', 'he']) ? 'rtl' : 'ltr' }}">       
-   
-
     @include('layout.partials.third-party-body')
-
     <div class="body-container">
         @include('includes.front.header')
         <main>

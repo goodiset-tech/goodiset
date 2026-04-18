@@ -530,7 +530,8 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
 
                     </a>
                 @endif
-                <a href="{{ url('/') }}/cart" class="option_item">
+                <a href="{{ url('/') }}/cart" class="option_item" id="headerCartLink"
+                    data-cart-drawer-url="{{ url('/cart/drawer') }}">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -540,6 +541,11 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
                     <span class="product-count"
                         id="cartValue">{{ Session::has('cart') ? App\Helpers\Cart::qty() : 0 }}</span>
                 </a>
+                @php
+                    $__headerCartQty = Session::has('cart') ? App\Helpers\Cart::qty() : 0;
+                @endphp
+                <span id="cartValue1" hidden>{{ $__headerCartQty }}</span>
+                <span id="cartValue2" hidden>{{ $__headerCartQty }}</span>
 
                 <button type="button" class="option_item menu_icon" title="open_mobile_menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -553,12 +559,9 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
         </nav>
     </div>
 </div>
-
 {{-- search dropdown --}}
 <div class="search_bar_overlay">
-
     <form action="{{ url('/') }}/search" class="search_form" method="get">
-
         <!-- <div class="row">
             <div class="col-6 col-xs-6">
                 <h2 class="" style="color: white;font-size: 25px;font-weight: 900;">{{ __('header.search.title') }}</h2>
@@ -750,7 +753,27 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
 </div>
 <!-- mobile nav ends here -->
 
+<div id="cartDrawerRoot" class="cart-drawer-root" aria-hidden="true">
+    <div id="cartDrawerBackdrop" class="cart-drawer-backdrop" tabindex="-1"></div>
+    <aside id="cartDrawerPanel" class="cart-drawer-panel" role="dialog" aria-modal="true"
+        aria-label="{{ __('cart.drawer.a11y_label') }}" aria-hidden="true">
+        <button type="button" class="cart-drawer-close" id="cartDrawerClose"
+            aria-label="{{ __('cart.drawer.close') }}">&times;</button>
+        <div id="cartDrawerBody" class="cart-drawer-body" aria-live="polite"></div>
+    </aside>
+</div>
 
+<a href="{{ url('/') }}/cart" class="cart-fab" data-cart-drawer-url="{{ url('/cart/drawer') }}"
+    aria-label="{{ __('cart.drawer.a11y_label') }}">
+    <span class="cart-fab__icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M6.52505 9.60002H19.635L17.8388 18.1238C17.7788 18.4013 17.535 18.6 17.25 18.6H6.7463C6.4613 18.6 6.21755 18.4013 6.15755 18.1238L4.36505 9.60002H6.52505ZM15.0038 7.80002H9.00005L10.695 6.00002L10.7663 5.92502L12.0038 4.61252L13.2413 5.92502L13.3125 6.00002L15.0075 7.80002H15.0038ZM21.3 7.80002H17.475C17.0063 7.30127 15.6188 5.82752 13.3088 3.37877L12.6563 2.68127C12.4838 2.50127 12.2475 2.40002 12 2.40002C11.7525 2.40002 11.5163 2.50127 11.3438 2.68127C11.2988 2.73002 10.08 4.02377 7.68755 6.56252L6.52505 7.80002H2.70005C2.2013 7.80002 1.80005 8.20127 1.80005 8.70002C1.80005 9.13502 2.1113 9.49877 2.5238 9.58127L4.3988 18.4913C4.6313 19.6013 5.6138 20.3963 6.7463 20.3963H17.25C18.3863 20.3963 19.365 19.6013 19.5975 18.4913L21.4725 9.58127C21.885 9.49877 22.1963 9.13502 22.1963 8.70002C22.1963 8.20127 21.7951 7.80002 21.2963 7.80002H21.3ZM9.00005 12.3C9.00005 11.8013 8.5988 11.4 8.10005 11.4C7.6013 11.4 7.20005 11.8013 7.20005 12.3V15.9C7.20005 16.3988 7.6013 16.8 8.10005 16.8C8.5988 16.8 9.00005 16.3988 9.00005 15.9V12.3ZM12 11.4C11.5013 11.4 11.1 11.8013 11.1 12.3V15.9C11.1 16.3988 11.5013 16.8 12 16.8C12.4988 16.8 12.9 16.3988 12.9 15.9V12.3C12.9 11.8013 12.4988 11.4 12 11.4ZM16.8 12.3C16.8 11.8013 16.3988 11.4 15.9 11.4C15.4013 11.4 15 11.8013 15 12.3V15.9C15 16.3988 15.4013 16.8 15.9 16.8C16.3988 16.8 16.8 16.3988 16.8 15.9V12.3Z"
+                fill="currentColor" />
+        </svg>
+    </span>
+    <span class="cart-fab__badge" id="cartValueFab">{{ $__headerCartQty }}</span>
+</a>
 
 <!-- Elfsight Website Translator | Untitled Website Translator 4 -->
 <script src="https://elfsightcdn.com/platform.js" async></script>

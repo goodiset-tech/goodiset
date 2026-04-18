@@ -73,6 +73,624 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         {{-- <script src="{{ asset('') }}front/swiper-bundle.min.js"></script> --}}
         <script src="{{ asset('') }}front/script.js"></script>
+        <script>
+            (function() {
+                const __pcSetQtyUrl = @json(url('/cart/set-qty'));
+                const __pcCsrf = @json(csrf_token());
+                const __pcToastProductAdded = @json(__('cart.toast.product_added'));
+
+                window.productCardSyncCartLine = function(pid) {
+                    const sid = String(pid);
+                    const spec = document.getElementById('spec' + sid);
+                    if (!spec) return Promise.resolve();
+                    const units = parseInt(spec.value, 10) || 1;
+                    return fetch(__pcSetQtyUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': __pcCsrf,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                id: sid,
+                                qty: units
+                            }),
+                        })
+                        .then(function(r) {
+                            return r.json();
+                        })
+                        .then(function(data) {
+                            if (data.error && typeof toastr !== 'undefined') {
+                                toastr.error(data.error_data || 'Unable to update quantity');
+                                return data;
+                            }
+                            if (data.cart && typeof data.cart.qty !== 'undefined') {
+                                document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab')
+                                    .forEach(
+                                        function(el) {
+                                            el.innerHTML = data.cart.qty;
+                                        });
+                            }
+                            if (data.cart && data.cart.items) {
+                                const rawItems = data.cart.items;
+                                const list = Array.isArray(rawItems) ? rawItems : Object.values(rawItems);
+                                const row = list.find(function(x) {
+                                    return String(x.id) === String(sid);
+                                });
+                                if (row && spec) {
+                                    spec.value = String(row.qty);
+                                    const gramsBar = document.querySelector(
+                                        '.product-card__pre-qty[data-product-id="' + sid + '"]');
+                                    const isG = gramsBar && gramsBar.getAttribute('data-qty-grams') === '1';
+                                    const disp = isG ? (parseInt(row.qty, 10) * 100) : parseInt(row.qty, 10);
+                                    var qIn = document.getElementById('quantity' + sid);
+                                    if (qIn) qIn.value = String(disp);
+                                    var pIn = document.getElementById('product-pre-qty-in-' + sid);
+                                    if (pIn) pIn.value = String(disp);
+                                }
+                            }
+                            if (typeof window.productCardUpdateQtyChrome === 'function') {
+                                window.productCardUpdateQtyChrome(sid);
+                            }
+                            if (!data.error && data.cart) {
+                                if (typeof showToastr === 'function') {
+                                    showToastr(__pcToastProductAdded, 'success');
+                                } else if (typeof toastr !== 'undefined') {
+                                    toastr.success(__pcToastProductAdded);
+                                }
+                            }
+                            return data;
+                        })
+                        .catch(function() {
+                            return {};
+                        });
+                };
+
+                window.productCardUpdateQtyChrome = function(productId) {
+                    const id = String(productId);
+                    const bar = document.querySelector('.product-card__pre-qty[data-product-id="' + id + '"]');
+                    if (!bar) return;
+                    const stack = bar.closest('.product-card__buy-stack');
+                    const inCart = stack && stack.getAttribute('data-line-in-cart') === '1';
+                    const spec = document.getElementById('spec' + id);
+                    const units = spec ? (parseInt(spec.value, 10) || 1) : 1;
+                    const del = bar.querySelector('.product-card__pre-del');
+                    const minus = bar.querySelector('.product-card__qty-btn--minus');
+                    const hide = 'product-card__qty-side--hide';
+                    if (!minus) return;
+                    if (!inCart) {
+                        if (del) del.classList.add(hide);
+                        minus.classList.remove(hide);
+                        return;
+                    }
+                    if (units <= 1) {
+                        if (del) del.classList.remove(hide);
+                        minus.classList.add(hide);
+                    } else {
+                        if (del) del.classList.add(hide);
+                        minus.classList.remove(hide);
+                    }
+                };
+
+                window.productCardSetLineState = function(productId, inCart, row) {
+                    const id = String(productId);
+                    const stack = document.querySelector('.add-to-cart' + id + '.product-card__buy-stack');
+                    if (!stack) return false;
+                    const addBtn = stack.querySelector('.product-card__add-btn');
+                    const sold = stack.getAttribute('data-soldout') === '1';
+                    const bar = stack.querySelector('.product-card__pre-qty[data-product-id="' + id + '"]');
+                    if (inCart) {
+                        stack.setAttribute('data-line-in-cart', '1');
+                        if (addBtn) addBtn.disabled = !!sold;
+                        if (row && bar) {
+                            const spec = document.getElementById('spec' + id);
+                            const isGram = bar.getAttribute('data-qty-grams') === '1';
+                            const disp = isGram ? (parseInt(row.qty, 10) * 100) : parseInt(row.qty, 10);
+                            if (spec) spec.value = String(row.qty);
+                            const pre = document.getElementById('product-pre-qty-in-' + id);
+                            if (pre) pre.value = String(disp);
+                        }
+                    } else {
+                        stack.setAttribute('data-line-in-cart', '0');
+                        if (addBtn) addBtn.disabled = sold;
+                        const spec = document.getElementById('spec' + id);
+                        if (spec) spec.value = '1';
+                        if (bar) {
+                            const isGram = bar.getAttribute('data-qty-grams') === '1';
+                            const pre = document.getElementById('product-pre-qty-in-' + id);
+                            if (pre) pre.value = isGram ? '100' : '1';
+                        }
+                    }
+                    if (typeof window.productCardUpdateQtyChrome === 'function') {
+                        window.productCardUpdateQtyChrome(id);
+                    }
+                    return true;
+                };
+
+                window.productCardStepQty = function(id, delta) {
+                    const sid = String(id);
+                    const bar = document.querySelector('.product-card__pre-qty[data-product-id="' + sid + '"]');
+                    if (!bar) return;
+                    const spec = document.getElementById('spec' + sid);
+                    const inp = document.getElementById('product-pre-qty-in-' + sid);
+                    if (!spec || !inp) return;
+                    const isGram = bar.getAttribute('data-qty-grams') === '1';
+                    const maxUnits = parseInt(bar.getAttribute('data-max-units') || '9999', 10) || 9999;
+                    let u = parseInt(spec.value, 10) || 1;
+                    u += delta;
+                    if (u < 1) u = 1;
+                    if (u > maxUnits) u = maxUnits;
+                    spec.value = String(u);
+                    inp.value = String(isGram ? u * 100 : u);
+                    if (typeof window.productCardUpdateQtyChrome === 'function') {
+                        window.productCardUpdateQtyChrome(sid);
+                    }
+                };
+
+                document.addEventListener('change', function(e) {
+                    const inp = e.target;
+                    if (!inp.classList || !inp.classList.contains('product-card__pre-qty-input')) return;
+                    const bar = inp.closest('.product-card__pre-qty');
+                    if (!bar) return;
+                    const pid = bar.getAttribute('data-product-id');
+                    const spec = document.getElementById('spec' + pid);
+                    if (!spec) return;
+                    const isGram = bar.getAttribute('data-qty-grams') === '1';
+                    const maxUnits = parseInt(bar.getAttribute('data-max-units') || '9999', 10) || 9999;
+                    let raw = parseInt(String(inp.value).trim(), 10);
+                    if (Number.isNaN(raw) || raw < 1) {
+                        raw = isGram ? 100 : 1;
+                    }
+                    if (isGram) {
+                        raw = Math.round(raw / 100) * 100;
+                        if (raw < 100) raw = 100;
+                        const maxG = maxUnits * 100;
+                        if (raw > maxG) raw = maxG;
+                        inp.value = String(raw);
+                        spec.value = String(raw / 100);
+                    } else {
+                        if (raw > maxUnits) raw = maxUnits;
+                        if (raw < 1) raw = 1;
+                        inp.value = String(raw);
+                        spec.value = String(raw);
+                    }
+                    if (typeof window.productCardUpdateQtyChrome === 'function') {
+                        window.productCardUpdateQtyChrome(pid);
+                    }
+                });
+
+                window.refreshCartUiFromSession = function() {
+                    return fetch(@json(url('/cart/ui-state')), {
+                            credentials: 'same-origin',
+                            headers: {
+                                'Accept': 'application/json',
+                            },
+                        })
+                        .then(function(r) {
+                            return r.json();
+                        })
+                        .then(function(payload) {
+                            var qty = payload.qty != null ? String(payload.qty) : '0';
+                            document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab')
+                                .forEach(
+                                    function(el) {
+                                        if (el) el.innerHTML = qty;
+                                    });
+                            var lineMap = {};
+                            (payload.lines || []).forEach(function(l) {
+                                lineMap[String(l.id)] = l.qty;
+                            });
+                            document.querySelectorAll('.product-card__buy-stack[data-card-product-id]')
+                                .forEach(function(stack) {
+                                    var pid = String(stack.getAttribute('data-card-product-id'));
+                                    var rowQty = lineMap[pid];
+                                    if (rowQty != null && rowQty > 0) {
+                                        if (typeof window.productCardSetLineState === 'function') {
+                                            window.productCardSetLineState(pid, true, {
+                                                id: parseInt(pid, 10),
+                                                qty: rowQty
+                                            });
+                                        }
+                                    } else if (typeof window.productCardSetLineState === 'function') {
+                                        window.productCardSetLineState(pid, false, null);
+                                    }
+                                });
+                            var __cdr = document.getElementById('cartDrawerRoot');
+                            if (__cdr && __cdr.classList.contains('cart-drawer-open') &&
+                                typeof window.reloadCartDrawerContent === 'function') {
+                                window.reloadCartDrawerContent();
+                            }
+                            return payload;
+                        })
+                        .catch(function() {
+                            return {};
+                        });
+                };
+
+                window.addEventListener('pageshow', function(ev) {
+                    if (!ev.persisted) return;
+                    if (typeof window.refreshCartUiFromSession !== 'function') return;
+                    window.refreshCartUiFromSession().then(function() {
+                        if (typeof fetchProducts === 'function') {
+                            try {
+                                fetchProducts();
+                            } catch (err) {}
+                        }
+                    });
+                });
+            })();
+        </script>
+        <script>
+            (function() {
+                var root = document.getElementById('cartDrawerRoot');
+                var backdrop = document.getElementById('cartDrawerBackdrop');
+                var panel = document.getElementById('cartDrawerPanel');
+                var bodyEl = document.getElementById('cartDrawerBody');
+                var closeBtn = document.getElementById('cartDrawerClose');
+                var cartDrawerLinks = document.querySelectorAll('a[data-cart-drawer-url]');
+                if (!root || !backdrop || !panel || !bodyEl || !cartDrawerLinks.length) {
+                    return;
+                }
+
+                var drawerUrl = cartDrawerLinks[0].getAttribute('data-cart-drawer-url') || '';
+                var csrfDrawer = @json(csrf_token());
+                var urlInc = @json(url('/cart/increment'));
+                var urlDec = @json(url('/cart/decrement'));
+                var urlRemove = @json(url('/cart/remove'));
+                var urlAdd = @json(url('/cart/add'));
+
+                function postCart(path, data) {
+                    var fd = new FormData();
+                    fd.append('_token', csrfDrawer);
+                    Object.keys(data).forEach(function(k) {
+                        if (data[k] !== undefined && data[k] !== null) {
+                            fd.append(k, data[k]);
+                        }
+                    });
+                    return fetch(path, {
+                        credentials: 'same-origin',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: fd,
+                        method: 'POST'
+                    }).then(function(r) {
+                        return r.json();
+                    });
+                }
+
+                function closeCartDrawer() {
+                    root.classList.remove('cart-drawer-open');
+                    root.setAttribute('aria-hidden', 'true');
+                    panel.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                    bodyEl.innerHTML = '';
+                }
+
+                window.reloadCartDrawerContent = function() {
+                    if (!drawerUrl) return Promise.resolve();
+                    bodyEl.classList.add('is-loading');
+                    return fetch(drawerUrl, {
+                            credentials: 'same-origin',
+                            headers: {
+                                'Accept': 'text/html'
+                            },
+                        })
+                        .then(function(r) {
+                            if (!r.ok) throw new Error('drawer');
+                            return r.text();
+                        })
+                        .then(function(html) {
+                            bodyEl.innerHTML = html;
+                            bodyEl.classList.remove('is-loading');
+                        })
+                        .catch(function() {
+                            bodyEl.classList.remove('is-loading');
+                        });
+                };
+
+                window.openCartDrawer = function() {
+                    root.classList.add('cart-drawer-open');
+                    root.setAttribute('aria-hidden', 'false');
+                    panel.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    bodyEl.innerHTML = '<p class="cart-drawer-loading-msg" style="padding:24px;text-align:center;">' +
+                        @json(__('cart.drawer.loading')) + '</p>';
+                    return window.reloadCartDrawerContent().then(function() {
+                        if (closeBtn) closeBtn.focus();
+                    });
+                };
+
+                cartDrawerLinks.forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        if (e.defaultPrevented) return;
+                        if (e.button !== 0) return;
+                        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                        e.preventDefault();
+                        window.openCartDrawer();
+                    });
+                });
+
+                closeBtn.addEventListener('click', function() {
+                    closeCartDrawer();
+                });
+                backdrop.addEventListener('click', function() {
+                    closeCartDrawer();
+                });
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && root.classList.contains('cart-drawer-open')) {
+                        closeCartDrawer();
+                    }
+                });
+
+                document.addEventListener('click', function(e) {
+                    var c = e.target;
+                    if (!root.classList.contains('cart-drawer-open')) return;
+                    if (c.closest && c.closest('[data-cart-drawer-continue]')) {
+                        e.preventDefault();
+                        closeCartDrawer();
+                        return;
+                    }
+                    var incP = c.closest && c.closest('.cart-drawer-inc-prod');
+                    if (incP) {
+                        e.preventDefault();
+                        postCart(urlInc, {
+                            id: incP.getAttribute('data-product-id'),
+                            boxid: ''
+                        }).then(function(res) {
+                            if (res.error) {
+                                alert(res.error_data || 'Error');
+                                return;
+                            }
+                            window.reloadCartDrawerContent();
+                            if (typeof window.refreshCartUiFromSession === 'function') {
+                                window.refreshCartUiFromSession();
+                            }
+                        });
+                        return;
+                    }
+                    var decP = c.closest && c.closest('.cart-drawer-dec-prod');
+                    if (decP) {
+                        e.preventDefault();
+                        postCart(urlDec, {
+                            id: decP.getAttribute('data-product-id'),
+                            boxid: ''
+                        }).then(function(res) {
+                            if (res.error) {
+                                alert(res.error_data || 'Error');
+                                return;
+                            }
+                            window.reloadCartDrawerContent();
+                            if (typeof window.refreshCartUiFromSession === 'function') {
+                                window.refreshCartUiFromSession();
+                            }
+                        });
+                        return;
+                    }
+                    var rmP = c.closest && c.closest('.cart-drawer-remove-prod');
+                    if (rmP) {
+                        e.preventDefault();
+                        postCart(urlRemove, {
+                            id: rmP.getAttribute('data-product-id'),
+                            boxId: ''
+                        }).then(function() {
+                            window.reloadCartDrawerContent();
+                            if (typeof window.refreshCartUiFromSession === 'function') {
+                                window.refreshCartUiFromSession();
+                            }
+                        });
+                        return;
+                    }
+                    var incB = c.closest && c.closest('.cart-drawer-inc-box');
+                    if (incB) {
+                        e.preventDefault();
+                        postCart(urlInc, {
+                            id: '',
+                            boxid: incB.getAttribute('data-box-id')
+                        }).then(function(res) {
+                            if (res.error) {
+                                alert(res.error_data || 'Error');
+                                return;
+                            }
+                            window.reloadCartDrawerContent();
+                            if (typeof window.refreshCartUiFromSession === 'function') {
+                                window.refreshCartUiFromSession();
+                            }
+                        });
+                        return;
+                    }
+                    var decB = c.closest && c.closest('.cart-drawer-dec-box');
+                    if (decB) {
+                        e.preventDefault();
+                        postCart(urlDec, {
+                            id: '',
+                            boxid: decB.getAttribute('data-box-id')
+                        }).then(function(res) {
+                            if (res.error) {
+                                alert(res.error_data || 'Error');
+                                return;
+                            }
+                            window.reloadCartDrawerContent();
+                            if (typeof window.refreshCartUiFromSession === 'function') {
+                                window.refreshCartUiFromSession();
+                            }
+                        });
+                        return;
+                    }
+                    var rmB = c.closest && c.closest('.cart-drawer-remove-box');
+                    if (rmB) {
+                        e.preventDefault();
+                        postCart(urlRemove, {
+                            id: '',
+                            boxId: rmB.getAttribute('data-box-id')
+                        }).then(function() {
+                            window.reloadCartDrawerContent();
+                            if (typeof window.refreshCartUiFromSession === 'function') {
+                                window.refreshCartUiFromSession();
+                            }
+                        });
+                        return;
+                    }
+                    var addU = c.closest && c.closest('.cart-drawer-upsell-add');
+                    if (addU) {
+                        e.preventDefault();
+                        postCart(urlAdd, {
+                            id: addU.getAttribute('data-product-id'),
+                            qty: 1
+                        }).then(function(res) {
+                            if (res.error || res.msg_type === 'danger') {
+                                alert((res.error_data || res.msg) || 'Error');
+                                return;
+                            }
+                            window.reloadCartDrawerContent();
+                            if (typeof window.refreshCartUiFromSession === 'function') {
+                                window.refreshCartUiFromSession();
+                            }
+                        });
+                        return;
+                    }
+                });
+            })();
+        </script>
+        <script>
+            (function() {
+                const setQtyUrl = @json(url('/cart/set-qty'));
+                const csrf = @json(csrf_token());
+
+                document.addEventListener('focusin', function(e) {
+                    const input = e.target;
+                    if (!input.classList || !input.classList.contains('quantity_cart')) return;
+                    if (input.tagName !== 'INPUT') return;
+                    input.dataset.qtyPrev = input.value;
+                }, true);
+
+                document.addEventListener('change', function(e) {
+                    const input = e.target;
+                    if (!input.classList || !input.classList.contains('quantity_cart')) return;
+                    if (input.tagName !== 'INPUT') return;
+                    const box = input.closest('.quantity-controls');
+                    if (!box || input.dataset.qtyCommitting === '1') return;
+
+                    const productId = input.dataset.productId;
+                    if (!productId) return;
+
+                    const isGram = box.dataset.qtyGrams === '1';
+                    const maxUnits = parseInt(box.dataset.productQtyMax || '0', 10) || 999999;
+
+                    let raw = parseInt(String(input.value).trim(), 10);
+                    if (Number.isNaN(raw) || raw < 1) {
+                        input.value = input.dataset.qtyPrev != null ? input.dataset.qtyPrev : input
+                            .defaultValue;
+                        return;
+                    }
+
+                    if (isGram) {
+                        raw = Math.round(raw / 100) * 100;
+                        if (raw < 100) raw = 100;
+                        const maxG = maxUnits * 100;
+                        if (raw > maxG) raw = maxG;
+                        input.value = String(raw);
+                    } else {
+                        if (raw > maxUnits) raw = maxUnits;
+                        if (raw < 1) raw = 1;
+                        input.value = String(raw);
+                    }
+
+                    const units = isGram ? raw / 100 : raw;
+                    const spec = document.getElementById('spec' + productId);
+                    const prevUnits = spec ? parseInt(spec.value, 10) || 0 : 0;
+
+                    if (units === prevUnits) return;
+
+                    input.dataset.qtyCommitting = '1';
+                    fetch(setQtyUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrf,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                id: productId,
+                                qty: units
+                            }),
+                        })
+                        .then(function(r) {
+                            return r.json();
+                        })
+                        .then(function(data) {
+                            delete input.dataset.qtyCommitting;
+                            if (data.error) {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error(data.error_data || 'Unable to update quantity');
+                                }
+                                if (input.dataset.qtyPrev != null) input.value = input.dataset.qtyPrev;
+                                return;
+                            }
+                            const cart = data.cart;
+
+                            if (cart && typeof cart.qty !== 'undefined') {
+                                document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab')
+                                    .forEach(
+                                        function(el) {
+                                            el.innerHTML = cart.qty;
+                                        });
+                            }
+
+                            if (!cart || !Array.isArray(cart.items)) {
+                                location.reload();
+                                return;
+                            }
+
+                            const row = cart.items.find(function(it) {
+                                return String(it.id) === String(productId);
+                            });
+
+                            if (!row) {
+                                if (typeof window.productCardSetLineState === 'function') {
+                                    window.productCardSetLineState(productId, false);
+                                }
+                                var qtyBox = document.querySelector('.quantity_btn_box' + productId);
+                                var addBtn = document.querySelector('.add-to-cart' + productId);
+                                if (qtyBox) {
+                                    qtyBox.style.display = 'none';
+                                    if (addBtn && !addBtn.classList.contains('product-card__buy-stack')) {
+                                        addBtn.style.display = 'block';
+                                    }
+                                }
+                                if (spec) spec.value = '1';
+                                return;
+                            }
+
+                            var line = parseInt(row.qty, 10) || 1;
+                            if (spec) spec.value = String(line);
+                            if (isGram) {
+                                input.value = String(line * 100);
+                            } else {
+                                input.value = String(line);
+                            }
+                            var preSync = document.getElementById('product-pre-qty-in-' + productId);
+                            if (preSync) {
+                                preSync.value = isGram ? String(line * 100) : String(line);
+                            }
+                            var stSync = document.querySelector('.product-card__pre-qty[data-product-id="' +
+                                productId + '"]');
+                            if (stSync) {
+                                var buySync = stSync.closest('.product-card__buy-stack');
+                                if (buySync) buySync.setAttribute('data-line-in-cart', '1');
+                            }
+                            if (typeof window.productCardUpdateQtyChrome === 'function') {
+                                window.productCardUpdateQtyChrome(productId);
+                            }
+                        })
+                        .catch(function() {
+                            delete input.dataset.qtyCommitting;
+                            if (input.dataset.qtyPrev != null) input.value = input.dataset.qtyPrev;
+                        });
+                });
+            })();
+        </script>
         <script src="{{ asset('front/assets/confettis.js') }}"></script>
         <script src="{{ asset('front/assets/slider.js') }}"></script>
 
@@ -322,7 +940,7 @@
             let id, qty, price, productTotal;
             $(document).ready(function() {
 
-                $('.ion-close').click(function(e) {
+                $(document).on('click', '.ion-close', function(e) {
                     e.preventDefault();
                     id = $(this).attr('productId');
                     $('#loader_container_overlay').css('display', 'flex').show();
@@ -338,24 +956,37 @@
                             //   location.reload();
                             //   console.log(id);
                             //   removeFromView(id,response);
+                            if (typeof window.productCardSetLineState === 'function') {
+                                window.productCardSetLineState(id, false);
+                            }
                             if (response.cart === null) {
-                                document.getElementById("cartValue").innerHTML = 0;
+                                document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab')
+                                    .forEach(function(el) {
+                                        el.innerHTML = 0;
+                                    });
                                 document.querySelectorAll(".quantity_btn_box" + id).forEach((
                                     el) => {
                                     el.style.display = "none";
                                 });
                                 document.querySelectorAll(".add-to-cart" + id).forEach((el) => {
-                                    el.style.display = "unset";
+                                    if (!el.classList.contains('product-card__buy-stack')) {
+                                        el.style.display = "unset";
+                                    }
                                 });
                                 // $('#loader_container').hide();
                             } else {
-                                document.getElementById("cartValue").innerHTML = response.cart.qty;
+                                document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab')
+                                    .forEach(function(el) {
+                                        el.innerHTML = response.cart.qty;
+                                    });
                                 document.querySelectorAll(".quantity_btn_box" + id).forEach((
                                     el) => {
                                     el.style.display = "none";
                                 });
                                 document.querySelectorAll(".add-to-cart" + id).forEach((el) => {
-                                    el.style.display = "unset";
+                                    if (!el.classList.contains('product-card__buy-stack')) {
+                                        el.style.display = "unset";
+                                    }
                                 });
                                 // $('#loader_container').hide();
                             }
@@ -393,7 +1024,7 @@
                             if (response.cart === null) {
                                 $('#cart_empty_dev').css('display', 'block');
                                 $('#content').css('display', 'block');
-                                $('#cartValue').html(0);
+                                $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(0);
                                 setTimeout(() => {
                                     $('#loader_container_overlay').hide();
                                     $('#button_loader' + id).hide();
@@ -506,7 +1137,7 @@
 
                 function updateView(response) {
                     productTotal = parseInt(qty * price);
-                    $('#cartValue').html(response.cart.qty);
+                    $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(response.cart.qty);
                     var minvalur = {{ getSetting('min_order_value') }};
                     var total = parseFloat(response.cart.amount) +
                         parseFloat({{ getSetting('shipping') }}) +
@@ -558,7 +1189,17 @@
                 $('.add-to-cart').click(function(e) {
                     e.preventDefault();
                     let id = $(this).attr('id');
+                    var buyStack = this.closest && this.closest('.product-card__buy-stack');
+                    var alreadyInCart = buyStack && buyStack.getAttribute('data-line-in-cart') === '1';
+                    if (alreadyInCart && typeof window.productCardSyncCartLine === 'function') {
+                        window.productCardSyncCartLine(id);
+                        return;
+                    }
                     let qty = $('#quantityinput').val();
+                    if (qty === undefined || qty === null || qty === '') {
+                        const specVal = $('#spec' + id).val();
+                        qty = specVal !== undefined && specVal !== '' ? specVal : 1;
+                    }
                     $.ajax({
                         url: "<?php echo url('/'); ?>/cart/add",
                         method: "POST",
@@ -569,113 +1210,135 @@
                         },
                         success: function(response) {
                             if (response.error) {
-                                // Handle error response
-                            } else {
-                                $('#cartValue').html(response.qty);
-                                $('#cartValue1').html(response.qty);
-                                $('#cartValue2').html(response.qty);
-                                $('.quantity_btn_box' + id).show();
-                                $('.add-to-cart' + id).hide();
-                                // showToastr(response.msg, response.msg_type);
-                                // $.post('{{ route('cart_data') }}', {
-                                //     _token: '{{ csrf_token() }}'
-                                // }, function (data) {
-                                //     $('#cart_data').html(data);
-                                // });
-                                // $.post('{{ route('hearder_cart') }}', {
-                                //     _token: '{{ csrf_token() }}'
-                                // }, function (data) {
-                                //     $('#hearder_cart').html(data);
-                                // });
-
-                                // Trigger confetti
-                                const button = document.querySelector(`.quantity_btn_box${id}`);
-                                if (button) {
-                                    const rect = button.getBoundingClientRect();
-                                    const x = rect.left + rect.width / 2; // Button's center x
-                                    const y = rect.top + rect.height / 2; // Button's center y
-
-                                    confetti({
-                                        particleCount: 50, // Fewer particles
-                                        startVelocity: 15, // Lower velocity
-                                        spread: 360, // Full spread
-                                        gravity: 0, // Prevent confetti from falling down
-                                        ticks: 100, // Short lifespan
-                                        origin: {
-                                            x: x / window.innerWidth, // Relative x position
-                                            y: y / window
-                                                .innerHeight, // Relative y position
-                                        },
-                                        scalar: 0.8, // Smaller particle size
-                                    });
+                                if (typeof showToastr === 'function') {
+                                    showToastr(response.error_data || 'Unable to add to cart', 'danger');
                                 }
-                                const cartItem = response.cart.items[
-                                    0]; // Assuming a single item is added at a time
-                                dataLayer.push({
-                                    event: "add_to_cart",
-                                    ecommerce: {
-                                        currency: "AED", // Replace with your store's currency
-                                        value: response.cart.amount, // Total cart amount
-                                        items: [{
-                                            item_id: cartItem.id, // Product ID
-                                            price: cartItem
-                                                .price, // Price per item (update if needed)
-                                            quantity: cartItem
-                                                .qty, // Quantity added
-                                            name: cartItem.name,
-                                        }, ],
-                                    },
-                                });
-                                console.log("DataLayer pushed:", dataLayer);
-                                try {
-                                    if (cartItem && typeof snaptr === "function") {
-                                        const c = document.cookie.match(
-                                            /(?:^|;\s*)uuid_c1=([^;]+)/);
-                                        const uuidC1 = c ? decodeURIComponent(c[1]) : null;
-                                        const qty = Number(cartItem.qty) || 1;
-                                        const unitPrice = Number(cartItem.price) || 0;
-                                        const addValue = unitPrice * qty;
-
-                                        const payload = {
-                                            price: addValue,
-                                            currency: "AED",
-                                            item_ids: [cartItem.id],
-                                            number_items: qty,
-                                            user_email: '{{ session()->has('user') ? session('user')['email'] : session('cart')['email'] ?? '' }}'
-                                        };
-                                        if (uuidC1) payload.uuid_c1 = uuidC1;
-
-                                        snaptr('track', 'ADD_CART', payload);
-                                        console.log("Snap ADD_CART sent:", payload);
-                                    } else {
-                                        console.warn("snaptr is not defined or cartItem missing.");
-                                    }
-                                } catch (e) {
-                                    console.error("Error sending snaptr ADD_CART event:", e);
-                                }
-
-                                // TikTok AddToCart tracking
-                                try {
-                                    if (cartItem && typeof ttq !== 'undefined') {
-                                        ttq.track('AddToCart', {
-                                            contents: [{
-                                                content_id: cartItem.id,
-                                                content_type: 'product',
-                                                content_name: cartItem.name,
-                                                quantity: cartItem.qty,
-                                                price: cartItem.price
-                                            }],
-                                            value: response.cart.amount,
-                                            currency: "AED"
-                                        }, {
-                                            event_id: Date.now() + '_' + Math.random().toString(36).substr(2, 9)
-                                        });
-                                        console.log("TikTok AddToCart sent for product:", cartItem.id);
-                                    }
-                                } catch (e) {
-                                    console.error("Error sending TikTok AddToCart event:", e);
-                                }
+                                return;
                             }
+                            if (typeof showToastr === 'function' && response.msg) {
+                                showToastr(response.msg, response.msg_type || 'success');
+                            }
+                            $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(response.qty);
+                                if (response.cart && response.cart.items) {
+                                    const rawItems = response.cart.items;
+                                    const list = Array.isArray(rawItems) ? rawItems : Object.values(rawItems);
+                                    const row = list.find(function(x) {
+                                        return String(x.id) === String(id);
+                                    });
+                                    if (row) {
+                                        var pcOk = typeof window.productCardSetLineState === 'function' &&
+                                            window.productCardSetLineState(id, true, row);
+                                        if (!pcOk) {
+                                            $('#spec' + id).val(row.qty);
+                                            const grams = $('.quantity_btn_box' + id).attr(
+                                                'data-qty-grams') === '1';
+                                            const disp = grams ? (parseInt(row.qty, 10) * 100) :
+                                                parseInt(row.qty, 10);
+                                            $('#quantity' + id).val(disp);
+                                            var preIn = document.getElementById('product-pre-qty-in-' + id);
+                                            if (preIn) {
+                                                preIn.value = String(disp);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!alreadyInCart) {
+                                    const button = document.querySelector('.add-to-cart' + id +
+                                            '.product-card__buy-stack') ||
+                                        document.querySelector('.add-to-cart' + id) || document
+                                        .querySelector(`.quantity_btn_box${id}`);
+                                    if (button) {
+                                        const rect = button.getBoundingClientRect();
+                                        const x = rect.left + rect.width / 2;
+                                        const y = rect.top + rect.height / 2;
+
+                                        confetti({
+                                            particleCount: 50,
+                                            startVelocity: 15,
+                                            spread: 360,
+                                            gravity: 0,
+                                            ticks: 100,
+                                            origin: {
+                                                x: x / window.innerWidth,
+                                                y: y / window.innerHeight,
+                                            },
+                                            scalar: 0.8,
+                                        });
+                                    }
+                                }
+                                var __items = response.cart && response.cart.items ? (Array.isArray(
+                                        response.cart.items) ? response.cart.items : Object.values(
+                                        response.cart.items)) : [];
+                                const cartItem = __items.find(function(x) {
+                                    return String(x.id) === String(id);
+                                }) || __items[0] || null;
+                                if (cartItem) {
+                                    dataLayer.push({
+                                        event: "add_to_cart",
+                                        ecommerce: {
+                                            currency: "AED", // Replace with your store's currency
+                                            value: response.cart.amount, // Total cart amount
+                                            items: [{
+                                                item_id: cartItem.id, // Product ID
+                                                price: cartItem
+                                                    .price, // Price per item (update if needed)
+                                                quantity: cartItem
+                                                    .qty, // Quantity added
+                                                name: cartItem.name,
+                                            }, ],
+                                        },
+                                    });
+                                    console.log("DataLayer pushed:", dataLayer);
+                                    try {
+                                        if (cartItem && typeof snaptr === "function") {
+                                            const c = document.cookie.match(
+                                                /(?:^|;\s*)uuid_c1=([^;]+)/);
+                                            const uuidC1 = c ? decodeURIComponent(c[1]) : null;
+                                            const qty = Number(cartItem.qty) || 1;
+                                            const unitPrice = Number(cartItem.price) || 0;
+                                            const addValue = unitPrice * qty;
+
+                                            const payload = {
+                                                price: addValue,
+                                                currency: "AED",
+                                                item_ids: [cartItem.id],
+                                                number_items: qty,
+                                                user_email: '{{ session()->has('user') ? session('user')['email'] : session('cart')['email'] ?? '' }}'
+                                            };
+                                            if (uuidC1) payload.uuid_c1 = uuidC1;
+
+                                            snaptr('track', 'ADD_CART', payload);
+                                            console.log("Snap ADD_CART sent:", payload);
+                                        } else {
+                                            console.warn("snaptr is not defined or cartItem missing.");
+                                        }
+                                    } catch (e) {
+                                        console.error("Error sending snaptr ADD_CART event:", e);
+                                    }
+
+                                    // TikTok AddToCart tracking
+                                    try {
+                                        if (cartItem && typeof ttq !== 'undefined') {
+                                            ttq.track('AddToCart', {
+                                                contents: [{
+                                                    content_id: cartItem.id,
+                                                    content_type: 'product',
+                                                    content_name: cartItem.name,
+                                                    quantity: cartItem.qty,
+                                                    price: cartItem.price
+                                                }],
+                                                value: response.cart.amount,
+                                                currency: "AED"
+                                            }, {
+                                                event_id: Date.now() + '_' + Math.random().toString(36)
+                                                    .substr(2, 9)
+                                            });
+                                            console.log("TikTok AddToCart sent for product:", cartItem.id);
+                                        }
+                                    } catch (e) {
+                                        console.error("Error sending TikTok AddToCart event:", e);
+                                    }
+                                }
                         },
                         cache: false // Disable caching for the AJAX response
                     });
@@ -685,7 +1348,18 @@
                 $('.add-to-cart-item').click(function(e) {
                     e.preventDefault();
                     let id = $(this).attr('id');
+                    var buyStackItem = this.closest && this.closest('.product-card__buy-stack');
+                    var alreadyInCartItem = buyStackItem && buyStackItem.getAttribute(
+                        'data-line-in-cart') === '1';
+                    if (alreadyInCartItem && typeof window.productCardSyncCartLine === 'function') {
+                        window.productCardSyncCartLine(id);
+                        return;
+                    }
                     let qty = $('#quantityinput').val();
+                    if (qty === undefined || qty === null || qty === '') {
+                        const specVal = $('#spec' + id).val();
+                        qty = specVal !== undefined && specVal !== '' ? specVal : 1;
+                    }
                     $.ajax({
                         url: "<?php echo url('/'); ?>/cart/add",
                         method: "POST",
@@ -696,109 +1370,136 @@
                         },
                         success: function(response) {
                             if (response.error) {
-                                // Handle error response
-                            } else {
-                                $('#cartValue').html(response.qty);
-                                $('.quantity_btn_box' + id).show();
-                                // $('.add-to-cart-item').html('Added to cart');
-                                // $('.add-to-cart-item').prop('disabled', true);
-                                // $('#cartValue1').html(response.qty);
-                                // $('#cartValue2').html(response.qty);
-                                // // showToastr(response.msg, response.msg_type);
-                                // $.post('{{ route('hearder_cart') }}', {
-                                //     _token: '{{ csrf_token() }}'
-                                // }, function(data) {
-                                //     $('#hearder_cart').html(data);
-                                // });
-                                // Trigger confetti
-                                const button = document.querySelector(`.quantity_btn_box${id}`);
-                                if (button) {
-                                    const rect = button.getBoundingClientRect();
-                                    const x = rect.left + rect.width / 2; // Button's center x
-                                    const y = rect.top + rect.height / 2; // Button's center y
-
-                                    confetti({
-                                        particleCount: 50, // Fewer particles
-                                        startVelocity: 15, // Lower velocity
-                                        spread: 360, // Full spread
-                                        gravity: 0, // Prevent confetti from falling down
-                                        ticks: 100, // Short lifespan
-                                        origin: {
-                                            x: x / window.innerWidth, // Relative x position
-                                            y: y / window
-                                                .innerHeight, // Relative y position
-                                        },
-                                        scalar: 0.8, // Smaller particle size
-                                    });
+                                if (typeof showToastr === 'function') {
+                                    showToastr(response.error_data || 'Unable to add to cart', 'danger');
                                 }
-                                const cartItem = response.cart.items[
-                                    0]; // Assuming a single item is added at a time
-                                dataLayer.push({
-                                    event: "add_to_cart",
-                                    ecommerce: {
-                                        currency: "AED", // Replace with your store's currency
-                                        value: response.cart.amount, // Total cart amount
-                                        items: [{
-                                            item_id: cartItem.id, // Product ID
-                                            price: cartItem
-                                                .price, // Price per item (update if needed)
-                                            quantity: cartItem
-                                                .qty, // Quantity added
-                                            name: cartItem.name,
-                                        }, ],
-                                    },
-                                });
-                                console.log("DataLayer pushed:", dataLayer);
-
-                                try {
-                                    if (cartItem && typeof snaptr === "function") {
-                                        const c = document.cookie.match(
-                                            /(?:^|;\s*)uuid_c1=([^;]+)/);
-                                        const uuidC1 = c ? decodeURIComponent(c[1]) : null;
-                                        const qty = Number(cartItem.qty) || 1;
-                                        const unitPrice = Number(cartItem.price) || 0;
-                                        const addValue = unitPrice * qty;
-
-                                        const payload = {
-                                            price: addValue,
-                                            currency: "AED",
-                                            item_ids: [cartItem.id],
-                                            number_items: qty,
-                                            user_email: '{{ session()->has('user') ? session('user')['email'] : session('cart')['email'] ?? '' }}'
-                                        };
-                                        if (uuidC1) payload.uuid_c1 = uuidC1;
-
-                                        snaptr('track', 'ADD_CART', payload);
-                                        console.log("Snap ADD_CART sent:", payload);
-                                    } else {
-                                        console.warn("snaptr is not defined or cartItem missing.");
-                                    }
-                                } catch (e) {
-                                    console.error("Error sending snaptr ADD_CART event:", e);
-                                }
-
-                                // TikTok AddToCart tracking
-                                try {
-                                    if (cartItem && typeof ttq !== 'undefined') {
-                                        ttq.track('AddToCart', {
-                                            contents: [{
-                                                content_id: cartItem.id,
-                                                content_type: 'product',
-                                                content_name: cartItem.name,
-                                                quantity: cartItem.qty,
-                                                price: cartItem.price
-                                            }],
-                                            value: response.cart.amount,
-                                            currency: "AED"
-                                        }, {
-                                            event_id: Date.now() + '_' + Math.random().toString(36).substr(2, 9)
-                                        });
-                                        console.log("TikTok AddToCart sent for product:", cartItem.id);
-                                    }
-                                } catch (e) {
-                                    console.error("Error sending TikTok AddToCart event:", e);
-                                }
+                                return;
                             }
+                            if (typeof showToastr === 'function' && response.msg) {
+                                showToastr(response.msg, response.msg_type || 'success');
+                            }
+                            $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(response.qty);
+                                if (response.cart && response.cart.items) {
+                                    const rawItems = response.cart.items;
+                                    const list = Array.isArray(rawItems) ? rawItems : Object.values(rawItems);
+                                    const row = list.find(function(x) {
+                                        return String(x.id) === String(id);
+                                    });
+                                    if (row) {
+                                        var pcOk2 = typeof window.productCardSetLineState === 'function' &&
+                                            window.productCardSetLineState(id, true, row);
+                                        if (!pcOk2) {
+                                            $('#spec' + id).val(row.qty);
+                                            const grams = $('.quantity_btn_box' + id).attr(
+                                                'data-qty-grams') === '1';
+                                            const disp = grams ? (parseInt(row.qty, 10) * 100) :
+                                                parseInt(row.qty, 10);
+                                            $('#quantity' + id).val(disp);
+                                            var preIn2 = document.getElementById('product-pre-qty-in-' + id);
+                                            if (preIn2) {
+                                                preIn2.value = String(disp);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!alreadyInCartItem) {
+                                    const button = document.querySelector('.add-to-cart' + id +
+                                            '.product-card__buy-stack') ||
+                                        document.querySelector('.add-to-cart' + id) || document
+                                        .querySelector(`.quantity_btn_box${id}`);
+                                    if (button) {
+                                        const rect = button.getBoundingClientRect();
+                                        const x = rect.left + rect.width / 2;
+                                        const y = rect.top + rect.height / 2;
+
+                                        confetti({
+                                            particleCount: 50,
+                                            startVelocity: 15,
+                                            spread: 360,
+                                            gravity: 0,
+                                            ticks: 100,
+                                            origin: {
+                                                x: x / window.innerWidth,
+                                                y: y / window.innerHeight,
+                                            },
+                                            scalar: 0.8,
+                                        });
+                                    }
+                                }
+                                var __items2 = response.cart && response.cart.items ? (Array.isArray(
+                                        response.cart.items) ? response.cart.items : Object.values(
+                                        response.cart.items)) : [];
+                                const cartItem = __items2.find(function(x) {
+                                    return String(x.id) === String(id);
+                                }) || __items2[0] || null;
+                                if (cartItem) {
+                                    dataLayer.push({
+                                        event: "add_to_cart",
+                                        ecommerce: {
+                                            currency: "AED", // Replace with your store's currency
+                                            value: response.cart.amount, // Total cart amount
+                                            items: [{
+                                                item_id: cartItem.id, // Product ID
+                                                price: cartItem
+                                                    .price, // Price per item (update if needed)
+                                                quantity: cartItem
+                                                    .qty, // Quantity added
+                                                name: cartItem.name,
+                                            }, ],
+                                        },
+                                    });
+                                    console.log("DataLayer pushed:", dataLayer);
+
+                                    try {
+                                        if (cartItem && typeof snaptr === "function") {
+                                            const c = document.cookie.match(
+                                                /(?:^|;\s*)uuid_c1=([^;]+)/);
+                                            const uuidC1 = c ? decodeURIComponent(c[1]) : null;
+                                            const qty = Number(cartItem.qty) || 1;
+                                            const unitPrice = Number(cartItem.price) || 0;
+                                            const addValue = unitPrice * qty;
+
+                                            const payload = {
+                                                price: addValue,
+                                                currency: "AED",
+                                                item_ids: [cartItem.id],
+                                                number_items: qty,
+                                                user_email: '{{ session()->has('user') ? session('user')['email'] : session('cart')['email'] ?? '' }}'
+                                            };
+                                            if (uuidC1) payload.uuid_c1 = uuidC1;
+
+                                            snaptr('track', 'ADD_CART', payload);
+                                            console.log("Snap ADD_CART sent:", payload);
+                                        } else {
+                                            console.warn("snaptr is not defined or cartItem missing.");
+                                        }
+                                    } catch (e) {
+                                        console.error("Error sending snaptr ADD_CART event:", e);
+                                    }
+
+                                    // TikTok AddToCart tracking
+                                    try {
+                                        if (cartItem && typeof ttq !== 'undefined') {
+                                            ttq.track('AddToCart', {
+                                                contents: [{
+                                                    content_id: cartItem.id,
+                                                    content_type: 'product',
+                                                    content_name: cartItem.name,
+                                                    quantity: cartItem.qty,
+                                                    price: cartItem.price
+                                                }],
+                                                value: response.cart.amount,
+                                                currency: "AED"
+                                            }, {
+                                                event_id: Date.now() + '_' + Math.random().toString(36)
+                                                    .substr(2, 9)
+                                            });
+                                            console.log("TikTok AddToCart sent for product:", cartItem.id);
+                                        }
+                                    } catch (e) {
+                                        console.error("Error sending TikTok AddToCart event:", e);
+                                    }
+                                }
                         },
                         cache: false // Disable caching for the AJAX response
                     });
@@ -810,21 +1511,36 @@
                     e.preventDefault();
 
                     let id = $(this).attr('id');
+                    var buyStackItem1 = this.closest && this.closest('.product-card__buy-stack');
+                    var inCartItem1 = buyStackItem1 && buyStackItem1.getAttribute('data-line-in-cart') === '1';
+                    if (inCartItem1 && typeof window.productCardSyncCartLine === 'function') {
+                        window.productCardSyncCartLine(id).then(function() {
+                            window.location.href = "<?php echo url('/'); ?>/cart";
+                        });
+                        return;
+                    }
+                    let qty = $('#quantityinput').val();
+                    if (qty === undefined || qty === null || qty === '') {
+                        const specVal = $('#spec' + id).val();
+                        qty = specVal !== undefined && specVal !== '' ? specVal : 1;
+                    }
 
                     $.ajax({
                         url: "<?php echo url('/'); ?>/cart/add",
                         method: "POST",
                         data: {
                             id: id,
+                            qty: qty,
                             "_token": "{{ csrf_token() }}",
                         },
                         success: function(response) {
                             if (response.error) {
-
-
-                            } else {
-                                window.location.href = "<?php echo url('/'); ?>/cart";
+                                if (typeof showToastr === 'function') {
+                                    showToastr(response.error_data || 'Unable to add to cart', 'danger');
+                                }
+                                return;
                             }
+                            window.location.href = "<?php echo url('/'); ?>/cart";
                         }
                     });
                 });

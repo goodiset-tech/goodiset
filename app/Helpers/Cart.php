@@ -224,6 +224,65 @@ class Cart
         }
     }
 
+    /**
+     * Set absolute line quantity for a normal cart product (not package/box lines).
+     *
+     * @param  int  $productId
+     * @param  int  $newQty  Cart units (for weight products, one unit is one 100g step).
+     * @return array{ok:bool,error?:string,removed?:bool}
+     */
+    public static function setItemQuantity($productId, $newQty)
+    {
+        if (!Session::has('cart') || !$productId) {
+            return ['ok' => false, 'error' => 'no_cart'];
+        }
+
+        $newQty = (int) $newQty;
+        $cart = Session::get('cart');
+        $product = Product::find($productId);
+        if (!$product) {
+            return ['ok' => false, 'error' => 'no_product'];
+        }
+
+        $index = null;
+        foreach ($cart['items'] ?? [] as $key => $item) {
+            if (isset($item['id']) && (int) $item['id'] === (int) $productId) {
+                $index = $key;
+                break;
+            }
+        }
+        if ($index === null) {
+            return ['ok' => false, 'error' => 'not_in_cart'];
+        }
+
+        if ($newQty < 1) {
+            self::remove($productId, null);
+
+            return ['ok' => true, 'removed' => true];
+        }
+
+        if ($newQty > $product->product_quantity) {
+            return ['ok' => false, 'error' => 'out_of_stock'];
+        }
+
+        $oldQty = (int) $cart['items'][$index]['qty'];
+        $delta = $newQty - $oldQty;
+        if ($delta === 0) {
+            return ['ok' => true];
+        }
+
+        $cart['qty'] += $delta;
+        $cart['amount'] += $delta * (float) $product->discount_price;
+        $cart['items'][$index]['qty'] = $newQty;
+        $cart['item_removed'] = null;
+
+        Session::put('cart', $cart);
+        self::applyAutoCoupons($cart);
+        self::reEvaluateCoupon($cart);
+
+        return ['ok' => true];
+    }
+
     public static function decrease($productId, $boxid)
     {
         if (!Session::has('cart')) return false;

@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="{{ asset('') }}front/assets/sass/bootstrap.min.css">
     </noscript>
     <link rel="stylesheet" href="{{ asset('') }}front/assets/sass/main.css?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('') }}front/assets/sass/cart-drawer.css?v={{ time() }}">
     <style>
         a {
             text-decoration: none;

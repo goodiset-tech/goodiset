@@ -123,7 +123,9 @@ use App\Models\Admins\Rating;
                                                     @endif
 
                                                     @if ($product->name != 'Free Product')
-                                                        <div class="quantity-controls">
+                                                        <div class="quantity-controls"
+                                                            data-qty-grams="{{ (int) $product->format === 1 ? '1' : '0' }}"
+                                                            data-product-qty-max="{{ (int) $product->product_quantity }}">
                                                             <div class="button_spin_overlay"
                                                                 id="button_loader{{ $product->id }}" style="display:none">
                                                                 <div class="loader_dots"></div>
@@ -184,7 +186,7 @@ use App\Models\Admins\Rating;
                                                         <h3>{{ $boxes->price }} {{ getSetting('currency') }}</h3>
                                                     </div>
                                                     <div class="operations">
-                                                        <div class="quantity-controls">
+                                                        <div class="quantity-controls" data-qty-grams="0">
                                                             <div class="button_spin_overlay"
                                                                 id="button_loader{{ $boxes->id }}"
                                                                 style="display:none">
@@ -842,7 +844,7 @@ use App\Models\Admins\Rating;
                         if (response.cart === null) {
                             $('#cart_empty_dev').css('display', 'block');
                             $('#content').css('display', 'block');
-                            $('#cartValue').html(0);
+                            $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(0);
                             setTimeout(() => {
                                 $('#loader_container_overlay').hide();
                                 $('#button_loader' + id).hide();
@@ -864,7 +866,7 @@ use App\Models\Admins\Rating;
 
             function updateView(response) {
                 productTotal = parseInt(qty * price);
-                $('#cartValue').html(response.cart.qty);
+                $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(response.cart.qty);
 
                 var minvalur = {{ getSetting('min_order_value') }};
                 var total = parseFloat(response.cart.amount) +

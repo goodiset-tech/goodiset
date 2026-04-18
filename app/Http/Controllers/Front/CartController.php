@@ -69,6 +69,62 @@ class CartController extends Controller
         return Api::setResponse('cart', Session::get('cart'));
     }
 
+    public function setQuantity(Request $request)
+    {
+        $productId = $request->input('id');
+        $qty = (int) $request->input('qty', 0);
+
+        if ($qty < 1) {
+            Cart::remove($productId, $request->input('boxid'));
+
+            return Api::setResponse('cart', Session::get('cart'));
+        }
+
+        $result = Cart::setItemQuantity($productId, $qty);
+        if (!$result['ok']) {
+            $message = match ($result['error'] ?? '') {
+                'out_of_stock' => 'Item out of stock',
+                'not_in_cart' => 'Item is not in the cart',
+                default => 'Unable to update quantity',
+            };
+
+            return Api::setError($message);
+        }
+
+        return Api::setResponse('cart', Session::get('cart'));
+    }
+
+    /**
+     * Minimal cart snapshot for client refresh after bfcache / history navigation.
+     */
+    public function uiState()
+    {
+        if (!Session::has('cart')) {
+            return response()->json(['qty' => 0, 'lines' => []]);
+        }
+
+        $cart = Session::get('cart');
+        $lines = [];
+        $items = $cart['items'] ?? [];
+        if (is_array($items)) {
+            foreach ($items as $item) {
+                $id = $item['id'] ?? null;
+                if ($id === null || $id === '') {
+                    continue;
+                }
+                $lines[] = [
+                    'id' => (int) $id,
+                    'qty' => (int) ($item['qty'] ?? 0),
+                ];
+            }
+        }
+
+        return response()->json([
+            'qty' => (int) ($cart['qty'] ?? 0),
+            'lines' => $lines,
+        ]);
+    }
+
     public function clear()
     {
         Session::forget('cart');

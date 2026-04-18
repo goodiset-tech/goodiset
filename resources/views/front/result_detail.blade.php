@@ -642,9 +642,7 @@ use App\Models\Admins\Rating;
                         console.error("Error adding to cart:", data.error);
                     } else {
                         // Update cart UI
-                        $('#cartValue').html(data.qty);
-                        $('#cartValue1').html(data.qty);
-                        $('#cartValue2').html(data.qty);
+                        $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(data.qty);
                         $('.quantity_btn_box' + productId).show();
                         $('.add-to-cart' + productId).hide();
 
@@ -769,9 +767,10 @@ use App\Models\Admins\Rating;
                             console.error("Item with id " + id + " not found in the cart.");
                         }
                         // showToastr(data.msg, data.msg_type);
-                        document.getElementById("cartValue").innerHTML = data.cart.qty;
-                        document.getElementById("cartValue1").innerHTML = data.cart.qty;
-                        document.getElementById("cartValue2").innerHTML = data.cart.qty;
+                        document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab').forEach(
+                            function(el) {
+                                el.innerHTML = data.cart.qty;
+                            });
                         // Quantity controls logic
                         const quantityControls = document.querySelectorAll(".quantity-controls");
 
@@ -849,9 +848,10 @@ use App\Models\Admins\Rating;
                         } else {
                             console.error("Item with id " + id + " not found in the cart.");
                         }
-                        document.getElementById("cartValue").innerHTML = data.cart.qty;
-                        document.getElementById("cartValue1").innerHTML = data.cart.qty;
-                        document.getElementById("cartValue2").innerHTML = data.cart.qty;
+                        document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab').forEach(
+                            function(el) {
+                                el.innerHTML = data.cart.qty;
+                            });
                         // Quantity controls logic
                         const quantityControls = document.querySelectorAll(".quantity-controls");
 
@@ -921,14 +921,20 @@ use App\Models\Admins\Rating;
 
                     } else {
                         if (data.cart === null) {
-                            document.getElementById("cartValue").innerHTML = 0;
+                            document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab')
+                                .forEach(function(el) {
+                                    el.innerHTML = 0;
+                                });
                             document.querySelector(".quantity_btn_box" + productId).style.display = "none";
                             document.querySelector(".add-to-cart" + productId).style.display = "unset";
                             $('#loader_container_overlay').hide();
                             $('#button_loader' + productId).hide();
                             // $('#loader_container').hide();
                         } else {
-                            document.getElementById("cartValue").innerHTML = data.cart.qty;
+                            document.querySelectorAll('#cartValue, #cartValue1, #cartValue2, #cartValueFab')
+                                .forEach(function(el) {
+                                    el.innerHTML = data.cart.qty;
+                                });
                             document.querySelector(".quantity_btn_box" + productId).style.display = "none";
                             document.querySelector(".add-to-cart" + productId).style.display = "unset";
                             $('#loader_container_overlay').hide();

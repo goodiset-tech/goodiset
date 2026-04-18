@@ -385,20 +385,21 @@
                     addToCartShop(btn.dataset.id, btn.dataset.price);
             });
 
-            /* PLUS */
-            document.querySelectorAll(".plus").forEach(btn => {
+            /* PLUS (shop cards on /cart use plus_1) */
+            document.querySelectorAll(".plus, .plus_1").forEach(btn => {
                 btn.onclick = () =>
                     increment(btn.getAttribute("productId"));
             });
 
             /* MINUS */
-            document.querySelectorAll(".minus").forEach(btn => {
+            document.querySelectorAll(".minus, .minus_1").forEach(btn => {
                 btn.onclick = () =>
                     decrement(btn.getAttribute("productId"));
             });
 
-            /* REMOVE */
+            /* REMOVE (product-card trash uses layout .ion-close delegation) */
             document.querySelectorAll(".del_btn").forEach(btn => {
+                if (btn.classList.contains("product-card__pre-del")) return;
                 btn.onclick = () =>
                     remove(btn.getAttribute("productId"));
             });
@@ -428,18 +429,39 @@
             const controllers = document.querySelectorAll(".quantity-controls");
 
             controllers.forEach(controller => {
-                const minusBtn = controller.querySelector(".minus");
-                const plusBtn = controller.querySelector(".plus");
+                const minusBtn = controller.querySelector(".minus, .minus_1");
+                const plusBtn = controller.querySelector(".plus, .plus_1");
                 const delBtn = controller.querySelector(".del_btn");
                 const qtyDisplay = controller.querySelector(".quantity_cart");
 
                 if (!minusBtn || !plusBtn || !delBtn || !qtyDisplay) return;
 
-                let original = qtyDisplay.innerHTML.trim();
-                let isGram = original.endsWith("g");
+                const isGram = controller.dataset.qtyGrams === "1";
+
+                const readQty = () => {
+                    const raw =
+                        qtyDisplay.tagName === "INPUT"
+                            ? qtyDisplay.value
+                            : qtyDisplay.textContent.trim().replace(/\s*g\s*$/i, "");
+                    let n = parseInt(raw, 10);
+                    if (Number.isNaN(n)) {
+                        n = isGram ? 100 : 1;
+                    }
+                    return n;
+                };
+
+                const writeQty = (n) => {
+                    if (qtyDisplay.tagName === "INPUT") {
+                        qtyDisplay.value = String(n);
+                    } else if (isGram) {
+                        qtyDisplay.textContent = `${n} g`;
+                    } else {
+                        qtyDisplay.textContent = String(n);
+                    }
+                };
 
                 function updateVisibility() {
-                    let qty = parseInt(qtyDisplay.innerHTML);
+                    const qty = readQty();
 
                     if (isGram) {
                         if (qty > 100) {
@@ -464,31 +486,35 @@
 
                 /* MINUS */
                 minusBtn.addEventListener("click", () => {
-                    let qty = parseInt(qtyDisplay.innerHTML);
+                    let qty = readQty();
 
                     if (isGram) {
                         if (qty > 100) qty -= 100;
-                        qtyDisplay.textContent = `${qty} g`;
-                    } else {
-                        if (qty > 1) qty -= 1;
-                        qtyDisplay.textContent = qty;
+                    } else if (qty > 1) {
+                        qty -= 1;
                     }
 
+                    writeQty(qty);
                     updateVisibility();
                 });
 
                 /* PLUS */
                 plusBtn.addEventListener("click", () => {
-                    let qty = parseInt(qtyDisplay.innerHTML);
+                    let qty = readQty();
 
                     if (isGram) {
                         qty += 100;
-                        qtyDisplay.textContent = `${qty} g`;
                     } else {
                         qty += 1;
-                        qtyDisplay.textContent = qty;
                     }
 
+                    const maxAttr = qtyDisplay.getAttribute("max");
+                    const maxVal = maxAttr !== null ? parseInt(maxAttr, 10) : NaN;
+                    if (!Number.isNaN(maxVal) && qty > maxVal) {
+                        qty = maxVal;
+                    }
+
+                    writeQty(qty);
                     updateVisibility();
                 });
             });
@@ -499,6 +525,19 @@
            CART FUNCTIONS
         ============================================================ */
         function addToCartShop(productId, price) {
+            const buyStackEl = document.querySelector(".add-to-cart" + productId);
+            if (buyStackEl && buyStackEl.getAttribute("data-line-in-cart") === "1" &&
+                typeof window.productCardSyncCartLine === "function") {
+                window.productCardSyncCartLine(productId).then(function(data) {
+                    if (data && data.cart && typeof data.cart.qty !== "undefined") {
+                        updateCartCount(data.cart.qty);
+                    }
+                });
+                return;
+            }
+            const specEl = document.getElementById("spec" + productId);
+            const qtyVal = specEl ? (parseInt(specEl.value, 10) || 1) : 1;
+            const doConfettiShop = true;
             fetch("{{ url('/cart/add') }}", {
                     method: "POST",
                     headers: {
@@ -506,37 +545,70 @@
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
-                        id: productId
+                        id: productId,
+                        qty: qtyVal
                     })
                 })
                 .then(res => res.json())
                 .then(data => {
-                    const addBtn = document.querySelector(".add-to-cart" + productId);
-                    const qtyBox = document.querySelector(".quantity_btn_box" + productId);
+                    if (data.error) {
+                        if (typeof showToastr === "function") {
+                            showToastr(data.error_data || "Unable to add to cart", "danger");
+                        }
+                        return;
+                    }
+                    if (typeof showToastr === "function" && data.msg) {
+                        showToastr(data.msg, data.msg_type || "success");
+                    }
+                    if (data.cart && data.cart.items) {
+                        const rawItems = data.cart.items;
+                        const list = Array.isArray(rawItems) ? rawItems : Object.values(rawItems);
+                        const row = list.find((x) => String(x.id) === String(productId));
+                        const pcOk = row && typeof window.productCardSetLineState === "function" &&
+                            window.productCardSetLineState(productId, true, row);
+                        if (!pcOk && row && specEl) {
+                            specEl.value = String(row.qty);
+                            const preBar = document.querySelector(
+                                '.product-card__pre-qty[data-product-id="' + productId + '"]');
+                            const isGram = preBar && preBar.getAttribute("data-qty-grams") === "1";
+                            const disp = isGram ? String(parseInt(row.qty, 10) * 100) : String(row.qty);
+                            const preEl = document.getElementById("product-pre-qty-in-" + productId);
+                            if (preEl) preEl.value = disp;
+                            const qEl = document.getElementById("quantity" + productId);
+                            if (qEl) qEl.value = disp;
+                        }
+                    }
+                    if (doConfettiShop) {
+                        const button = document.querySelector(".add-to-cart" + productId +
+                                ".product-card__buy-stack") ||
+                            document.querySelector(".add-to-cart" + productId) || document.querySelector(
+                                `.quantity_btn_box${productId}`);
+                        if (button) {
+                            const rect = button.getBoundingClientRect();
+                            const x = rect.left + rect.width / 2;
+                            const y = rect.top + rect.height / 2;
 
-                    if (addBtn) addBtn.style.display = "none";
-                    if (qtyBox) qtyBox.style.display = "flex";
-                    const button = document.querySelector(`.quantity_btn_box${productId}`);
-                    if (button) {
-                        const rect = button.getBoundingClientRect();
-                        const x = rect.left + rect.width / 2; // Button's center x
-                        const y = rect.top + rect.height / 2; // Button's center y
-
-                        confetti({
-                            particleCount: 50, // Fewer particles
-                            startVelocity: 15, // Lower velocity
-                            spread: 360, // Full spread
-                            gravity: 0, // Prevent confetti from falling down
-                            ticks: 100, // Short lifespan
-                            origin: {
-                                x: x / window.innerWidth, // Relative x position
-                                y: y / window.innerHeight, // Relative y position
-                            },
-                            scalar: 0.8, // Smaller particle size
-                        });
+                            confetti({
+                                particleCount: 50,
+                                startVelocity: 15,
+                                spread: 360,
+                                gravity: 0,
+                                ticks: 100,
+                                origin: {
+                                    x: x / window.innerWidth,
+                                    y: y / window.innerHeight,
+                                },
+                                scalar: 0.8,
+                            });
+                        }
                     }
 
                     updateCartCount(data.qty);
+                })
+                .catch(() => {
+                    if (typeof showToastr === "function") {
+                        showToastr("Unable to add to cart", "danger");
+                    }
                 });
         }
 
@@ -616,18 +688,22 @@
                 })
                 .then(res => res.json())
                 .then(data => {
+                    if (typeof window.productCardSetLineState === "function") {
+                        window.productCardSetLineState(productId, false);
+                    }
                     const qtyBox = document.querySelector(".quantity_btn_box" + productId);
                     const addBtn = document.querySelector(".add-to-cart" + productId);
-
                     if (qtyBox) qtyBox.style.display = "none";
-                    if (addBtn) addBtn.style.display = "block";
+                    if (addBtn && !addBtn.classList.contains("product-card__buy-stack")) {
+                        addBtn.style.display = "block";
+                    }
 
                     updateCartCount(data.cart?.qty ?? 0);
                 });
         }
 
         function updateCartCount(qty) {
-            document.querySelectorAll("#cartValue, #cartValue1, #cartValue2")
+            document.querySelectorAll("#cartValue, #cartValue1, #cartValue2, #cartValueFab")
                 .forEach(x => x.innerHTML = qty);
         }
 

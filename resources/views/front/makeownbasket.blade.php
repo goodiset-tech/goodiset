@@ -733,9 +733,7 @@ padding:10px;
                     showToastr(msg, msg_type);
                     // Handle error response
                 } else {
-                    $('#cartValue').html(response.qty);
-                    $('#cartValue1').html(response.qty);
-                    $('#cartValue2').html(response.qty);
+                    $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(response.qty);
                     $('#pack_qty').val(qtyy);
                     var msg = "Package Added To Cart";
                     var msg_type = "success";
@@ -805,9 +803,7 @@ padding:10px;
                     showToastr(msg, msg_type);
                     // Handle error response
                 } else {
-                    $('#cartValue').html(response.qty);
-                    $('#cartValue1').html(response.qty);
-                    $('#cartValue2').html(response.qty);
+                    $('#cartValue, #cartValue1, #cartValue2, #cartValueFab').html(response.qty);
                     $('#pack_qty').val(qtyy);
                     var msg = "Package Added To Cart";
                     var msg_type = "success";
