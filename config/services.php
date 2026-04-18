@@ -39,4 +39,9 @@ return [
         'phone_fallback_region' => env('TIKTOK_PHONE_FALLBACK_REGION'),
     ],
 
+    'recaptcha' => [
+        'site_key' => env('RECAPTCHA_SITE_KEY'),
+        'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+    ],
+
 ];

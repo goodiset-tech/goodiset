@@ -147,7 +147,7 @@
                     <textarea name="meg" rows="4" placeholder="{{ __('retailers.contact_message') }}"></textarea>
                 </div>
 
-                <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25"></div>
+                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                 <button type="submit" class="btn-red contactus-btn">{{ __('retailers.contact_btn') }}</button>
             </form>
         </div>

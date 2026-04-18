@@ -52,7 +52,7 @@ use App\Models\Admins\Slider;
                                         </span>
                                         
                                     </div>
-                                    <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25"></div>
+                                    <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                                 </div>
 
                                 <button type="submit" class="register">{{ __('signup.signup_button') }}</button>
