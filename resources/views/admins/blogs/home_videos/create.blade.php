@@ -14,15 +14,6 @@
                     <h5>Add home page video</h5>
                 </div>
                 <div class="ibox-content">
-                    @if (!empty($phpLimits))
-                        <div class="alert alert-info m-b-md">
-                            <strong>Server upload limits (PHP)</strong><br>
-                            <code>upload_max_filesize</code> = {{ $phpLimits['upload_max_filesize'] ?? '—' }},
-                            <code>post_max_size</code> = {{ $phpLimits['post_max_size'] ?? '—' }}.
-                            This form accepts up to <strong>{{ $phpLimits['effective_max_mb'] ?? $maxUploadMb }} MB</strong> per video (the smaller of your .env limit and PHP).
-                            If uploads disappear with no file, raise <code>post_max_size</code> and <code>upload_max_filesize</code> (and nginx <code>client_max_body_size</code>).
-                        </div>
-                    @endif
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul class="m-b-none">

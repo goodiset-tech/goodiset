@@ -125,15 +125,6 @@ class HomePageVideoController extends Controller
         };
     }
 
-    private function phpLimitsForView(): array
-    {
-        return [
-            'upload_max_filesize' => ini_get('upload_max_filesize'),
-            'post_max_size' => ini_get('post_max_size'),
-            'effective_max_mb' => round($this->maxUploadKb() / 1024, 1),
-        ];
-    }
-
     public function index()
     {
         $videos = HomePageVideo::query()->orderBy('sort_order')->orderBy('id')->get();
@@ -145,7 +136,6 @@ class HomePageVideoController extends Controller
     {
         return view('admins.blogs.home_videos.create', [
             'maxUploadMb' => round($this->maxUploadKb() / 1024, 1),
-            'phpLimits' => $this->phpLimitsForView(),
         ]);
     }
 
@@ -221,7 +211,6 @@ class HomePageVideoController extends Controller
         return view('admins.blogs.home_videos.edit', [
             'video' => $video,
             'maxUploadMb' => round($this->maxUploadKb() / 1024, 1),
-            'phpLimits' => $this->phpLimitsForView(),
         ]);
     }
 
