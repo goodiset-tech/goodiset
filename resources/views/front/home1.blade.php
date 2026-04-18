@@ -352,7 +352,7 @@
     <!-- GCC Countries Section End -->
 
     {{-- google review --}}
-    <section class="google_review section n_p_b">
+    <section class="google_review section n_p_b" style="margin-bottom: 20px;">
         <h2 class="section_heading red center">{!! __('home.loved_by_customers') !!}</h2>
 
         <div style="padding:0px 6px !important;max-width: 1230px; margin: auto;" class="google-review-conntainer">
