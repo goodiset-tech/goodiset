@@ -131,7 +131,7 @@ class NgeniusPaymentController extends Controller
                             Mail::send('emails.order', $data, function ($message) use ($to_name, $to_email) {
                                 $message->to($to_email, $to_name)
                                     ->subject('Order Email');
-                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
                             \Log::error('Failed to send order email to customer: ' . $e->getMessage());
@@ -180,7 +180,7 @@ class NgeniusPaymentController extends Controller
                             Mail::send('emails.order', $data, function ($message) use ($to_name, $to_email) {
                                 $message->to($to_email, $to_name)
                                     ->subject('Order Email');
-                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
                             \Log::error('Failed to send order email to customer: ' . $e->getMessage());
@@ -191,7 +191,7 @@ class NgeniusPaymentController extends Controller
                             Mail::send('emails.order', $data, function ($message) use ($to_n, $to) {
                                 $message->to($to, $to_n)
                                     ->subject('Order Email');
-                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
                             \Log::error('Failed to send order email to admin: ' . $e->getMessage());
@@ -202,7 +202,7 @@ class NgeniusPaymentController extends Controller
                             Mail::send('emails.order', $data, function ($message) use ($to_n, $to) {
                                 $message->to($to, $to_n)
                                     ->subject('Order Email');
-                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
                             \Log::error('Failed to send order email to admin: ' . $e->getMessage());

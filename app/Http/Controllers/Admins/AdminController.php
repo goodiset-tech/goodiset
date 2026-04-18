@@ -2501,7 +2501,7 @@ class AdminController extends Controller
             Mail::send('emails.contact_reply', $data, function ($msg) use ($to_name, $to_email) {
                 $msg->to($to_email, $to_name)
                     ->subject('Response to Your Inquiry');
-                $msg->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                $msg->from(config('mail.from.address'), config('mail.from.name'));
             });
 
             return response()->json(['success' => true]);
@@ -4016,7 +4016,7 @@ class AdminController extends Controller
                         Mail::send('emails.assign_order', $data, function ($message) use ($to_name, $to_email) {
                             $message->to($to_email, $to_name)
                                 ->subject('We have confirmed your order(s) and its ready for shipping.’');
-                            $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                            $message->from(config('mail.from.address'), config('mail.from.name'));
                         });
                     } catch (\Throwable $th) {
                         return redirect(route('admins.complete_orders'))->with([
@@ -4029,7 +4029,7 @@ class AdminController extends Controller
                     Mail::send('emails.p_order', $data, function ($message) use ($to_name, $to_email) {
                         $message->to($to_email, $to_name)
                             ->subject('We have confirmed your order(s) and its ready for shipping.’');
-                        $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                        $message->from(config('mail.from.address'), config('mail.from.name'));
                     });
                 } catch (\Throwable $th) {
                     return redirect(route('admins.complete_orders'))->with([
@@ -4105,7 +4105,7 @@ class AdminController extends Controller
                     Mail::send('emails.p_order', $data, function ($message) use ($to_name, $to_email) {
                         $message->to($to_email, $to_name)
                             ->subject('Your products are delivered.’');
-                        $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                        $message->from(config('mail.from.address'), config('mail.from.name'));
                     });
                 } catch (\Throwable $th) {
                     return redirect(route('admins.deliverd_orders'))->with([
@@ -4225,7 +4225,7 @@ class AdminController extends Controller
                     Mail::send('emails.p_order', $data, function ($message) use ($to_name, $to_email) {
                         $message->to($to_email, $to_name)
                             ->subject('Your Order Has Been Canceled');
-                        $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                        $message->from(config('mail.from.address'), config('mail.from.name'));
                     });
                 } catch (\Throwable $th) {
                     return redirect(route('admins.canceled_orders'))->with([
@@ -4300,7 +4300,7 @@ class AdminController extends Controller
                     Mail::send('emails.p_order', $data, function ($message) use ($to_name, $to_email) {
                         $message->to($to_email, $to_name)
                             ->subject('Your Order is On The Way');
-                        $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                        $message->from(config('mail.from.address'), config('mail.from.name'));
                     });
                 } catch (\Throwable $th) {
                     return redirect(route('admins.dispatched_orders'))->with([
@@ -4409,7 +4409,7 @@ class AdminController extends Controller
                 Mail::send('emails.order', $data, function ($message) use ($to_name, $to_email) {
                     $message->to($to_email, $to_name)
                         ->subject('We have confirmed your order(s) and its ready for shipping.’');
-                    $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                    $message->from(config('mail.from.address'), config('mail.from.name'));
                 });
             } catch (\Throwable $th) {
                 return redirect(route('admins.complete_orders'))->with([
@@ -5063,7 +5063,7 @@ class AdminController extends Controller
             Mail::send('emails.con_order', $data, function ($message) use ($to_name, $to_email) {
                 $message->to($to_email, $to_name)
                     ->subject('We have confirmed your order(s) and its ready for shipping.');
-                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                $message->from(config('mail.from.address'), config('mail.from.name'));
             });
 
             return response()->json(['success' => true]);

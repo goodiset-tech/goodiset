@@ -92,8 +92,10 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        // Never leave null/empty: Symfony Address rejects null; env() is empty string if key exists unset in some hosts.
+        // Also use config('mail.from.address') in app code (not env()) when config is cached.
+        'address' => env('MAIL_FROM_ADDRESS') ?: 'hello@example.com',
+        'name' => env('MAIL_FROM_NAME') ?: 'Example',
     ],
 
     /*

@@ -570,7 +570,7 @@ class FrontController extends Controller
                 Mail::send('emails.mail', $data, function ($message) use ($to, $name) {
                     $message->to($to, $name)
                         ->subject('OTP for Account Verification')
-                        ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                        ->from(config('mail.from.address'), config('mail.from.name'));
                 });
                 return view('front.verify', compact('user'));
             } catch (\Exception $e) {
@@ -697,7 +697,7 @@ class FrontController extends Controller
                 Mail::send('emails.welcome', $data, function ($message) use ($to_name, $to_email) {
                     $message->to($to_email, $to_name)
                         ->subject('Account Opening')
-                        ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                        ->from(config('mail.from.address'), config('mail.from.name'));
                 });
 
                 // --- NEW: prepare values for Snap ---
@@ -2235,7 +2235,7 @@ class FrontController extends Controller
     //                 Mail::send('emails.CustomerInquiry', $data, function ($message) use ($to_name, $to_email) {
     //                     $message->to($to_email, $to_name)
     //                         ->subject('Contact');
-    //                     $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+    //                     $message->from(config('mail.from.address'), config('mail.from.name'));
     //                 });
     //             } catch (\Exception $e) {
     //                 \Log::error('Failed to send customer creation email: ' . $e->getMessage());
@@ -2250,7 +2250,7 @@ class FrontController extends Controller
     //                 Mail::send('emails.FranchiseInquiry', $data, function ($message) use ($to_name, $to_email) {
     //                     $message->to($to_email, $to_name)
     //                         ->subject('Contact');
-    //                     $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+    //                     $message->from(config('mail.from.address'), config('mail.from.name'));
     //                 });
     //             } catch (\Exception $e) {
     //                 \Log::error('Failed to send customer creation email: ' . $e->getMessage());
@@ -2265,7 +2265,7 @@ class FrontController extends Controller
     //                 Mail::send('emails.RetailerInquiry', $data, function ($message) use ($to_name, $to_email) {
     //                     $message->to($to_email, $to_name)
     //                         ->subject('Contact');
-    //                     $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+    //                     $message->from(config('mail.from.address'), config('mail.from.name'));
     //                 });
     //             } catch (\Exception $e) {
     //                 \Log::error('Failed to send customer creation email: ' . $e->getMessage());
@@ -2280,7 +2280,7 @@ class FrontController extends Controller
     //                 Mail::send('emails.OrganiserInquiry', $data, function ($message) use ($to_name, $to_email) {
     //                     $message->to($to_email, $to_name)
     //                         ->subject('Contact');
-    //                     $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+    //                     $message->from(config('mail.from.address'), config('mail.from.name'));
     //                 });
     //             } catch (\Exception $e) {
     //                 \Log::error('Failed to send customer creation email: ' . $e->getMessage());
@@ -2295,7 +2295,7 @@ class FrontController extends Controller
     //                 Mail::send('emails.Inquiry', $data, function ($message) use ($to_name, $to_email) {
     //                     $message->to($to_email, $to_name)
     //                         ->subject('Contact');
-    //                     $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+    //                     $message->from(config('mail.from.address'), config('mail.from.name'));
     //                 });
     //             } catch (\Exception $e) {
     //                 \Log::error('Failed to send customer creation email: ' . $e->getMessage());
@@ -2379,7 +2379,7 @@ class FrontController extends Controller
                     Mail::send($emailTemplates[$contact_list->contact_type], $data, function ($message) use ($to_name, $to_email) {
                         $message->to($to_email, $to_name)
                             ->subject('Contact')
-                            ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                            ->from(config('mail.from.address'), config('mail.from.name'));
                     });
                 } catch (\Exception $e) {
                     \Log::error('Failed to send email for contact type ' . $contact_list->contact_type . ': ' . $e->getMessage());
@@ -2393,7 +2393,7 @@ class FrontController extends Controller
                     Mail::send($emailTemplates[$contact_list->contact_type], $data, function ($message) use ($to_name, $to_email) {
                         $message->to($to_email, $to_name)
                             ->subject('Contact')
-                            ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                            ->from(config('mail.from.address'), config('mail.from.name'));
                     });
                 } catch (\Exception $e) {
                     \Log::error('Failed to send email for contact type ' . $contact_list->contact_type . ': ' . $e->getMessage());
@@ -2816,7 +2816,7 @@ class FrontController extends Controller
                             Mail::send('emails.welcome', $data, function ($message) use ($to_name, $to_email) {
                                 $message->to($to_email, $to_name)
                                     ->subject('Account Opening Email');
-                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
                             \Log::error('Failed to send customer creation email: ' . $e->getMessage());
@@ -2933,7 +2933,7 @@ class FrontController extends Controller
                                 Mail::send('emails.order', $data, function ($message) use ($to_name, $to_email) {
                                     $message->to($to_email, $to_name)
                                         ->subject('Order Email');
-                                    $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                    $message->from(config('mail.from.address'), config('mail.from.name'));
                                 });
                             } catch (\Exception $e) {
                                 \Log::error('Failed to send order email to customer: ' . $e->getMessage());
@@ -2953,7 +2953,7 @@ class FrontController extends Controller
                                         Mail::send('emails.admin_order', $data, function ($message) use ($to_n, $to) {
                                             $message->to($to, $to_n)
                                                 ->subject('Order Email');
-                                            $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                            $message->from(config('mail.from.address'), config('mail.from.name'));
                                         });
                                     } catch (\Exception $e) {
                                         \Log::error('Failed to send order email to admin: ' . $e->getMessage());
@@ -3122,7 +3122,7 @@ class FrontController extends Controller
                             Mail::send('emails.order', $data, function ($message) use ($to_name, $to_email) {
                                 $message->to($to_email, $to_name)
                                     ->subject('Order Email');
-                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
                             \Log::error('Failed to send order email to customer: ' . $e->getMessage());
@@ -3142,7 +3142,7 @@ class FrontController extends Controller
                                     Mail::send('emails.admin_order', $data, function ($message) use ($to_n, $to) {
                                         $message->to($to, $to_n)
                                             ->subject('Order Email');
-                                        $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                        $message->from(config('mail.from.address'), config('mail.from.name'));
                                     });
                                 } catch (\Exception $e) {
                                     \Log::error('Failed to send order email to admin: ' . $e->getMessage());
@@ -3183,7 +3183,7 @@ class FrontController extends Controller
                             Mail::send('emails.welcome', $data, function ($message) use ($to_name, $to_email) {
                                 $message->to($to_email, $to_name)
                                     ->subject('Account Opening Email');
-                                $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+                                $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
                             \Log::error('Failed to send customer creation email: ' . $e->getMessage());
