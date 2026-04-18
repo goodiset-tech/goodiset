@@ -299,7 +299,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="@yield('review') @yield('blogs') @yield('faq') @yield('review_child_2_active')">
+                        <li class="@yield('review') @yield('blogs') @yield('faq') @yield('review_child_2_active') @yield('home_videos')">
                             <a href="#"><i class="fa-solid fa-truck"></i> <span
                                     class="nav-label">Content</span><span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level collapse @yield('product_active_c1')">
@@ -314,6 +314,10 @@
                                 <li class="@yield('blogs')" style="display:;">
                                     <a href="{{ route('admins.blogs.index') }}"> <span class="nav-label">Blogs</span>
                                     </a>
+                                </li>
+                                <li class="@yield('home_videos')" style="display:;">
+                                    <a href="{{ route('admins.home-videos.index') }}"> <span
+                                            class="nav-label">Videos</span></a>
                                 </li>
                                 {{-- <li class="@yield('blog_category_active')" style="display:;">
                                     <a href="{{ route('admins.blog_category') }}"> <span
@@ -631,7 +635,7 @@
                                 auth()->guard('admin')->user()->hasPermissionForAction('faqs', 'read') ||
                                 auth()->guard('admin')->user()->hasPermissionForAction('blogs', 'read') ||
                                 auth()->guard('admin')->user()->hasPermissionForAction('blog_category', 'read'))
-                            <li class="@yield('review')">
+                            <li class="@yield('review') @yield('blog_active') @yield('home_videos')">
                                 <a href="#"><i class="fa-solid fa-truck"></i> <span
                                         class="nav-label">Content</span><span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level collapse @yield('product_active_c1')">
@@ -651,6 +655,10 @@
                                     @if (auth()->guard('admin')->user()->hasPermissionForAction('blogs', 'read'))
                                         <li class="@yield('blog_active')" style="display:;"><a
                                                 href="{{ route('admins.blogs.index') }}">Blog</a></li>
+                                    @endif
+                                    @if (auth()->guard('admin')->user()->hasPermissionForAction('blogs', 'read'))
+                                        <li class="@yield('home_videos')" style="display:;"><a
+                                                href="{{ route('admins.home-videos.index') }}">Videos</a></li>
                                     @endif
                                     {{-- @if (auth()->guard('admin')->user()->hasPermissionForAction('blog_category', 'read'))
                                         <li class="@yield('blog_category_active')" style="display:;"><a

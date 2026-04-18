@@ -363,8 +363,281 @@
             <div class="elfsight-app-b5966e63-eb25-4f04-9b6a-3c5fbaa10992" data-elfsight-app-lazy></div>
         </div>
     </section>
+    {{-- Video Section: portrait (9:16) tiles, muted autoplay in view; card opens modal for sound/full controls --}}
+    @if (isset($homeVideos) && $homeVideos->isNotEmpty())
+        <section class="section home-page-videos" id="home-page-videos-section">
+            <div class="container">
+                <h2 class="section_heading red center">{{ __('home.videos.heading') }}</h2>
+                <div class="home-videos-strip" role="list">
+                    @foreach ($homeVideos as $hv)
+                        <button type="button" class="home-videos-strip__card" role="listitem"
+                            data-home-video-src="{{ asset($hv->video_path) }}"
+                            data-home-video-title="{{ e($hv->displayTitle()) }}"
+                            aria-label="{{ e(__('home.videos.open') . ($hv->displayTitle() !== '' ? ': ' . $hv->displayTitle() : '')) }}">
+                            <span class="home-videos-strip__media">
+                                <video class="home-videos-strip__preview" tabindex="-1" muted playsinline loop
+                                    preload="metadata" disablepictureinpicture disableremoteplayback
+                                    @if ($hv->poster_path) poster="{{ asset($hv->poster_path) }}" @endif
+                                    src="{{ asset($hv->video_path) }}"></video>
+                            </span>
+                        </button>
+                    @endforeach
+                </div>
+            </div>
 
+            <div id="homeVideoModal" class="home-videos-modal" hidden>
+                <div class="home-videos-modal__backdrop" data-home-video-close tabindex="-1"></div>
+                <div class="home-videos-modal__dialog" role="dialog" aria-modal="true"
+                    aria-labelledby="homeVideoModalTitle">
+                    <button type="button" class="home-videos-modal__close" data-home-video-close
+                        aria-label="{{ __('home.videos.close') }}">&times;</button>
+                    <p id="homeVideoModalTitle" class="home-videos-modal__title visually-hidden"></p>
+                    <video id="homeVideoModalPlayer" class="home-videos-modal__player" controls playsinline
+                        preload="metadata"></video>
+                </div>
+            </div>
+        </section>
+        <style>
+            .home-page-videos { margin-bottom: 32px; }
 
+            /* Mobile: swipeable row; desktop/tablet: grid (4 cols on wide screens) */
+            .home-videos-strip {
+                display: flex;
+                gap: 14px;
+                overflow-x: auto;
+                padding: 8px 4px 16px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .home-videos-strip__card {
+                flex: 0 0 clamp(130px, 42vw, 200px);
+                scroll-snap-align: start;
+                border: none;
+                background: transparent;
+                padding: 0;
+                cursor: pointer;
+                text-align: center;
+                color: inherit;
+            }
+
+            @media (min-width: 600px) {
+                .home-videos-strip {
+                    display: grid;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    align-items: start;
+                    overflow-x: visible;
+                    scroll-snap-type: none;
+                }
+
+                .home-videos-strip__card {
+                    flex: none;
+                    scroll-snap-align: unset;
+                    min-width: 0;
+                }
+            }
+
+            @media (min-width: 900px) {
+                .home-videos-strip {
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                }
+            }
+
+            @media (min-width: 1200px) {
+                .home-videos-strip {
+                    grid-template-columns: repeat(4, minmax(0, 1fr));
+                }
+            }
+
+            /* Portrait reel / Shorts ratio (matches typical phone UGC). */
+            .home-videos-strip__media {
+                position: relative;
+                display: block;
+                border-radius: 12px;
+                overflow: hidden;
+                aspect-ratio: 9 / 16;
+                background: #111;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            }
+
+            .home-videos-strip__media img,
+            .home-videos-strip__media video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                pointer-events: none;
+            }
+
+            .home-videos-strip__preview {
+                object-position: center center;
+            }
+
+            .home-videos-modal[hidden] {
+                display: none !important;
+            }
+
+            .home-videos-modal:not([hidden]) {
+                display: flex;
+                position: fixed;
+                inset: 0;
+                z-index: 9000;
+                align-items: center;
+                justify-content: center;
+                padding: 16px;
+            }
+
+            .home-videos-modal__backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.55);
+            }
+
+            .home-videos-modal__dialog {
+                position: relative;
+                z-index: 1;
+                width: min(960px, 100%);
+                max-height: 90vh;
+                background: #000;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            }
+
+            .home-videos-modal__player {
+                display: block;
+                width: 100%;
+                max-height: min(78vh, 540px);
+            }
+
+            .home-videos-modal__close {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                z-index: 2;
+                width: 40px;
+                height: 40px;
+                border: none;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.95);
+                font-size: 26px;
+                line-height: 1;
+                cursor: pointer;
+                color: #111;
+            }
+
+            .home-videos-modal__title.visually-hidden {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                border: 0;
+            }
+        </style>
+        <script>
+            (function() {
+                var root = document.getElementById('home-page-videos-section');
+                if (!root) return;
+                var modal = root.querySelector('#homeVideoModal');
+                var player = root.querySelector('#homeVideoModalPlayer');
+                var titleEl = root.querySelector('#homeVideoModalTitle');
+                if (!modal || !player) return;
+
+                var stripVideos = root.querySelectorAll('.home-videos-strip__preview');
+
+                function tryPlay(v) {
+                    v.muted = true;
+                    return v.play();
+                }
+
+                function pauseAllStrips() {
+                    stripVideos.forEach(function(v) {
+                        try {
+                            v.pause();
+                        } catch (e) {}
+                    });
+                }
+
+                function resumeVisibleStrips() {
+                    var H = window.innerHeight || document.documentElement.clientHeight;
+                    stripVideos.forEach(function(v) {
+                        var r = v.getBoundingClientRect();
+                        if (r.width < 1 || r.height < 1) return;
+                        if (r.bottom > H * 0.04 && r.top < H * 0.96) {
+                            tryPlay(v).catch(function() {});
+                        }
+                    });
+                }
+
+                function openModal(src, title) {
+                    pauseAllStrips();
+                    player.removeAttribute('src');
+                    player.load();
+                    player.src = src;
+                    titleEl.textContent = title || '';
+                    modal.hidden = false;
+                    document.body.style.overflow = 'hidden';
+                    player.play().catch(function() {});
+                }
+
+                function closeModal() {
+                    player.pause();
+                    player.removeAttribute('src');
+                    player.load();
+                    modal.hidden = true;
+                    document.body.style.overflow = '';
+                    resumeVisibleStrips();
+                }
+
+                /* Muted inline playback when scrolled into view (no tap required). */
+                if (!('IntersectionObserver' in window)) {
+                    stripVideos.forEach(function(v) {
+                        tryPlay(v).catch(function() {});
+                    });
+                } else {
+                    var io = new IntersectionObserver(
+                        function(entries) {
+                            if (!modal.hidden) return;
+                            entries.forEach(function(entry) {
+                                var v = entry.target;
+                                if (entry.isIntersecting && entry.intersectionRatio >= 0.2) {
+                                    tryPlay(v).catch(function() {});
+                                } else {
+                                    try {
+                                        v.pause();
+                                    } catch (e) {}
+                                }
+                            });
+                        }, {
+                            root: null,
+                            threshold: [0, 0.1, 0.2, 0.35, 0.5, 0.75, 1],
+                            rootMargin: '0px 0px -5% 0px'
+                        }
+                    );
+                    stripVideos.forEach(function(v) {
+                        io.observe(v);
+                    });
+                }
+
+                root.querySelectorAll('.home-videos-strip__card').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        openModal(btn.getAttribute('data-home-video-src'), btn.getAttribute(
+                            'data-home-video-title'));
+                    });
+                });
+                modal.querySelectorAll('[data-home-video-close]').forEach(function(el) {
+                    el.addEventListener('click', closeModal);
+                });
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !modal.hidden) closeModal();
+                });
+            })();
+        </script>
+    @endif
+    {{-- Video Section End --}}
 
     @foreach ($home_categories as $v)
         @php

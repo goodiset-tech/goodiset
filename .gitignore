@@ -4,6 +4,10 @@
 /public/src/media/users
 /public/hot
 /public/storage
+
+# Home page video uploads (large binaries; created at runtime)
+/public/videos/home-page/*
+!/public/videos/home-page/.gitkeep
 /storage/*.key
 /vendor
 .htaccess

@@ -14,6 +14,7 @@
                     <div class="ibox-tools">
                         <a href="{{ route('admins.blogs.create') }}" class="btn btn-primary btn-xs">Add New Blog</a>
                         <a href="{{ route('admins.blogs.categories.index') }}" class="btn btn-primary btn-xs">Manage Categories</a>
+                        <a href="{{ route('admins.home-videos.index') }}" class="btn btn-primary btn-xs">Home page videos</a>
                     </div>
                 </div>
                 <div class="ibox-content">

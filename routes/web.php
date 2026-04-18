@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\OrderNotificationController;
 use App\Http\Controllers\Admins\TranslationController;
 use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\HomePageVideoController;
 use App\Http\Controllers\Admins\CityController;
 use App\Http\Controllers\Admins\CountryController;
 use App\Http\Controllers\Admins\ShippingRateController;
@@ -250,6 +251,9 @@ Route::name('admins.')->prefix('/admin')->group(function () {
         Route::put('/locations/{id}', [LocationsController::class, 'update'])->name('locations.update');
         Route::delete('/locations/{id}', [LocationsController::class, 'destroy'])->name('locations.destroy');
         Route::resource('blogs', BlogController::class)->names('blogs');
+        Route::resource('home-videos', HomePageVideoController::class)
+            ->parameters(['home-videos' => 'video'])
+            ->except(['show']);
         Route::resource('blog/categories', BlogCategoryController::class)->names('blogs.categories');
         Route::resource('order_notifications', OrderNotificationController::class)->names('order_notifications');
         Route::post('order_notifications/toggle-status', [OrderNotificationController::class, 'toggleStatus'])->name('order_notifications.toggle-status');
