@@ -300,7 +300,7 @@
     </section>
 
     <!-- GCC Countries Section Start -->
-    <div class="gcc-countries-section section">
+    <!-- <div class="gcc-countries-section section hidden">
         <div class="container-fluid pt-5">
             <h2 class="section_heading center red n_m_b">
                 {{ __('home.gcc_section_title') }}
@@ -348,7 +348,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- GCC Countries Section End -->
 
     {{-- google review --}}
