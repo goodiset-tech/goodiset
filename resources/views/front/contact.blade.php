@@ -212,7 +212,7 @@
                                             <textarea name="meg" id="cust_msg" required placeholder="{{ __('contact_us.message') }}" rows="5"></textarea>
                                             <input type="hidden" value="submit" name="submit">
                                         </div>
-                                        <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25">
+                                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}">
                                         </div>
                                         <button class="contactus-btn"
                                             type="submit">{{ __('contact_us.submit_btn') }}</button>
@@ -293,7 +293,7 @@
                                             <label for="fra_msg">{{ __('contact_us.message') }}</label>
                                             <textarea name="meg" id="fra_msg" required placeholder="{{ __('contact_us.message') }}" rows="5"></textarea>
                                         </div>
-                                        <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25">
+                                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}">
                                         </div>
                                         <input type="hidden" value="submit" name="submit">
                                         <button class="contactus-btn"
@@ -354,7 +354,7 @@
                                             <label for="ret_msg">{{ __('contact_us.message') }}</label>
                                             <textarea name="meg" id="ret_msg" required placeholder="{{ __('contact_us.message') }}" rows="5"></textarea>
                                         </div>
-                                        <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25">
+                                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}">
                                         </div>
                                         <input type="hidden" value="submit" name="submit">
                                         <button class="contactus-btn"
@@ -470,7 +470,7 @@
                                             <label for="org_msg">{{ __('contact_us.message') }}</label>
                                             <textarea name="meg" id="org_msg" required placeholder="{{ __('contact_us.message') }}" rows="5"></textarea>
                                         </div>
-                                        <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25">
+                                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}">
                                         </div>
                                         <input type="hidden" value="submit" name="submit">
                                         <button class="contactus-btn"

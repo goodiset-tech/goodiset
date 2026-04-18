@@ -11,14 +11,20 @@
             
         @endphp
 
-        // User identification
-        @if (!empty($ttUserData['email']) || !empty($ttUserData['phone_number']) || !empty($ttUserData['external_id']))
-            ttq.identify({
-                "email": "{{ $ttUserData['email'] }}",
-                "phone_number": "{{ $ttUserData['phone_number'] }}",
-                "external_id": "{{ $ttUserData['external_id'] }}"
-            });
+        // User identification (omit empty fields so TikTok receives only usable hashes)
+        var ttIdentify = {};
+        @if (! empty($ttUserData['email']))
+            ttIdentify.email = @json($ttUserData['email']);
         @endif
+        @if (! empty($ttUserData['phone_number']))
+            ttIdentify.phone_number = @json($ttUserData['phone_number']);
+        @endif
+        @if (! empty($ttUserData['external_id']))
+            ttIdentify.external_id = @json($ttUserData['external_id']);
+        @endif
+        if (Object.keys(ttIdentify).length) {
+            ttq.identify(ttIdentify);
+        }
     }
 
     // Initialize when ttq is ready

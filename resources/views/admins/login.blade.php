@@ -49,7 +49,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25"></div>
+                                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                                 <button type="submit" class="login">{{ __('login.login_button') }}</button>
                                 <p class="dont_have_acc">{{ __('login.no_account_message') }} <span> <a
                                             href="{{ url('/') }}/user_register">{{ __('login.sign_up_link') }}</a></span>

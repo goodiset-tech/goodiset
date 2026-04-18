@@ -309,7 +309,7 @@
                 </div>
 
                 <input type="hidden" value="submit" name="submit">
-                <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25"></div>
+                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                 <button type="submit" class="btn-red contactus-btn">{{ __('influencers.contact_button') }}</button>
             </form>
         </div>

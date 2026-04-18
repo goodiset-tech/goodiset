@@ -139,7 +139,7 @@ $cate = DB::table('categories')->get();
                                 {{-- <label>{{ __('celebration.field_message') }}</label> --}}
                                 <textarea name="meg" id="msg" required placeholder="{{ __('celebration.field_message') }}" rows="5"></textarea>
                             </div>
-                            <div class="g-recaptcha" data-sitekey="6Le64RErAAAAANr0kwqbFyTVQAkSHgXzbq2E2i25"></div>
+                            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
 
                             <button class="contactus-btn" type="submit" value="submit" name="submit">
                                 {{ __('celebration.contact_button') }}

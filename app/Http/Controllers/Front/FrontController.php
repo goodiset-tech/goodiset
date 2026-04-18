@@ -523,7 +523,7 @@ class FrontController extends Controller
         ]);
 
         // Verify reCAPTCHA
-        $recaptchaSecret = env('RECAPTCHA_SECRET_KEY'); // Add this to your .env file
+        $recaptchaSecret = config('services.recaptcha.secret_key');
         $recaptchaResponse = $req->input('g-recaptcha-response');
 
         $verifyResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
@@ -634,7 +634,7 @@ class FrontController extends Controller
         // Convert email to lowercase
         $email = strtolower($req->email);
         // Verify reCAPTCHA
-        $recaptchaSecret = env('RECAPTCHA_SECRET_KEY'); // Add this to your .env file
+        $recaptchaSecret = config('services.recaptcha.secret_key');
         $recaptchaResponse = $req->input('g-recaptcha-response');
 
         $verifyResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
@@ -2318,7 +2318,7 @@ class FrontController extends Controller
         if ($request->has('submit')) {
 
             // Verify reCAPTCHA
-            $recaptchaSecret = env('RECAPTCHA_SECRET_KEY');
+            $recaptchaSecret = config('services.recaptcha.secret_key');
             $recaptchaResponse = $request->input('g-recaptcha-response');
 
             $verifyResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [

@@ -48,6 +48,11 @@ class TikTokTracking
             'macao' => 'MO',
             'taiwan' => 'TW',
             'hong kong' => 'HK',
+            'uae' => 'AE',
+            'u.a.e.' => 'AE',
+            'u a e' => 'AE',
+            'the uae' => 'AE',
+            'emirates' => 'AE',
         ];
     }
 
@@ -139,13 +144,46 @@ class TikTokTracking
         if (empty($phone)) {
             return '';
         }
-        $e164 = self::formatPhoneE164($phone, $countryHint);
+        $raw = trim((string) $phone);
+
+        $hints = [];
+        if ($countryHint !== null && trim((string) $countryHint) !== '') {
+            $hints[] = $countryHint;
+        }
+        $fallback = self::phoneFallbackRegion();
+        if ($fallback !== null && $fallback !== '') {
+            $hints[] = $fallback;
+        }
+        $hints = array_values(array_unique($hints, SORT_REGULAR));
+
+        $e164 = '';
+        if (str_starts_with($raw, '+')) {
+            $e164 = self::formatPhoneE164($raw, null);
+        } else {
+            foreach ($hints as $h) {
+                $e164 = self::formatPhoneE164($raw, $h);
+                if ($e164 !== '') {
+                    break;
+                }
+            }
+            if ($e164 === '') {
+                $e164 = self::formatPhoneE164($raw, null);
+            }
+        }
+
         if ($e164 === '') {
             return '';
         }
         $digits = preg_replace('/\D+/', '', $e164);
 
         return $digits === '' ? '' : hash('sha256', $digits);
+    }
+
+    private static function phoneFallbackRegion(): ?string
+    {
+        $r = config('services.tiktok.phone_fallback_region');
+
+        return $r === null || $r === '' ? null : strtoupper(trim((string) $r));
     }
 
     /**
@@ -187,6 +225,10 @@ class TikTokTracking
                 } else {
                     $proto = $util->parse($raw, $region);
                 }
+            }
+
+            if (! $util->isValidNumber($proto)) {
+                return '';
             }
 
             return $util->format($proto, PhoneNumberFormat::E164);

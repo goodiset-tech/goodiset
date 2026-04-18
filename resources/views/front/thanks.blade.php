@@ -164,48 +164,104 @@
                 $hashedPhone = \App\Helpers\TikTokTracking::hashPhoneNumber($order->phone ?? null, $order->country ?? null);
                 $hashedExternalId = $externalRaw !== '' ? \App\Helpers\TikTokTracking::hashExternalId($externalRaw) : '';
 
-                $products = json_decode($order->product_detail);
-                if (is_array($products) || is_object($products)) {
-                    foreach ($products as $product) {
-                        if (isset($product->id) && $product->id !== null && $product->id !== '') {
-                            $purchaseContents[] = [
-                                'content_id' => (string) $product->id,
-                                'content_type' => 'product',
-                                'content_name' => (string) ($product->name ?? ''),
-                                'quantity' => (int) ($product->qty ?? 1),
-                                'price' => (float) ($product->price ?? 0),
-                            ];
-                        }
+                $products = json_decode($order->product_detail ?? '[]');
+                if (! is_array($products) && ! is_object($products)) {
+                    $products = [];
+                }
+                foreach ($products as $product) {
+                    $product = (object) $product;
+                    if (isset($product->id) && $product->id !== null && $product->id !== '') {
+                        $purchaseContents[] = [
+                            'content_id' => (string) $product->id,
+                            'content_type' => 'product',
+                            'content_name' => (string) ($product->name ?? ''),
+                            'quantity' => (int) ($product->qty ?? 1),
+                            'price' => (float) ($product->price ?? 0),
+                        ];
                     }
+                }
+
+                $packagesRaw = json_decode($order->package_detail ?? '[]');
+                if (! is_array($packagesRaw) && ! is_object($packagesRaw)) {
+                    $packagesRaw = [];
+                }
+                foreach ($packagesRaw as $pkgRow) {
+                    $value = (object) $pkgRow;
+                    $qty = (int) ($value->qty ?? 1);
+                    $linePrice = (float) ($value->package_price ?? 0);
+                    if ($qty < 1) {
+                        $qty = 1;
+                    }
+                    $typeId = $value->package_type ?? null;
+                    $sizeId = $value->package_size ?? null;
+                    if ($typeId === null || $typeId === '' || $sizeId === null || $sizeId === '') {
+                        continue;
+                    }
+                    $boxSize = BoxSize::where('id', $sizeId)->first();
+                    $packageType = PackageType::where('id', $typeId)->first();
+                    $nameParts = array_filter([
+                        $packageType?->name,
+                        $boxSize?->name,
+                    ]);
+                    $label = $nameParts !== [] ? implode(' — ', $nameParts) : 'Package';
+                    $purchaseContents[] = [
+                        'content_id' => 'pkg_'.$typeId.'_'.$sizeId,
+                        'content_type' => 'product',
+                        'content_name' => $label,
+                        'quantity' => $qty,
+                        'price' => $linePrice,
+                    ];
+                }
+
+                if ($purchaseContents === [] && $totalValue > 0) {
+                    $purchaseContents[] = [
+                        'content_id' => 'order_'.(string) ($order->order_no ?? $order->id),
+                        'content_type' => 'product',
+                        'content_name' => 'Order',
+                        'quantity' => 1,
+                        'price' => $totalValue,
+                    ];
                 }
 
                 $eventId = \App\Helpers\TikTokTracking::generateEventId();
             @endphp
 
-            @if (!empty($purchaseContents) && $totalValue > 0)
+            @if ($totalValue > 0)
                 (function() {
+                    try {
+                        if (typeof loadThirdPartyScripts === 'function') {
+                            loadThirdPartyScripts();
+                        }
+                    } catch (e) {}
+
                     var contents = {!! json_encode($purchaseContents) !!};
                     var payload = {
                         contents: contents,
                         value: {{ json_encode($totalValue) }},
-                        currency: @json($currencyIso),
+                        currency: @json($currencyIso)
+                    };
+                    @if ($hashedEmail !== '' || $hashedPhone !== '' || $hashedExternalId !== '')
+                        payload.user_data = {};
                         @if ($hashedEmail !== '')
-                            email: @json($hashedEmail),
+                            payload.user_data.em = @json($hashedEmail);
                         @endif
                         @if ($hashedPhone !== '')
-                            phone_number: @json($hashedPhone),
+                            payload.user_data.ph = @json($hashedPhone);
                         @endif
                         @if ($hashedExternalId !== '')
-                            external_id: @json($hashedExternalId),
+                            payload.user_data.external_id = @json($hashedExternalId);
                         @endif
-                    };
+                    @endif
                     var options = {
                         event_id: @json($eventId)
                     };
 
-                    function sendCompletePayment() {
-                        if (typeof ttq === 'undefined') {
-                            return false;
+                    var purchaseSent = false;
+                    var purchaseScheduleStarted = false;
+
+                    function runCompletePayment() {
+                        if (purchaseSent) {
+                            return;
                         }
                         try {
                             @if ($hashedEmail !== '' || $hashedPhone !== '' || $hashedExternalId !== '')
@@ -224,21 +280,52 @@
                                 }
                             @endif
                             ttq.track('CompletePayment', payload, options);
+                            purchaseSent = true;
                         } catch (e) {
                             console.error('TikTok CompletePayment error:', e);
+                            purchaseScheduleStarted = false;
+                        }
+                    }
+
+                    function scheduleCompletePayment() {
+                        if (typeof ttq === 'undefined') {
+                            return false;
+                        }
+                        if (purchaseScheduleStarted) {
+                            return true;
+                        }
+                        purchaseScheduleStarted = true;
+                        try {
+                            if (typeof ttq.ready === 'function') {
+                                ttq.ready(runCompletePayment);
+                                setTimeout(function() {
+                                    if (!purchaseSent) {
+                                        runCompletePayment();
+                                    }
+                                }, 4000);
+                            } else {
+                                runCompletePayment();
+                            }
+                        } catch (e) {
+                            console.error('TikTok CompletePayment schedule error:', e);
+                            purchaseScheduleStarted = false;
+                            runCompletePayment();
                         }
                         return true;
                     }
 
-                    if (!sendCompletePayment()) {
+                    if (!scheduleCompletePayment()) {
                         window.addEventListener('third-party-pixel-ready', function() {
-                            sendCompletePayment();
+                            scheduleCompletePayment();
                         }, {
                             once: true
                         });
                         var n = 0;
                         var t = setInterval(function() {
-                            if (sendCompletePayment() || ++n >= 120) {
+                            if (!purchaseSent) {
+                                scheduleCompletePayment();
+                            }
+                            if (purchaseSent || ++n >= 160) {
                                 clearInterval(t);
                             }
                         }, 250);
