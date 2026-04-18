@@ -92,8 +92,9 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        // Use ?: so empty string in .env still falls back (avoids Symfony Address null errors).
+        'address' => env('MAIL_FROM_ADDRESS') ?: 'hello@example.com',
+        'name' => env('MAIL_FROM_NAME') ?: env('APP_NAME', 'Example'),
     ],
 
     /*
