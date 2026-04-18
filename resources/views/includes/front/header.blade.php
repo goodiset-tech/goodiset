@@ -93,7 +93,7 @@ $sliders = $slider ? DB::table('sliders')->where('id', '!=', $slider->id)->get()
             <div class="ann-text">
                 @php $bar = $TopAnnouncementBar->first(); @endphp
                 <p>
-                    {{ app()->isLocale('ar') ? $bar->text_ar : $bar->text }}
+                    {!! app()->isLocale('ar') ? $bar->text_ar : $bar->text !!}
                 </p>
             </div>
         @endif
