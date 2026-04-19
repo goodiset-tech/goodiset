@@ -371,14 +371,14 @@
                 <div class="home-videos-strip" role="list">
                     @foreach ($homeVideos as $hv)
                         <button type="button" class="home-videos-strip__card" role="listitem"
-                            data-home-video-src="{{ asset($hv->video_path) }}"
+                            data-home-video-src="{{ homeVideoPublicUrl($hv->video_path) }}"
                             data-home-video-title="{{ e($hv->displayTitle()) }}"
                             aria-label="{{ e(__('home.videos.open') . ($hv->displayTitle() !== '' ? ': ' . $hv->displayTitle() : '')) }}">
                             <span class="home-videos-strip__media">
                                 <video class="home-videos-strip__preview" tabindex="-1" muted playsinline loop
                                     preload="metadata" disablepictureinpicture disableremoteplayback
-                                    @if ($hv->poster_path) poster="{{ asset($hv->poster_path) }}" @endif
-                                    src="{{ asset($hv->video_path) }}"></video>
+                                    @if ($hv->poster_path) poster="{{ homeVideoPublicUrl($hv->poster_path) }}" @endif
+                                    src="{{ homeVideoPublicUrl($hv->video_path) }}"></video>
                             </span>
                         </button>
                     @endforeach

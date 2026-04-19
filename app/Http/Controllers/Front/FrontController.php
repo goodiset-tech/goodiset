@@ -490,7 +490,26 @@ class FrontController extends Controller
         $faqs = Faq::where('page', 'general')->get();
         $home_categories = Category::where('status', 1)->orderBy('sort_no', 'asc')->get();
         $promotional_banners = PromotionalBanner::where('status', 1)->orderBy('sort_order', 'asc')->get();
-        $homeVideos = HomePageVideo::query()->where('status', true)->orderBy('sort_order')->orderBy('id')->get();
+        $homeVideos = HomePageVideo::query()->where('status', true)->orderBy('sort_order')->orderBy('id')->get()
+            ->filter(function (HomePageVideo $hv) {
+                if (! filled($hv->video_path)) {
+                    return false;
+                }
+                if (filled(config('home_videos.public_url'))) {
+                    return true;
+                }
+                if (! is_file(public_path($hv->video_path))) {
+                    Log::warning('home_video.missing_local_file', [
+                        'id' => $hv->id,
+                        'path' => $hv->video_path,
+                    ]);
+
+                    return false;
+                }
+
+                return true;
+            })
+            ->values();
 
         return view('front.home1', compact('page', 'Ratings', 'products', 'categories', 'home_categories', 'fproducts', 'setting', 'aproducts', 'mostviewproducts', 'Slider', 'Rating', 'meta', 'onslaeproducts', 'faqs', 'flavours', 'promotional_banners', 'homeVideos'));
     }

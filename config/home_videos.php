@@ -19,4 +19,11 @@ return [
 
     'ffmpeg_binary' => env('HOME_VIDEO_FFMPEG', 'ffmpeg'),
 
+    /*
+    | Optional public base URL for video + poster files (no trailing slash).
+    | Use when media is served from a CDN / object store (e.g. S3 public URL) or Railway volume
+    | URL, so <video src> matches where files actually live. If unset, asset() uses APP_URL.
+    */
+    'public_url' => env('HOME_VIDEO_PUBLIC_URL'),
+
 ];
