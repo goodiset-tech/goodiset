@@ -41,6 +41,16 @@ return [
         'access_token' => env('TIKTOK_EVENTS_API_ACCESS_TOKEN'),
     ],
 
+    /*
+    | Meta Pixel + Conversions API (Purchase on thank-you page).
+    | Token: Events Manager → Settings → Generate access token (Conversions API).
+    */
+    'meta' => [
+        'pixel_id' => env('META_PIXEL_ID', '4013696122240068'),
+        'access_token' => env('META_CAPI_ACCESS_TOKEN'),
+        'graph_api_version' => env('META_GRAPH_API_VERSION', 'v21.0'),
+    ],
+
     'recaptcha' => [
         'site_key' => env('RECAPTCHA_SITE_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),

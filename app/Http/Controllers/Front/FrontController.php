@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Helpers\Cart;
 use App\Http\Controllers\Controller;
 use App\Imports\ProductsImport;
+use App\Jobs\SendMetaServerPurchaseJob;
 use App\Jobs\SendTikTokServerPurchaseJob;
 use App\Mail\CouponEmail;
 use App\Models\Admins\Blog_Category;
@@ -3361,6 +3362,20 @@ class FrontController extends Controller
                 $request->userAgent(),
                 $request->fullUrl(),
                 $request->headers->get('referer')
+            );
+        }
+
+        if (
+            config('services.meta.access_token')
+            && (float) ($order->amount ?? 0) > 0
+        ) {
+            SendMetaServerPurchaseJob::dispatch(
+                (int) $order->id,
+                $request->ip(),
+                $request->userAgent(),
+                $request->cookie('_fbc'),
+                $request->cookie('_fbp'),
+                $request->fullUrl()
             );
         }
 

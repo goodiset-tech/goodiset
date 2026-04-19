@@ -158,6 +158,7 @@
                 $hashedExternalId = $externalRaw !== '' ? \App\Helpers\TikTokTracking::hashExternalId($externalRaw) : '';
 
                 $eventId = \App\Helpers\TikTokTracking::purchaseEventIdForOrder($order);
+                $metaContents = \App\Helpers\MetaPixelTracking::mapToMetaContents($purchaseContents);
             @endphp
 
             @if ($totalValue > 0)
@@ -261,6 +262,86 @@
                             }
                             if (purchaseSent || ++n >= 160) {
                                 clearInterval(t);
+                            }
+                        }, 250);
+                    }
+                })();
+            @endif
+        </script>
+
+        <!-- Meta Pixel Purchase + CAPI dedup (eventID matches server) -->
+        <script>
+            @if ($totalValue > 0)
+                (function() {
+                    try {
+                        if (typeof loadThirdPartyScripts === 'function') {
+                            loadThirdPartyScripts();
+                        }
+                    } catch (e) {}
+
+                    var metaPayload = {
+                        value: {{ json_encode($totalValue) }},
+                        currency: @json($currencyIso),
+                        content_type: 'product',
+                        contents: {!! json_encode($metaContents) !!},
+                        order_id: @json((string) ($order->order_no ?? ''))
+                    };
+                    var metaEventId = @json($eventId);
+
+                    var metaPurchaseSent = false;
+                    var metaPurchaseScheduleStarted = false;
+
+                    function runMetaPurchase() {
+                        if (metaPurchaseSent) {
+                            return;
+                        }
+                        try {
+                            fbq('track', 'Purchase', metaPayload, {
+                                eventID: metaEventId
+                            });
+                            metaPurchaseSent = true;
+                        } catch (e) {
+                            console.error('Meta Purchase error:', e);
+                            metaPurchaseScheduleStarted = false;
+                        }
+                    }
+
+                    function scheduleMetaPurchase() {
+                        if (typeof fbq === 'undefined') {
+                            return false;
+                        }
+                        if (metaPurchaseScheduleStarted) {
+                            return true;
+                        }
+                        metaPurchaseScheduleStarted = true;
+                        try {
+                            runMetaPurchase();
+                        } catch (e) {
+                            console.error('Meta Purchase schedule error:', e);
+                            metaPurchaseScheduleStarted = false;
+                            runMetaPurchase();
+                        }
+                        return true;
+                    }
+
+                    if (!scheduleMetaPurchase()) {
+                        window.addEventListener('meta-pixel-ready', function() {
+                            scheduleMetaPurchase();
+                        }, {
+                            once: true
+                        });
+                        window.addEventListener('third-party-pixel-ready', function() {
+                            scheduleMetaPurchase();
+                        }, {
+                            once: true
+                        });
+                        var mn = 0;
+                        var mt = setInterval(function() {
+                            if (!metaPurchaseSent) {
+                                scheduleMetaPurchase();
+                            }
+                            if (metaPurchaseSent || ++mn >= 160) {
+                                clearInterval(mt);
                             }
                         }, 250);
                     }
