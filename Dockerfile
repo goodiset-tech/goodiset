@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libpng-dev \
+        libwebp-dev \
         libzip-dev \
         libonig-dev \
         libxml2-dev \
@@ -38,7 +39,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install and configure PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp\
     && docker-php-ext-install -j$(nproc) \
         gd \
         pdo \
