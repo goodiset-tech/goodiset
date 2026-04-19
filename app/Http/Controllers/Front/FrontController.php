@@ -395,7 +395,7 @@ class FrontController extends Controller
             ->where('country', $country)
             ->first();
 
-        if (! $visitor) {
+        if ($visitor == null) {
             // If not, create a new entry
             $visitor = Visitor::create([
                 'visit_date' => $today,
