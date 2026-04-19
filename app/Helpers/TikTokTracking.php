@@ -466,10 +466,12 @@ class TikTokTracking
             $payload['context'] = $context;
         }
 
-        $url = 'https://business-api.tiktok.com/open_api/v1.3/pixel/track/?access_token='.rawurlencode((string) $token);
+        // TikTok expects Access-Token header (not ?access_token=), per official Business API client.
+        $url = 'https://business-api.tiktok.com/open_api/v1.3/pixel/track/';
 
         try {
             $response = Http::timeout(20)
+                ->withHeaders(['Access-Token' => (string) $token])
                 ->acceptJson()
                 ->asJson()
                 ->post($url, $payload);
@@ -507,6 +509,14 @@ class TikTokTracking
         }
 
         Cache::put($cacheKey, 1, now()->addDays(90));
+
+        Log::info('TikTok server CompletePayment succeeded', [
+            'order_id' => $order->id,
+            'event_id' => self::purchaseEventIdForOrder($order),
+            'value' => $totalValue,
+            'currency' => $currency,
+            'tiktok_request_id' => $json['request_id'] ?? null,
+        ]);
 
         return true;
     }
