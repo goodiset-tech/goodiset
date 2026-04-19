@@ -31,9 +31,9 @@ llbar {
   scroll-snap-align: start;
 }
 
-/* Make card fill the slide */
-.c-slider__item .card-container {
-  width: 33%;
+/* Card fills slide (class is card_container in markup) */
+.c-slider__item .card {
+  width: 100%;
   max-width: 100%;
 }
 
@@ -88,22 +88,14 @@ llbar {
   }
 }
 
-/* Small tablet / big mobile (≤ 768px): 2 items per view */
+/* Tablet / mobile: one product per slide so cards stay readable */
 @media (max-width: 768px) {
 
   .c-slider {
     padding: 0 16px;
   }
   .c-slider__item {
-    flex: 0 0 calc(50% - 14px);
-    max-width: calc(50% - 14px);
-  }
-}
-
-/* Small phones (≤ 480px): 1 item per view */
-@media (max-width: 480px) {
-  .c-slider__item {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: 0 0 calc(100% - 14px);
+    max-width: calc(100% - 14px);
   }
 }

@@ -25,28 +25,34 @@
 
 // ============ End Promotional Cards Section ============*/
 
-// /* ============ Category section ============ */
-.product-card {
+// /* ============ Category section (homepage only — scoped so .product-card on other pages is unaffected) ============ */
+.section.category .product-card {
   position: relative;
   width: 100%;
-  height: 420px;
-  margin: 0 auto;
+  min-width: 0;
+  margin: 0 auto 30px;
   border-radius: 12px;
   overflow: hidden;
   background: #e1eab4;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); // lighter base shadow
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  margin-bottom: 30px;
   transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 
+  /* Hero row + flexible body (long titles expand the card instead of clipping) */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 220px minmax(200px, auto);
+  min-height: 420px;
+
   @include mobile {
-    height: 320px;
+    grid-template-rows: 140px minmax(168px, auto);
+    min-height: 360px;
   }
 
-  &__link {
+  .product-card__link {
     position: absolute;
     inset: 0;
-    z-index: 5; // above .card-content (3) / .card-btn (4) so the whole card hits the same URL as Shop now
+    z-index: 5;
   }
 
   /* Default state (circle can) */
@@ -66,7 +72,6 @@
       width: 230px;
       height: 230px;
       border-radius: 50%;
-      //   background: #4bb15c;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -80,7 +85,6 @@
         width: 150px;
         height: 150px;
       }
-
     }
 
     .card-title {
@@ -99,65 +103,61 @@
     }
   }
 
-  /* Hero image (top) */
+  /* Hero image (top row) */
   .card-hero {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
     height: 220px;
+    width: 100%;
     opacity: 1;
     z-index: 1;
     transition: opacity 0.3s ease 0.2s;
     overflow: hidden;
+
+    @include mobile {
+      height: 140px;
+    }
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-
-      @include mobile {
-        height: 140px;
-      }
     }
   }
 
-  /* Wave + background mask */
+  /* Wave + coloured fill (shares body row with .card-content) */
   .card-mask {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 420px; // full card height
-    top: 220px; // visible position
+    grid-row: 2;
+    grid-column: 1;
+    position: relative;
     z-index: 2;
-    transition: top 0.5s ease;
+    margin-top: -12px;
+    align-self: stretch;
+    min-height: 120px;
 
     svg {
       width: 100%;
       height: 12px;
       display: block;
-      margin-top: -12px; // pull wave to touch hero edge
+      margin-top: -12px;
     }
-
-    @include mobile {
-      top: 140px;
-    }
-
   }
 
-  /* Bottom content */
+  /* Bottom content — overlays mask in same grid cell */
   .card-content {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 220px; // where hero ends
-    height: calc(420px - 220px);
-    padding: 24px 18px 22px;
+    grid-row: 2;
+    grid-column: 1;
+    position: relative;
+    z-index: 3;
+    align-self: stretch;
+    margin-top: -12px;
+    padding: 20px 18px 22px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     text-align: center;
-    z-index: 3;
     opacity: 1;
     transform: translateY(0);
     transition:
@@ -165,32 +165,48 @@
       transform 0.35s ease 0.25s;
 
     @include mobile {
-      padding: 18px;
-      top: 140px;
+      padding: 16px 14px 18px;
     }
 
     .card-subtitle {
-      font-size: 24px;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 0 8px;
+      font-size: clamp(1rem, 2.8vw, 1.5rem);
       font-weight: 900;
+      line-height: 1.25;
       color: $uiBlack;
-      margin-bottom: 8px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      hyphens: auto;
 
       @include mobile {
-        font-size: 15px;
+        font-size: clamp(0.95rem, 4.2vw, 1.15rem);
+        line-height: 1.3;
       }
     }
 
     .card-text {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 0 16px;
       font-size: 13px;
+      line-height: 1.45;
       color: #000000;
-      margin-bottom: 24px;
+
+      @include mobile {
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
     }
 
     .card-btn {
       display: inline-block;
+      flex-shrink: 0;
       height: 40px;
-      margin: 0 auto;
+      margin-top: auto;
       width: 120px;
+      max-width: 100%;
       border-radius: 999px;
       background: #ffffff;
       color: $uiBlack;
@@ -215,7 +231,6 @@
     }
   }
 
-  /* ---------- Hover states ---------- */
   &:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -236,20 +251,11 @@
       }
     }
 
-    .card-mask {
-      top: 220px; // wave stops at hero/content border
-
-      @include mobile {
-        top: 140px;
-      }
-    }
-
     .card-content {
       opacity: 1;
       transform: translateY(0);
     }
 
-    // Button visual matches direct .card-btn:hover when pointer is anywhere on the card
     .card-content .card-btn {
       background: $priColor;
       color: #ffffff;

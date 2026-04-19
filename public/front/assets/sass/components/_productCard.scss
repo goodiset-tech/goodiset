@@ -5,6 +5,7 @@
 
 .card {
     width: 100%;
+    min-width: 0; /* allow flex/grid children to shrink without overflow */
     border: 2px solid rgba(#E92827, .1);
     border-radius: 12px;
     background-color: $white;
@@ -58,6 +59,10 @@
                 text-align: center;
             }
 
+            @include mobile {
+                padding: 14px 12px 16px;
+            }
+
             .product-name {
                 font-family: $priFont;
                 font-size: 16px;
@@ -71,6 +76,20 @@
                 @include rtl {
                     text-align: center;
                     font-family: $arFont;
+                }
+
+                /* Phones: show up to 3 lines instead of a single clipped line */
+                @include mobile {
+                    white-space: normal;
+                    text-wrap: balance;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 3;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-size: 15px;
+                    line-height: 1.35;
+                    word-break: break-word;
                 }
             }
 

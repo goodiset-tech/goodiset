@@ -148,7 +148,7 @@ padding:10px;
                 @endphp
                 <input type="hidden" value="{{$quantity}}" id="pack_qty">
                 @foreach ($product as $index => $v)
-                                <div class="card-container2 col-6 col-sm-6 col-md-4 col-xl-3 col-custom-xxl  col-lg-3 mb-4  product-card"
+                                <div class="card-container2 col-12 col-sm-6 col-md-4 col-xl-3 col-custom-xxl col-lg-3 mb-4 product-card"
                                     data-index="{{ $index + 1 }}" style="{{ $index >= 24 ? 'display: none;' : '' }}">
                                     <div class="image">
                                         <img src="{{ asset('') }}{{ $v->image_one }}" />

@@ -105,7 +105,7 @@
             <h1 class="section_heading center red">{{ __('home.cate.heading') }}</h1>
             <div class="row" style="justify-content: center;">
                 @foreach ($cate as $v)
-                    <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
                         <div class="product-card" aria-label="{{ app()->isLocale('ar') ? $v->name_ar : $v->name }}"
                             style="background-color: {{ $v->color }};">
                             <a href="{{ url('/') }}/category/{{ $v->slug }}" class="product-card__link"

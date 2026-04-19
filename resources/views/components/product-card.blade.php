@@ -343,6 +343,29 @@
                         opacity: 0.55;
                         cursor: not-allowed;
                     }
+
+                    @media (max-width: 575.98px) {
+                        .product-card__pre-qty {
+                            gap: 0.35rem;
+                            padding: 0.5rem 0.4rem;
+                        }
+
+                        .product-card__qty-btn {
+                            width: 2rem;
+                            height: 2rem;
+                            font-size: 1.15rem;
+                        }
+
+                        .product-card__qty-value-row {
+                            min-width: 0;
+                        }
+
+                        .product-card__pre-qty[data-qty-grams='1'] .product-card__qty-value-row {
+                            flex-wrap: wrap;
+                            justify-content: center;
+                            row-gap: 0.15rem;
+                        }
+                    }
                 </style>
             @endonce
             @php
