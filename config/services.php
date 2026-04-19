@@ -37,6 +37,8 @@ return [
     */
     'tiktok' => [
         'phone_fallback_region' => env('TIKTOK_PHONE_FALLBACK_REGION'),
+        /** Events API / server-side pixel track — generate in TikTok Events Manager */
+        'access_token' => env('TIKTOK_EVENTS_API_ACCESS_TOKEN'),
     ],
 
     'recaptcha' => [

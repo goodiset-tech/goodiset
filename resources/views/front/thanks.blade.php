@@ -148,82 +148,16 @@
             @php
                 $currencyIso = strtoupper(pixelCurrency());
                 $totalValue = (float) ($order->amount ?? 0);
-                $purchaseContents = [];
+                $purchaseContents = \App\Helpers\TikTokTracking::purchaseContentsForOrder($order);
 
                 $emailPlain = strtolower(trim((string) ($order->email ?? '')));
-                $externalRaw = null;
-                if (isset($order->user_id) && $order->user_id !== null && (string) $order->user_id !== '') {
-                    $externalRaw = (string) $order->user_id;
-                } elseif (isset($order->uid) && (int) $order->uid > 0) {
-                    $externalRaw = (string) $order->uid;
-                } else {
-                    $externalRaw = (string) $order->id;
-                }
+                $externalRaw = \App\Helpers\TikTokTracking::purchaseExternalIdRaw($order);
 
                 $hashedEmail = $emailPlain !== '' ? \App\Helpers\TikTokTracking::hashEmail($emailPlain) : '';
                 $hashedPhone = \App\Helpers\TikTokTracking::hashPhoneNumber($order->phone ?? null, $order->country ?? null);
                 $hashedExternalId = $externalRaw !== '' ? \App\Helpers\TikTokTracking::hashExternalId($externalRaw) : '';
 
-                $products = json_decode($order->product_detail ?? '[]');
-                if (! is_array($products) && ! is_object($products)) {
-                    $products = [];
-                }
-                foreach ($products as $product) {
-                    $product = (object) $product;
-                    if (isset($product->id) && $product->id !== null && $product->id !== '') {
-                        $purchaseContents[] = [
-                            'content_id' => (string) $product->id,
-                            'content_type' => 'product',
-                            'content_name' => (string) ($product->name ?? ''),
-                            'quantity' => (int) ($product->qty ?? 1),
-                            'price' => (float) ($product->price ?? 0),
-                        ];
-                    }
-                }
-
-                $packagesRaw = json_decode($order->package_detail ?? '[]');
-                if (! is_array($packagesRaw) && ! is_object($packagesRaw)) {
-                    $packagesRaw = [];
-                }
-                foreach ($packagesRaw as $pkgRow) {
-                    $value = (object) $pkgRow;
-                    $qty = (int) ($value->qty ?? 1);
-                    $linePrice = (float) ($value->package_price ?? 0);
-                    if ($qty < 1) {
-                        $qty = 1;
-                    }
-                    $typeId = $value->package_type ?? null;
-                    $sizeId = $value->package_size ?? null;
-                    if ($typeId === null || $typeId === '' || $sizeId === null || $sizeId === '') {
-                        continue;
-                    }
-                    $boxSize = BoxSize::where('id', $sizeId)->first();
-                    $packageType = PackageType::where('id', $typeId)->first();
-                    $nameParts = array_filter([
-                        $packageType?->name,
-                        $boxSize?->name,
-                    ]);
-                    $label = $nameParts !== [] ? implode(' — ', $nameParts) : 'Package';
-                    $purchaseContents[] = [
-                        'content_id' => 'pkg_'.$typeId.'_'.$sizeId,
-                        'content_type' => 'product',
-                        'content_name' => $label,
-                        'quantity' => $qty,
-                        'price' => $linePrice,
-                    ];
-                }
-
-                if ($purchaseContents === [] && $totalValue > 0) {
-                    $purchaseContents[] = [
-                        'content_id' => 'order_'.(string) ($order->order_no ?? $order->id),
-                        'content_type' => 'product',
-                        'content_name' => 'Order',
-                        'quantity' => 1,
-                        'price' => $totalValue,
-                    ];
-                }
-
-                $eventId = \App\Helpers\TikTokTracking::generateEventId();
+                $eventId = \App\Helpers\TikTokTracking::purchaseEventIdForOrder($order);
             @endphp
 
             @if ($totalValue > 0)

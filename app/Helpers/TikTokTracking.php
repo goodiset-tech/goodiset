@@ -2,7 +2,14 @@
 
 namespace App\Helpers;
 
+use App\Models\Admins\Order;
+use App\Models\BoxSize;
 use App\Models\Countries;
+use App\Models\PackageType;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use League\ISO3166\Exception\OutOfBoundsException;
 use League\ISO3166\ISO3166;
 use libphonenumber\NumberParseException;
@@ -286,5 +293,221 @@ class TikTokTracking
             'phone_number' => self::hashPhoneNumber($phone, $countryHint),
             'external_id' => self::hashExternalId($userId),
         ];
+    }
+
+    /**
+     * Stable event_id shared with the browser pixel CompletePayment (dedup with server Events API).
+     */
+    public static function purchaseEventIdForOrder(Order $order): string
+    {
+        return 'order_'.(string) ($order->id ?? '');
+    }
+
+    public static function purchaseExternalIdRaw(Order $order): string
+    {
+        if (isset($order->user_id) && $order->user_id !== null && (string) $order->user_id !== '') {
+            return (string) $order->user_id;
+        }
+        if (isset($order->uid) && (int) $order->uid > 0) {
+            return (string) $order->uid;
+        }
+
+        return (string) ($order->id ?? '');
+    }
+
+    /**
+     * @return list<array{content_id: string, content_type: string, content_name: string, quantity: int, price: float}>
+     */
+    public static function purchaseContentsForOrder(Order $order): array
+    {
+        $purchaseContents = [];
+
+        $products = json_decode($order->product_detail ?? '[]');
+        if (! is_array($products) && ! is_object($products)) {
+            $products = [];
+        }
+        foreach ($products as $product) {
+            $product = (object) $product;
+            if (isset($product->id) && $product->id !== null && $product->id !== '') {
+                $purchaseContents[] = [
+                    'content_id' => (string) $product->id,
+                    'content_type' => 'product',
+                    'content_name' => (string) ($product->name ?? ''),
+                    'quantity' => (int) ($product->qty ?? 1),
+                    'price' => (float) ($product->price ?? 0),
+                ];
+            }
+        }
+
+        $packagesRaw = json_decode($order->package_detail ?? '[]');
+        if (! is_array($packagesRaw) && ! is_object($packagesRaw)) {
+            $packagesRaw = [];
+        }
+        foreach ($packagesRaw as $pkgRow) {
+            $value = (object) $pkgRow;
+            $qty = (int) ($value->qty ?? 1);
+            $linePrice = (float) ($value->package_price ?? 0);
+            if ($qty < 1) {
+                $qty = 1;
+            }
+            $typeId = $value->package_type ?? null;
+            $sizeId = $value->package_size ?? null;
+            if ($typeId === null || $typeId === '' || $sizeId === null || $sizeId === '') {
+                continue;
+            }
+            $boxSize = BoxSize::where('id', $sizeId)->first();
+            $packageType = PackageType::where('id', $typeId)->first();
+            $nameParts = array_filter([
+                $packageType?->name,
+                $boxSize?->name,
+            ]);
+            $label = $nameParts !== [] ? implode(' — ', $nameParts) : 'Package';
+            $purchaseContents[] = [
+                'content_id' => 'pkg_'.$typeId.'_'.$sizeId,
+                'content_type' => 'product',
+                'content_name' => $label,
+                'quantity' => $qty,
+                'price' => $linePrice,
+            ];
+        }
+
+        $totalValue = (float) ($order->amount ?? 0);
+        if ($purchaseContents === [] && $totalValue > 0) {
+            $purchaseContents[] = [
+                'content_id' => 'order_'.(string) ($order->order_no ?? $order->id),
+                'content_type' => 'product',
+                'content_name' => 'Order',
+                'quantity' => 1,
+                'price' => $totalValue,
+            ];
+        }
+
+        return $purchaseContents;
+    }
+
+    /**
+     * TikTok Pixel server-to-server: {@see https://business-api.tiktok.com/portal/docs?id=1739584860408338}
+     * Same event_id as the browser for deduplication.
+     *
+     * @throws \Throwable On transport errors or 5xx (caller may retry).
+     */
+    public static function sendServerCompletePaymentForOrder(
+        Order $order,
+        ?string $ip = null,
+        ?string $userAgent = null,
+        ?string $pageUrl = null,
+        ?string $referrer = null
+    ): bool {
+        $token = config('services.tiktok.access_token');
+        if ($token === null || $token === '') {
+            return false;
+        }
+
+        $totalValue = (float) ($order->amount ?? 0);
+        if ($totalValue <= 0) {
+            return false;
+        }
+
+        $cacheKey = 'tiktok_server_complete_payment:'.$order->id;
+        if (Cache::has($cacheKey)) {
+            return true;
+        }
+
+        $contents = self::purchaseContentsForOrder($order);
+        $currency = strtoupper(pixelCurrency());
+
+        $emailPlain = strtolower(trim((string) ($order->email ?? '')));
+        $externalRaw = self::purchaseExternalIdRaw($order);
+        $userBlock = array_filter([
+            'email' => $emailPlain !== '' ? self::hashEmail($emailPlain) : null,
+            'phone_number' => self::hashPhoneNumber($order->phone ?? null, $order->country ?? null) ?: null,
+            'external_id' => $externalRaw !== '' ? self::hashExternalId($externalRaw) : null,
+        ], static fn ($v) => $v !== null && $v !== '');
+
+        $context = array_filter([
+            'ip' => $ip !== null && $ip !== '' ? $ip : null,
+            'user_agent' => $userAgent !== null && $userAgent !== '' ? $userAgent : null,
+        ], static fn ($v) => $v !== null && $v !== '');
+
+        if ($userBlock !== []) {
+            $context['user'] = $userBlock;
+        }
+
+        $page = array_filter([
+            'url' => $pageUrl !== null && $pageUrl !== '' ? $pageUrl : null,
+            'referrer' => $referrer !== null && $referrer !== '' ? $referrer : null,
+        ], static fn ($v) => $v !== null && $v !== '');
+        if ($page !== []) {
+            $context['page'] = $page;
+        }
+
+        $ts = $order->created_at
+            ? Carbon::parse($order->created_at)->utc()
+            : now()->utc();
+        $timestamp = $ts->format('Y-m-d\TH:i:s.v\Z');
+
+        $properties = [
+            'value' => $totalValue,
+            'currency' => $currency,
+        ];
+        if ($contents !== []) {
+            $properties['contents'] = $contents;
+        }
+
+        $payload = [
+            'pixel_code' => self::PIXEL_ID,
+            'event' => 'CompletePayment',
+            'event_id' => self::purchaseEventIdForOrder($order),
+            'timestamp' => $timestamp,
+            'properties' => $properties,
+        ];
+
+        if ($context !== []) {
+            $payload['context'] = $context;
+        }
+
+        $url = 'https://business-api.tiktok.com/open_api/v1.3/pixel/track/?access_token='.rawurlencode((string) $token);
+
+        try {
+            $response = Http::timeout(20)
+                ->acceptJson()
+                ->asJson()
+                ->post($url, $payload);
+        } catch (\Throwable $e) {
+            Log::warning('TikTok server CompletePayment HTTP exception', [
+                'order_id' => $order->id,
+                'message' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
+
+        if (! $response->successful()) {
+            Log::warning('TikTok server CompletePayment HTTP error', [
+                'order_id' => $order->id,
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            if ($response->serverError()) {
+                throw new \RuntimeException('TikTok pixel track HTTP '.$response->status());
+            }
+
+            return false;
+        }
+
+        $json = $response->json();
+        $code = $json['code'] ?? null;
+        if ($code !== 0 && $code !== '0') {
+            Log::warning('TikTok server CompletePayment rejected', [
+                'order_id' => $order->id,
+                'response' => $json,
+            ]);
+
+            return false;
+        }
+
+        Cache::put($cacheKey, 1, now()->addDays(90));
+
+        return true;
     }
 }

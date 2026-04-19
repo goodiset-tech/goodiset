@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Helpers\Cart;
 use App\Http\Controllers\Controller;
 use App\Imports\ProductsImport;
+use App\Jobs\SendTikTokServerPurchaseJob;
 use App\Mail\CouponEmail;
 use App\Models\Admins\Blog_Category;
 use App\Models\Admins\Blog_Comment;
@@ -15,18 +16,17 @@ use App\Models\Admins\CategoryCondition;
 use App\Models\Admins\Colors;
 use App\Models\Admins\Contact;
 use App\Models\Admins\Coupon;
-use App\Models\Faq;
 use App\Models\Admins\Gallerie;
 use App\Models\Admins\Learn_setting;
 use App\Models\Admins\Order;
 use App\Models\Admins\Pages;
 use App\Models\Admins\Product;
+use App\Models\Admins\PromotionalBanner;
 use App\Models\Admins\Rating;
 use App\Models\Admins\Setting;
 use App\Models\Admins\Shap;
 use App\Models\Admins\Size;
 use App\Models\Admins\Slider;
-use App\Models\Admins\PromotionalBanner;
 use App\Models\Admins\User;
 use App\Models\Allergen;
 use App\Models\BasketType;
@@ -38,84 +38,84 @@ use App\Models\City;
 use App\Models\Countries;
 use App\Models\Country;
 use App\Models\Customer;
-use App\Models\Faq as ModelsFaq;
-use App\Models\Location as ModelsLocation;
+use App\Models\Faq;
 use App\Models\Flavour;
-use App\Models\HomePageVideo;
 use App\Models\Format;
+use App\Models\HomePageVideo;
+use App\Models\Location as ModelsLocation;
 use App\Models\Newsletter;
 use App\Models\OrderNotification;
 use App\Models\PackageType;
-use App\Models\ProductSlugRedirect;
 use App\Models\ProductType;
 use App\Models\Theme;
-use DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
-use Session;
-use Stripe\Charge;
-use Stripe\Stripe;
 use App\Models\Visitor;
 use App\Services\WhatsAppService;
 use Carbon\Carbon;
+use DB;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
-use Stevebauman\Location\Facades\Location;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Session;
+use Stevebauman\Location\Facades\Location;
+use Stripe\Charge;
 use Stripe\PaymentIntent;
+use Stripe\Stripe;
 
 /**
  * Class FrontController
- * 
- * Handles public-facing functionalities such as homepage rendering, 
+ *
+ * Handles public-facing functionalities such as homepage rendering,
  * product details, user authentication, and checkout processes.
- * 
- * @package App\Http\Controllers\Front
  */
 class FrontController extends Controller
 {
-
     public function generateMetaProductFeed()
     {
         try {
             // Eager load brand to optimize queries
             $products = Product::with('brand')->where('status', 1)->latest()->get();
         } catch (\Exception $e) {
-            Log::error('Error loading products: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Failed to load products: ' . $e->getMessage()], 500);
+            Log::error('Error loading products: '.$e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Failed to load products: '.$e->getMessage()], 500);
         }
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<rss version="2.0" xmlns:fb="http://www.facebook.com/2008/fbml" xmlns:g="http://base.google.com/ns/1.0">';
         $xml .= '<channel>';
-        $xml .= '<title>' . htmlspecialchars(getSetting('site_title')) . ' Meta Product Feed</title>';
-        $xml .= '<link>' . htmlspecialchars(url('/')) . '</link>';
-        $xml .= '<description>Product catalog for ' . htmlspecialchars(getSetting('site_title')) . '</description>';
+        $xml .= '<title>'.htmlspecialchars(getSetting('site_title')).' Meta Product Feed</title>';
+        $xml .= '<link>'.htmlspecialchars(url('/')).'</link>';
+        $xml .= '<description>Product catalog for '.htmlspecialchars(getSetting('site_title')).'</description>';
 
         foreach ($products as $product) {
 
             $xml .= '<item>';
-            $xml .= '<g:id>' . htmlspecialchars($product->id) . '</g:id>';
-            $xml .= '<g:title>' . htmlspecialchars($product->product_name) . '</g:title>';
+            $xml .= '<g:id>'.htmlspecialchars($product->id).'</g:id>';
+            $xml .= '<g:title>'.htmlspecialchars($product->product_name).'</g:title>';
             $plainDescription = strip_tags($product->product_details ?? 'No description available');
-            $xml .= '<g:description>' . htmlspecialchars(ucfirst(strtolower($plainDescription))) . '</g:description>';
+            $xml .= '<g:description>'.htmlspecialchars(ucfirst(strtolower($plainDescription))).'</g:description>';
 
-            $xml .= '<g:link>' . htmlspecialchars(url('/product/' . $product->slug)) . '</g:link>';
+            $xml .= '<g:link>'.htmlspecialchars(url('/product/'.$product->slug)).'</g:link>';
 
             // Image handling (Meta requires a main image)
-            $imageUrl =  asset($product->image_one);
-            $xml .= '<g:image_link>' . htmlspecialchars($imageUrl) . '?v=' . $product->updated_at . '</g:image_link>';
+            $imageUrl = asset($product->image_one);
+            $xml .= '<g:image_link>'.htmlspecialchars($imageUrl).'?v='.$product->updated_at.'</g:image_link>';
 
             // Price with currency in ISO 4217 format (e.g., "19.99 AED")
-            $currency = "AED"; // Assumed to return "AED"
-            $xml .= '<g:price>' . number_format($product->discount_price, 2, '.', '') . ' ' . $currency . '</g:price>';
+            $currency = 'AED'; // Assumed to return "AED"
+            $xml .= '<g:price>'.number_format($product->discount_price, 2, '.', '').' '.$currency.'</g:price>';
 
             // Availability (Meta supports in stock, out of stock, preorder, etc.)
             $availability = $product->product_quantity > 0 ? 'in stock' : 'out of stock';
-            $xml .= '<g:availability>' . $availability . '</g:availability>';
+            $xml .= '<g:availability>'.$availability.'</g:availability>';
 
             $xml .= '<g:condition>new</g:condition>';
 
@@ -137,10 +137,10 @@ class FrontController extends Controller
             try {
                 $brandName = $product->brand ? $product->brand->name : getSetting('site_title');
             } catch (\Exception $e) {
-                Log::error('Error accessing brand for product ID ' . $product->id . ': ' . $e->getMessage());
+                Log::error('Error accessing brand for product ID '.$product->id.': '.$e->getMessage());
                 $brandName = getSetting('site_title');
             }
-            $xml .= '<g:brand>' . htmlspecialchars($brandName) . '</g:brand>';
+            $xml .= '<g:brand>'.htmlspecialchars($brandName).'</g:brand>';
 
             // Fetch first category name for product_type
             $categoryName = null;
@@ -148,10 +148,10 @@ class FrontController extends Controller
                 $categories = $product->categories();
                 if ($categories->isNotEmpty()) {
                     $categoryName = $categories->first()->name;
-                    $xml .= '<g:product_type>' . htmlspecialchars($categoryName) . '</g:product_type>';
+                    $xml .= '<g:product_type>'.htmlspecialchars($categoryName).'</g:product_type>';
                 }
             } catch (\Exception $e) {
-                Log::error('Error accessing categories for product ID ' . $product->id . ': ' . $e->getMessage());
+                Log::error('Error accessing categories for product ID '.$product->id.': '.$e->getMessage());
             }
 
             // Fetch all color names for g:color
@@ -159,10 +159,10 @@ class FrontController extends Controller
                 $colors = $product->colors();
                 if ($colors->isNotEmpty()) {
                     $colorNames = $colors->pluck('name')->implode(', ');
-                    $xml .= '<g:color>' . htmlspecialchars($colorNames) . '</g:color>';
+                    $xml .= '<g:color>'.htmlspecialchars($colorNames).'</g:color>';
                 }
             } catch (\Exception $e) {
-                Log::error('Error accessing colors for product ID ' . $product->id . ': ' . $e->getMessage());
+                Log::error('Error accessing colors for product ID '.$product->id.': '.$e->getMessage());
             }
 
             // Fetch all size names for g:size
@@ -170,18 +170,18 @@ class FrontController extends Controller
                 $sizes = $product->sizes();
                 if ($sizes->isNotEmpty()) {
                     $sizeNames = $sizes->pluck('name')->implode(', ');
-                    $xml .= '<g:size>' . htmlspecialchars($sizeNames) . '</g:size>';
+                    $xml .= '<g:size>'.htmlspecialchars($sizeNames).'</g:size>';
                 }
             } catch (\Exception $e) {
-                Log::error('Error accessing sizes for product ID ' . $product->id . ': ' . $e->getMessage());
+                Log::error('Error accessing sizes for product ID '.$product->id.': '.$e->getMessage());
             }
 
             // Optional fields
             if ($product->mpn) {
-                $xml .= '<g:mpn>' . htmlspecialchars($product->mpn) . '</g:mpn>';
+                $xml .= '<g:mpn>'.htmlspecialchars($product->mpn).'</g:mpn>';
             }
             if ($product->sku) {
-                $xml .= '<g:gtin>' . htmlspecialchars($product->sku) . '</g:gtin>';
+                $xml .= '<g:gtin>'.htmlspecialchars($product->sku).'</g:gtin>';
             }
 
             // Handle bundle products if applicable
@@ -201,10 +201,11 @@ class FrontController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Meta product feed generated successfully']);
     }
+
     /**
      * Generate a product feed in RSS/XML format for Google/Meta.
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public function generateProductFeed()
     {
@@ -212,34 +213,34 @@ class FrontController extends Controller
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">';
         $xml .= '<channel>';
-        $xml .= '<title>' . htmlspecialchars(getSetting('site_title')) . ' Product Feed</title>';
-        $xml .= '<link>' . htmlspecialchars(url('/')) . '</link>';
-        $xml .= '<description>Product catalog for ' . htmlspecialchars(getSetting('site_title')) . '</description>';
+        $xml .= '<title>'.htmlspecialchars(getSetting('site_title')).' Product Feed</title>';
+        $xml .= '<link>'.htmlspecialchars(url('/')).'</link>';
+        $xml .= '<description>Product catalog for '.htmlspecialchars(getSetting('site_title')).'</description>';
 
         foreach ($products as $product) {
             $xml .= '<item>';
-            $xml .= '<g:id>' . htmlspecialchars($product->id) . '</g:id>';
-            $xml .= '<title>' . htmlspecialchars($product->product_name) . '</title>';
-            $xml .= '<description>' . htmlspecialchars($product->product_details ?? 'No description available') . '</description>';
-            $xml .= '<link>' . htmlspecialchars(url('/product/' . $product->slug)) . '</link>';
+            $xml .= '<g:id>'.htmlspecialchars($product->id).'</g:id>';
+            $xml .= '<title>'.htmlspecialchars($product->product_name).'</title>';
+            $xml .= '<description>'.htmlspecialchars($product->product_details ?? 'No description available').'</description>';
+            $xml .= '<link>'.htmlspecialchars(url('/product/'.$product->slug)).'</link>';
 
             // Image handling (assuming you have a way to get the main image)
-            $imageUrl = asset('') . $product->image_one;
-            $xml .= '<g:image_link>' . htmlspecialchars($imageUrl) . '</g:image_link>';
+            $imageUrl = asset('').$product->image_one;
+            $xml .= '<g:image_link>'.htmlspecialchars($imageUrl).'</g:image_link>';
 
-            $xml .= '<g:price>' . number_format($product->discount_price, 2) . ' AED</g:price>';
-            $xml .= '<g:availability>' . ($product->product_quantity > 0 ? 'in stock' : 'out of stock') . '</g:availability>';
+            $xml .= '<g:price>'.number_format($product->discount_price, 2).' AED</g:price>';
+            $xml .= '<g:availability>'.($product->product_quantity > 0 ? 'in stock' : 'out of stock').'</g:availability>';
             $xml .= '<g:condition>new</g:condition>';
 
             // Optional fields (adjust based on your Product model)
             if ($product->brand) {
-                $xml .= '<g:brand>' . htmlspecialchars($product->brand) . '</g:brand>';
+                $xml .= '<g:brand>'.htmlspecialchars($product->brand).'</g:brand>';
             }
             if ($product->gtin) {
-                $xml .= '<g:gtin>' . htmlspecialchars($product->gtin) . '</g:gtin>';
+                $xml .= '<g:gtin>'.htmlspecialchars($product->gtin).'</g:gtin>';
             }
             if ($product->mpn) {
-                $xml .= '<g:mpn>' . htmlspecialchars($product->mpn) . '</g:mpn>';
+                $xml .= '<g:mpn>'.htmlspecialchars($product->mpn).'</g:mpn>';
             }
 
             // Handle bundle products if applicable
@@ -268,7 +269,7 @@ class FrontController extends Controller
 
         foreach ($posts as $post) {
             $xml .= '<url>
-            <loc>' . htmlspecialchars(url('product/' . $post->slug)) . '</loc>
+            <loc>'.htmlspecialchars(url('product/'.$post->slug)).'</loc>
             <priority>1.0</priority>
             <changefreq>daily</changefreq>
             </url>';
@@ -291,7 +292,7 @@ class FrontController extends Controller
 
         foreach ($posts as $post) {
             $xml .= '<url>
-            <loc>' . htmlspecialchars(url('category/' . $post->slug)) . '</loc>
+            <loc>'.htmlspecialchars(url('category/'.$post->slug)).'</loc>
             <priority>1.0</priority>
             <changefreq>daily</changefreq>
             </url>';
@@ -314,7 +315,7 @@ class FrontController extends Controller
 
         foreach ($posts as $post) {
             $xml .= '<url>
-            <loc>' . htmlspecialchars(url('brand/' . $post->slug)) . '</loc>
+            <loc>'.htmlspecialchars(url('brand/'.$post->slug)).'</loc>
             <priority>1.0</priority>
             <changefreq>daily</changefreq>
             </url>';
@@ -343,15 +344,15 @@ class FrontController extends Controller
 
             for ($i = 0; $i < $chunkSize && $tagIndex < count($products); $i++) {
                 $product = $products[$tagIndex];
-                $tags = explode(",", $product->tags);
+                $tags = explode(',', $product->tags);
 
                 foreach ($tags as $tag) {
-                    $tag = str_replace("&", "and", $tag);
+                    $tag = str_replace('&', 'and', $tag);
                     $tag = urlencode(trim($tag)); // Ensure valid URL format
-                    $url = url('tags/') . '/' . $tag;
+                    $url = url('tags/').'/'.$tag;
 
                     $xml .= '<url>
-                    <loc>' . $url . '</loc>
+                    <loc>'.$url.'</loc>
                     <priority>1.0</priority>
                     <changefreq>daily</changefreq>
                     </url>';
@@ -378,9 +379,8 @@ class FrontController extends Controller
 
     /**
      * Display the homepage with sliders, featured products, and categories.
-     * 
-     * @param Request $request
-     * @return \Illuminate\View\View
+     *
+     * @return View
      */
     public function home(Request $request)
     {
@@ -394,7 +394,7 @@ class FrontController extends Controller
             ->where('country', $country)
             ->first();
 
-        if (!$visitor) {
+        if (! $visitor) {
             // If not, create a new entry
             $visitor = Visitor::create([
                 'visit_date' => $today,
@@ -405,7 +405,7 @@ class FrontController extends Controller
             // If visitor already exists, increment the count
             $visitor->increment('visitors');
         }
-        $page = "home";
+        $page = 'home';
         $Slider = Slider::all();
         $Rating = Rating::all();
         $categories = Category::all();
@@ -430,7 +430,7 @@ class FrontController extends Controller
                     '@type' => 'Brand',
                     'name' => 'UAE Disar',
                 ],
-                'sku' => getSetting('site_title') . '_pk',
+                'sku' => getSetting('site_title').'_pk',
                 'gtin13' => getSetting('phone') ?? '',
                 'offers' => [
                     '@type' => 'AggregateOffer',
@@ -474,7 +474,6 @@ class FrontController extends Controller
             $meta->scheme = json_encode($sch, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         }
 
-
         $products = Product::select('products.*')->where('status', 1)->orderBy('products.id', 'DESC')->get();
         $fproducts = Product::select('products.*')->where('status', 1)->where('featured', '1')->orderBy('products.id', 'DESC')->limit(10)->get();
 
@@ -516,8 +515,8 @@ class FrontController extends Controller
 
     /**
      * Show the user login page.
-     * 
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     *
+     * @return RedirectResponse|View
      */
     public function login()
     {
@@ -525,22 +524,26 @@ class FrontController extends Controller
             return redirect('/my_account');
         }
         Session::put('title', 'Login');
+
         return view('front.login');
     }
+
     public function cart_data()
     {
         return view('front.cart_data');
     }
+
     public function hearder_cart()
     {
         return view('front.hearder_cart');
     }
+
     public function user_login(Request $req)
     {
         // Validate the request data
         $req->validate([
             'login_email' => 'required|email',
-            'g-recaptcha-response' => 'required'
+            'g-recaptcha-response' => 'required',
         ]);
 
         // Verify reCAPTCHA
@@ -550,15 +553,15 @@ class FrontController extends Controller
         $verifyResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => $recaptchaSecret,
             'response' => $recaptchaResponse,
-            'remoteip' => $req->ip()
+            'remoteip' => $req->ip(),
         ])->json();
 
         // print_r($verifyResponse);die;
 
-        if (!$verifyResponse['success']) {
+        if (! $verifyResponse['success']) {
             return redirect('/login')->with([
                 'msg' => 'reCAPTCHA verification failed. Please try again.',
-                'msg_type' => 'danger'
+                'msg_type' => 'danger',
             ]);
         }
 
@@ -567,17 +570,17 @@ class FrontController extends Controller
 
         if ($user) {
             try {
-                if (!filter_var($req->login_email, FILTER_VALIDATE_EMAIL)) {
+                if (! filter_var($req->login_email, FILTER_VALIDATE_EMAIL)) {
                     return redirect('/login')->with([
                         'msg' => 'Invalid email format. Please check your email address.',
-                        'msg_type' => 'danger'
+                        'msg_type' => 'danger',
                     ]);
                 }
-                $domain = substr(strrchr($req->login_email, "@"), 1);
-                if (!checkdnsrr($domain, 'MX')) {
+                $domain = substr(strrchr($req->login_email, '@'), 1);
+                if (! checkdnsrr($domain, 'MX')) {
                     return redirect('/login')->with([
                         'msg' => 'Email domain appears invalid or unreachable.',
-                        'msg_type' => 'danger'
+                        'msg_type' => 'danger',
                     ]);
                 }
                 $otp = random_int(1000, 9999);
@@ -593,18 +596,20 @@ class FrontController extends Controller
                         ->subject('OTP for Account Verification')
                         ->from(config('mail.from.address'), config('mail.from.name'));
                 });
+
                 return view('front.verify', compact('user'));
             } catch (\Exception $e) {
-                Log::error('Mail error: ' . $e->getMessage());
+                Log::error('Mail error: '.$e->getMessage());
+
                 return redirect('/login')->with([
                     'msg' => 'Error sending OTP email. Please try again later.',
-                    'msg_type' => 'danger'
+                    'msg_type' => 'danger',
                 ]);
             }
         } else {
             return redirect('/login')->with([
                 'msg' => 'User not found. Please try again.',
-                'msg_type' => 'danger'
+                'msg_type' => 'danger',
             ]);
         }
     }
@@ -616,17 +621,19 @@ class FrontController extends Controller
         $data = Customer::all();
         if ($user) {
             $to_email = $user->email;
-            $otp = $req->value1 . $req->value2 . $req->value3 . $req->value4;
+            $otp = $req->value1.$req->value2.$req->value3.$req->value4;
 
             if ($user->otp == $otp) {
                 $req->session()->flash('invalid', 'Success');
                 $req->session()->put('user', $user);
+
                 return redirect('/my_account');
             } else {
 
                 // return "password not matched";
                 $req->session()->flash('msg', 'Enter Correct Otp');
                 $req->session()->flash('msg_type', 'danger');
+
                 return view('front.verify', compact('user'));
             }
         } else {
@@ -638,10 +645,12 @@ class FrontController extends Controller
             // return view('front.login');
         }
     }
+
     public function logout(Request $req)
     {
         if ($req->session()->has('user')) {
             $req->session()->pull('user');
+
             return redirect('/login');
         }
     }
@@ -650,7 +659,7 @@ class FrontController extends Controller
     {
         // Validate the request data
         $req->validate([
-            'g-recaptcha-response' => 'required'
+            'g-recaptcha-response' => 'required',
         ]);
         // Convert email to lowercase
         $email = strtolower($req->email);
@@ -661,15 +670,15 @@ class FrontController extends Controller
         $verifyResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => $recaptchaSecret,
             'response' => $recaptchaResponse,
-            'remoteip' => $req->ip()
+            'remoteip' => $req->ip(),
         ])->json();
 
         // print_r($verifyResponse);die;
 
-        if (!$verifyResponse['success']) {
+        if (! $verifyResponse['success']) {
             return redirect()->back()->with([
                 'msg' => 'reCAPTCHA verification failed. Please try again.',
-                'msg_type' => 'danger'
+                'msg_type' => 'danger',
             ]);
         }
 
@@ -686,7 +695,7 @@ class FrontController extends Controller
         $otp = random_int(1000, 9999);
 
         // Create a new customer
-        $User = new Customer();
+        $User = new Customer;
         $User->name = $req->name;
         $User->email = $email; // Store email in lowercase
         $User->phone = $req->phone;
@@ -701,17 +710,17 @@ class FrontController extends Controller
             ];
 
             try {
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     return redirect()->back()->with([
                         'msg' => 'Invalid email format. Please check your email address.',
-                        'msg_type' => 'danger'
+                        'msg_type' => 'danger',
                     ]);
                 }
-                $domain = substr(strrchr($email, "@"), 1);
-                if (!checkdnsrr($domain, 'MX')) {
+                $domain = substr(strrchr($email, '@'), 1);
+                if (! checkdnsrr($domain, 'MX')) {
                     return redirect()->back()->with([
                         'msg' => 'Email domain appears invalid or unreachable.',
-                        'msg_type' => 'danger'
+                        'msg_type' => 'danger',
                     ]);
                 }
                 // Send a welcome email
@@ -723,20 +732,20 @@ class FrontController extends Controller
 
                 // --- NEW: prepare values for Snap ---
                 $normalizedEmail = strtolower(trim($User->email ?? ''));
-                $normalizedPhone = preg_replace('/\D+/', '', (string)($User->phone ?? '')); // digits only
+                $normalizedPhone = preg_replace('/\D+/', '', (string) ($User->phone ?? '')); // digits only
                 // If you know country code, ensure E.164 here (e.g., add '1' for US if absent)
 
                 $snapPayload = [
-                    'sign_up_method'          => 'form', // or 'email', adjust if you capture method
-                    'user_email'              => $normalizedEmail ?: null,
-                    'user_phone_number'       => $normalizedPhone ?: null,
-                    'user_hashed_email'       => $normalizedEmail ? hash('sha256', $normalizedEmail) : null,
+                    'sign_up_method' => 'form', // or 'email', adjust if you capture method
+                    'user_email' => $normalizedEmail ?: null,
+                    'user_phone_number' => $normalizedPhone ?: null,
+                    'user_hashed_email' => $normalizedEmail ? hash('sha256', $normalizedEmail) : null,
                     'user_hashed_phone_number' => $normalizedPhone ? hash('sha256', $normalizedPhone) : null,
                 ];
 
                 return view('front.success', compact('User', 'snapPayload'));
             } catch (\Exception $e) {
-                Log::error('Mail error: ' . $e->getMessage());
+                Log::error('Mail error: '.$e->getMessage());
             }
         }
 
@@ -748,7 +757,7 @@ class FrontController extends Controller
 
     public function user_update(Request $request)
     {
-        $in = array(
+        $in = [
 
             'name' => $request->name,
             'email' => $request->email,
@@ -760,11 +769,12 @@ class FrontController extends Controller
             'unit_type' => $request->unit_type,
             'unit_number' => $request->unit_number,
             'postal_code' => $request->postal_code,
-        );
+        ];
         $id = DB::table('customers')->where('id', $request->id)->update($in);
         $user = Customer::where(['email' => $request->email])->first();
         if ($id) {
             $request->session()->put('user', $user);
+
             return redirect('/my_account')->with([
                 'msg' => 'User Updated successfully',
                 'msg_type' => 'success',
@@ -814,6 +824,7 @@ class FrontController extends Controller
             }
         }
         Session::put('title', 'Forget Password');
+
         return view('front.forget_pass');
     }
 
@@ -827,16 +838,18 @@ class FrontController extends Controller
             ]);
         }
 
-        $Newsletter = new Newsletter();
+        $Newsletter = new Newsletter;
         $Newsletter->email = $request->email;
-        $Newsletter->created_at = Date('Y-m-d h:i:s');
-        $Newsletter->updated_at = Date('Y-m-d h:i:s');
+        $Newsletter->created_at = date('Y-m-d h:i:s');
+        $Newsletter->updated_at = date('Y-m-d h:i:s');
         $Newsletter->save();
+
         return redirect()->back()->with([
             'msg' => 'Thank you for subscribing to our newsletter!',
             'msg_type' => 'success',
         ]);
     }
+
     public function product_detail($slug)
     {
         $allcatagories = Category::where(['status' => 1])->get();
@@ -862,19 +875,15 @@ class FrontController extends Controller
 
             $pro->increment('view'); // Increase view count
             if ($meta) {
-                $meta->url = url('/') . '/product/' . $pro->slug;
-                $meta->image = url('/') . '/' . $pro->image_one;
-
-
-
-
+                $meta->url = url('/').'/product/'.$pro->slug;
+                $meta->image = url('/').'/'.$pro->image_one;
 
                 // ✅ Add Schema.org Structured Data for Product Detail Page
                 $productSchema = [
                     '@context' => 'https://schema.org/',
                     '@type' => 'Product',
                     'name' => $pro->product_name,
-                    'image' => url('/') . '/' . $pro->image_one,
+                    'image' => url('/').'/'.$pro->image_one,
                     'description' => strip_tags($pro->description),
                     'sku' => $pro->sku ?? 'N/A',
                     'brand' => [
@@ -886,7 +895,7 @@ class FrontController extends Controller
                         'priceCurrency' => getSetting('currency') ?? 'USD',
                         'price' => $pro->discount_price ?? '0',
                         'availability' => $pro->product_quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-                        'url' => url('/product/' . $pro->slug),
+                        'url' => url('/product/'.$pro->slug),
                     ],
                     'aggregateRating' => [
                         '@type' => 'AggregateRating',
@@ -963,10 +972,11 @@ class FrontController extends Controller
 
         return view('front.blog_detail', compact('blog', 'relatedBlogs', 'comments', 'categories'));
     }
+
     public function blod_comment(Request $request)
     {
         // dd($request);
-        $rating = new Blog_Comment();
+        $rating = new Blog_Comment;
 
         $rating->bid = $request->bid;
         $rating->comment = $request->cum;
@@ -978,7 +988,7 @@ class FrontController extends Controller
         $product = Blog_Post::where(['id' => $request->bid])->get();
         $pro = $product[0];
 
-        return redirect('/blog/' . $product[0]->slug)->with([
+        return redirect('/blog/'.$product[0]->slug)->with([
             'msg' => 'Comment submit successfully',
             'msg_type' => 'success',
         ]);
@@ -987,7 +997,7 @@ class FrontController extends Controller
     public function contact_us(Request $request)
     {
         // dd($request);
-        $rating = new Contact();
+        $rating = new Contact;
 
         $rating->name = $request->name;
         $rating->email = $request->email;
@@ -1004,9 +1014,10 @@ class FrontController extends Controller
     public function celebrations(Request $request)
     {
         Session::put('title', 'Celebrations');
-        $page = "celebrations";
+        $page = 'celebrations';
         $theme = Theme::all();
         $faqs = Faq::where('page', 'celebration')->get();
+
         return view('front.celebrations', compact('page', 'theme', 'faqs'));
     }
 
@@ -1028,7 +1039,7 @@ class FrontController extends Controller
             ->flatMap(function ($size) {
                 return is_string($size) ? explode(',', $size) : [$size];
             })
-            ->filter(fn($size) => is_numeric($size))
+            ->filter(fn ($size) => is_numeric($size))
             ->unique()
             ->values()
             ->toArray();
@@ -1043,7 +1054,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1058,7 +1069,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1073,7 +1084,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1142,7 +1153,7 @@ class FrontController extends Controller
             ->flatMap(function ($size) {
                 return is_string($size) ? explode(',', $size) : [$size];
             })
-            ->filter(fn($size) => is_numeric($size))
+            ->filter(fn ($size) => is_numeric($size))
             ->unique()
             ->values()
             ->toArray();
@@ -1157,7 +1168,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1172,7 +1183,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1187,7 +1198,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1214,7 +1225,6 @@ class FrontController extends Controller
             Product::whereNotNull('brand_id')->distinct()->pluck('brand_id')->toArray()
         )->get();
 
-
         $product_type = ProductType::whereIn(
             'id',
             Product::whereNotNull('product_type_id')->distinct()->pluck('product_type_id')->toArray()
@@ -1234,14 +1244,16 @@ class FrontController extends Controller
             'id',
             Product::whereNotNull('format')->distinct()->pluck('format')->toArray()
         )->get();
+
         return view('front.shop', compact('formatid', 'brand', 'category_id', 'categories', 'color', 'size', 'theme', 'flavour', 'product_type', 'package_type', 'basket_type', 'format'));
     }
 
     public function flavours(Request $request)
     {
         Session::put('title', 'Flavours');
-        $page = "flavours";
+        $page = 'flavours';
         $theme = Flavour::all();
+
         return view('front.celebrations', compact('page', 'theme'));
     }
 
@@ -1263,7 +1275,7 @@ class FrontController extends Controller
             ->flatMap(function ($size) {
                 return is_string($size) ? explode(',', $size) : [$size];
             })
-            ->filter(fn($size) => is_numeric($size))
+            ->filter(fn ($size) => is_numeric($size))
             ->unique()
             ->values()
             ->toArray();
@@ -1278,7 +1290,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1293,7 +1305,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1308,7 +1320,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1363,7 +1375,7 @@ class FrontController extends Controller
     public function shop(Request $request)
     {
         Session::put('title', 'Shop');
-        $page = "shop";
+        $page = 'shop';
         $product_sizes = [];
         $product_colors = [];
         $category = [];
@@ -1375,7 +1387,7 @@ class FrontController extends Controller
             ->flatMap(function ($size) {
                 return is_string($size) ? explode(',', $size) : [$size];
             })
-            ->filter(fn($size) => is_numeric($size))
+            ->filter(fn ($size) => is_numeric($size))
             ->unique()
             ->values()
             ->toArray();
@@ -1390,7 +1402,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1405,7 +1417,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1420,7 +1432,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1478,6 +1490,7 @@ class FrontController extends Controller
         // $format = Format::all();
 
         $best = Product::select('products.*')->orderBy('view', 'DESC')->limit(3)->get();
+
         return view('front.shop', compact('page', 'best', 'brand', 'categories', 'color', 'size', 'theme', 'flavour', 'product_type', 'package_type', 'basket_type', 'format'));
     }
 
@@ -1487,7 +1500,7 @@ class FrontController extends Controller
         $Slider = Slider::all();
         $categories = Category::all();
         // return $slug->input();
-        $rproducts = product::where('product_name', 'ilike', '%' . $slug->text . '%')->get();
+        $rproducts = Product::where('product_name', 'ilike', '%'.$slug->text.'%')->get();
         $slugs = $slug->text;
         Session::put('title', 'Search');
         $product_sizes = [];
@@ -1501,7 +1514,7 @@ class FrontController extends Controller
             ->flatMap(function ($size) {
                 return is_string($size) ? explode(',', $size) : [$size];
             })
-            ->filter(fn($size) => is_numeric($size))
+            ->filter(fn ($size) => is_numeric($size))
             ->unique()
             ->values()
             ->toArray();
@@ -1516,7 +1529,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1531,7 +1544,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1546,7 +1559,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -1592,6 +1605,7 @@ class FrontController extends Controller
             'id',
             Product::whereNotNull('format')->distinct()->pluck('format')->toArray()
         )->get();
+
         return view('front.shop', compact('rproducts', 'brand', 'format', 'slugs', 'categories', 'categories', 'color', 'size', 'theme', 'flavour', 'product_type', 'package_type', 'basket_type'));
     }
 
@@ -1616,8 +1630,6 @@ class FrontController extends Controller
     //         $categoryObj = Category::where('id', $category_id)->select('id', 'is_manual', 'is_condition')->first();
     //         // $query->whereRaw("? = ANY(string_to_array(category_id, ','))", [$category_id]);
     //     }
-
-
 
     //     if (isset($categoryObj->is_manual) && $categoryObj->is_manual == 2) {
     //         if ($searchObj->count() > 0) {
@@ -1758,7 +1770,6 @@ class FrontController extends Controller
     //         $product->in_cart_quantity = $product->format == 1 ? ($cartQuantity * 100) . ' g' : ($cartQuantity * 1);
     //         $product->cart_quantity = $cartQuantity;
 
-
     //         return $product;
     //     });
 
@@ -1779,8 +1790,8 @@ class FrontController extends Controller
     {
         $query = Product::query();
 
-        $searchObj = new \stdClass();
-        $categoryObj = new \stdClass();
+        $searchObj = new \stdClass;
+        $categoryObj = new \stdClass;
 
         if ($request->has('selected_cate')) {
             $category_id = $request->selected_cate;
@@ -1814,7 +1825,7 @@ class FrontController extends Controller
                         case 'Tag':
                             $tags = explode(',', $val->condition_value);
                             foreach ($tags as $tag) {
-                                $query->$method('tags', 'LIKE', '%' . trim($tag) . '%');
+                                $query->$method('tags', 'LIKE', '%'.trim($tag).'%');
                             }
                             break;
 
@@ -1895,14 +1906,14 @@ class FrontController extends Controller
                 $query->where('brand_id', $request->brand_id);
             }
             if ($request->has('slug')) {
-                $query->where('product_name', 'ilike', '%' . $request->slug . '%');
+                $query->where('product_name', 'ilike', '%'.$request->slug.'%');
             }
         }
 
         $query->where('status', 1);
 
         $products = $query
-            ->orderByRaw("CASE WHEN COALESCE(sort_order,0)>0 THEN sort_order ELSE 999999 END ASC, product_name ASC")
+            ->orderByRaw('CASE WHEN COALESCE(sort_order,0)>0 THEN sort_order ELSE 999999 END ASC, product_name ASC')
             ->paginate(24);
 
         /** -------------------------
@@ -1917,7 +1928,7 @@ class FrontController extends Controller
             $qty = Cart::product_qty($product->id) ?? 1;
 
             $product->cart_quantity = $qty;
-            $product->in_cart_quantity = $product->format == 1 ? ($qty * 100) . " g" : $qty;
+            $product->in_cart_quantity = $product->format == 1 ? ($qty * 100).' g' : $qty;
 
             return $product;
         });
@@ -1940,7 +1951,6 @@ class FrontController extends Controller
         ]);
     }
 
-
     public function user_register(Request $request)
     {
         Session::put('title', 'User Register');
@@ -1950,7 +1960,7 @@ class FrontController extends Controller
 
     public function category_detail($slug)
     {
-        //redirect to  https://www.goodisetsubscription.com
+        // redirect to  https://www.goodisetsubscription.com
         if ($slug === 'subscription') {
             return redirect('https://www.goodisetsubscription.com');
         }
@@ -1971,55 +1981,55 @@ class FrontController extends Controller
             ->first();
         if ($meta) {
             $meta->image = '';
-            $meta->url = url('/category/') . '/' . $slug;
-            $sch = array(
+            $meta->url = url('/category/').'/'.$slug;
+            $sch = [
                 '@context' => 'https://schema.org/',
                 '@type' => 'Category',
                 'name' => $meta->title,
                 'description' => $meta->description,
-                'brand' => array(
+                'brand' => [
                     '@type' => 'Brand',
                     'name' => 'UAE Disar',
-                ),
+                ],
                 'sku' => 'DealStore_diSUa',
                 'gtin13' => '54435345',
-                'offers' => array(
+                'offers' => [
                     '@type' => 'AggregateOffer',
                     'url' => url()->current(),
                     'priceCurrency' => 'PKR',
                     'lowPrice' => '1999',
                     'highPrice' => '2000',
                     'offerCount' => '5',
-                ),
-                'aggregateRating' => array(
+                ],
+                'aggregateRating' => [
                     '@type' => 'AggregateRating',
                     'ratingValue' => '5',
                     'bestRating' => '5',
                     'worstRating' => '1',
                     'ratingCount' => '1',
                     'reviewCount' => '1',
-                ),
-                'review' => array(
+                ],
+                'review' => [
                     '@type' => 'Review',
                     'name' => 'Fahad Khan',
                     'reviewBody' => 'Best Product',
-                    'reviewRating' => array(
+                    'reviewRating' => [
                         '@type' => 'Rating',
                         'ratingValue' => '5',
                         'bestRating' => '5',
                         'worstRating' => '1',
-                    ),
+                    ],
                     'datePublished' => '2022-05-01',
-                    'author' => array(
+                    'author' => [
                         '@type' => 'Person',
                         'name' => 'DealStore',
-                    ),
-                    'publisher' => array(
+                    ],
+                    'publisher' => [
                         '@type' => 'Organization',
                         'name' => 'DealStore.com.pk',
-                    ),
-                ),
-            );
+                    ],
+                ],
+            ];
             // $meta->scheme = $sch;
         }
 
@@ -2035,7 +2045,7 @@ class FrontController extends Controller
             ->flatMap(function ($size) {
                 return is_string($size) ? explode(',', $size) : [$size];
             })
-            ->filter(fn($size) => is_numeric($size))
+            ->filter(fn ($size) => is_numeric($size))
             ->unique()
             ->values()
             ->toArray();
@@ -2050,7 +2060,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -2065,7 +2075,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -2080,7 +2090,7 @@ class FrontController extends Controller
             ->flatMap(function ($color) {
                 return is_string($color) ? explode(',', $color) : [$color];
             })
-            ->filter(fn($color) => is_numeric($color))
+            ->filter(fn ($color) => is_numeric($color))
             ->unique()
             ->values()
             ->toArray();
@@ -2126,6 +2136,7 @@ class FrontController extends Controller
             'id',
             Product::whereNotNull('format')->distinct()->pluck('format')->toArray()
         )->get();
+
         return view('front.shop', compact('meta', 'format', 'brand', 'products', 'cateid', 'category_id', 'best', 'categories', 'color', 'size', 'theme', 'flavour', 'product_type', 'package_type', 'basket_type'));
     }
 
@@ -2143,6 +2154,7 @@ class FrontController extends Controller
 
         return view('front.blogs', compact('post', 'category_id', 'meta', 'cate'));
     }
+
     public function blogs(Request $request)
     {
         Session::put('title', 'Blogs');
@@ -2154,8 +2166,8 @@ class FrontController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'ilike', '%' . $search . '%')
-                    ->orWhere('short_description', 'ilike', '%' . $search . '%');
+                $q->where('title', 'ilike', '%'.$search.'%')
+                    ->orWhere('short_description', 'ilike', '%'.$search.'%');
             });
         }
 
@@ -2179,6 +2191,7 @@ class FrontController extends Controller
         $userCountry = 'United Arab Emirates';
         $aproducts = Product::select('products.*')->where('status', 1)->where('new_arrival', '1')->orderBy('products.id', 'DESC')->limit(3)->get();
         $countries = Countries::where('status', 1)->get();
+
         return view('front.cart', compact('aproducts', 'userCountry', 'countries'));
     }
 
@@ -2243,8 +2256,6 @@ class FrontController extends Controller
     //         $contact = Contact::create($request->all());
     //         $lastid = $contact->id;
     //         $contact_list = Contact::where('id', $lastid)->first();
-
-
 
     //         if ($contact_list->contact_type == 'Customers') {
     //             try {
@@ -2345,33 +2356,36 @@ class FrontController extends Controller
             $verifyResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
                 'secret' => $recaptchaSecret,
                 'response' => $recaptchaResponse,
-                'remoteip' => $request->ip()
+                'remoteip' => $request->ip(),
             ])->json();
 
-            if (!$verifyResponse['success']) {
+            if (! $verifyResponse['success']) {
                 \Log::warning('reCAPTCHA verification failed', ['response' => $verifyResponse]);
+
                 return redirect()->back()->with([
                     'msg' => 'reCAPTCHA verification failed. Please try again.',
-                    'msg_type' => 'danger'
+                    'msg_type' => 'danger',
                 ]);
             }
 
             // Validate email format
-            if (!filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
-                \Log::error('Invalid email format: ' . $request->email);
+            if (! filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+                \Log::error('Invalid email format: '.$request->email);
+
                 return redirect()->back()->with([
                     'msg' => 'Invalid email format. Please check your email address.',
-                    'msg_type' => 'danger'
+                    'msg_type' => 'danger',
                 ]);
             }
 
             // Validate email domain (only in production)
-            $domain = substr(strrchr($request->email, "@"), 1);
-            if (app()->environment('production') && !checkdnsrr($domain, 'MX') && !checkdnsrr($domain, 'A')) {
-                \Log::error('Invalid email domain: ' . $domain);
+            $domain = substr(strrchr($request->email, '@'), 1);
+            if (app()->environment('production') && ! checkdnsrr($domain, 'MX') && ! checkdnsrr($domain, 'A')) {
+                \Log::error('Invalid email domain: '.$domain);
+
                 return redirect()->back()->with([
                     'msg' => 'Email domain appears invalid or unreachable.',
-                    'msg_type' => 'danger'
+                    'msg_type' => 'danger',
                 ]);
             }
 
@@ -2403,12 +2417,12 @@ class FrontController extends Controller
                             ->from(config('mail.from.address'), config('mail.from.name'));
                     });
                 } catch (\Exception $e) {
-                    \Log::error('Failed to send email for contact type ' . $contact_list->contact_type . ': ' . $e->getMessage());
+                    \Log::error('Failed to send email for contact type '.$contact_list->contact_type.': '.$e->getMessage());
                 }
 
                 try {
-                    $to_name = "Admin";
-                    $to_email = "info@goodiset.com";
+                    $to_name = 'Admin';
+                    $to_email = 'info@goodiset.com';
                     $data = ['user' => $contact_list];
 
                     Mail::send($emailTemplates[$contact_list->contact_type], $data, function ($message) use ($to_name, $to_email) {
@@ -2417,10 +2431,10 @@ class FrontController extends Controller
                             ->from(config('mail.from.address'), config('mail.from.name'));
                     });
                 } catch (\Exception $e) {
-                    \Log::error('Failed to send email for contact type ' . $contact_list->contact_type . ': ' . $e->getMessage());
+                    \Log::error('Failed to send email for contact type '.$contact_list->contact_type.': '.$e->getMessage());
                 }
             } else {
-                \Log::warning('Unknown contact type: ' . $contact_list->contact_type);
+                \Log::warning('Unknown contact type: '.$contact_list->contact_type);
             }
 
             return redirect()->back()->with([
@@ -2433,6 +2447,7 @@ class FrontController extends Controller
         $page = Pages::where(['slug' => 'contact-us'])->firstOrFail();
         $page->increment('view');
         Session::put('title', 'Contact Us');
+
         return view('front.contact', compact('page'));
     }
 
@@ -2442,6 +2457,7 @@ class FrontController extends Controller
         $count = Order::where(['order_no' => $request->num])->count();
 
         Session::put('title', 'Track Order');
+
         return view('front.track_order', compact('product', 'count'));
     }
 
@@ -2457,34 +2473,42 @@ class FrontController extends Controller
         $aproducts = Product::select('products.*')->where('status', 1)->where('new_arrival', '1')->orderBy('products.id', 'DESC')->limit(3)->get();
         $countries = Countries::where('status', 1)->get();
         Session::put('title', 'Checkout');
+
         return view('front.checkout', compact('aproducts', 'userCountry', 'countries'));
         // }
     }
+
     public function payment()
     {
-        $userCountry =  'United Arab Emirates';
+        $userCountry = 'United Arab Emirates';
         $aproducts = Product::select('products.*')->where('status', 1)->where('new_arrival', '1')->orderBy('products.id', 'DESC')->limit(3)->get();
         $countries = Countries::where('status', 1)->get();
         Session::put('title', 'Checkout');
+
         return view('front.payment', compact('aproducts', 'userCountry', 'countries'));
     }
+
     public function order()
     {
         if (Session::get('user')) {
             $uid = Session::get('user')['id'];
             $user = User::where(['id' => $uid])->get();
             Session::put('title', 'Order Checkout');
+
             return view('front.order', compact('user'));
         } else {
 
             Session::put('title', 'Order Checkout');
+
             return view('front.order');
         }
     }
+
     public function guest_checkout()
     {
 
         Session::put('title', 'Order Checkout');
+
         return view('front.order');
     }
 
@@ -2496,6 +2520,7 @@ class FrontController extends Controller
         $order = Order::where(['email' => $email])->latest()->get();
         $countries = Countries::all();
         Session::put('title', 'My Account');
+
         return view('front.myaccount', compact('user', 'order', 'countries'));
     }
 
@@ -2521,6 +2546,7 @@ class FrontController extends Controller
         if (isset($pages[0]->name)) {
             Session::put('title', $pages[0]->name);
         }
+
         return view('front.dynamicpage', compact('title', 'pages', 'slug', 'Slider', 'meta', 'size', 'colors', 'shap'));
     }
 
@@ -2536,12 +2562,15 @@ class FrontController extends Controller
         $page = Pages::where(['slug' => 'about-us'])->first();
         $page->increment('view');
         Session::put('title', $page->name);
+
         return view('front.about', compact('Slider', 'page', 'meta', 'size', 'colors', 'shap', 'products', 'categories'));
     }
+
     public function learn(Request $request)
     {
         $setting = Learn_setting::all();
         Session::put('title', 'Learn');
+
         return view('front.new', compact('setting'));
     }
 
@@ -2552,6 +2581,7 @@ class FrontController extends Controller
         $page = Pages::where(['slug' => 'faqs'])->first();
         $page->increment('view');
         Session::put('title', $page->name);
+
         return view('front.faq', compact('faqs', 'page'));
     }
     // public function order(Request $request)
@@ -2698,6 +2728,7 @@ class FrontController extends Controller
                     $existingOrder->shipping_fee = $shipping;
                     $existingOrder->vat = $vat;
                     $existingOrder->save();
+
                     return response()->json(['success' => true, 'message' => 'Order submitted successfully']);
                 }
                 // Handle different payment methods
@@ -2715,12 +2746,12 @@ class FrontController extends Controller
                         $payment_status = $charge->status === 'succeeded' ? 'paid' : 'failed';
                         break;
                     case 'express_checkout':
-                        $transaction_id = $request->transaction_id ?? 'EXPRESS_CHECKOUT_' . uniqid();
+                        $transaction_id = $request->transaction_id ?? 'EXPRESS_CHECKOUT_'.uniqid();
                         $payment_status = 'pending';
                         break;
                     case 'apple_pay':
                         $payment_status = 'paid';
-                        $transaction_id = 'APPLE_PAY_' . uniqid();
+                        $transaction_id = 'APPLE_PAY_'.uniqid();
                         break;
 
                     case 'ngenius':
@@ -2737,7 +2768,7 @@ class FrontController extends Controller
                         throw new \Exception('Invalid payment method');
                 }
                 // Create order
-                $Order = new Order();
+                $Order = new Order;
 
                 $package_type = 0;
                 $package_size = 0;
@@ -2769,7 +2800,7 @@ class FrontController extends Controller
                 $Order->package_detail = json_encode(Session::get('cart')['package_detail']);
                 $Order->uid = Session::get('user') ? Session::get('user')['id'] : rand(10, 100000);
                 $Order->order_no = rand(10, 100000);
-                $Order->customer_name = $request->fname . ' ' . $request->lname;
+                $Order->customer_name = $request->fname.' '.$request->lname;
                 $Order->email = $request->email;
                 $Order->phone = $request->phone;
                 $Order->country = $request->country;
@@ -2810,11 +2841,10 @@ class FrontController extends Controller
                 $cart['draft_order_no'] = $order_neew->order_no;
                 Session::put('cart', $cart);
 
-
                 $customer_data1 = Customer::where('email', $request->email)->first();
-                if (!$customer_data1) {
-                    $data = array(
-                        'name' => $request->fname . ' ' . $request->lname,
+                if (! $customer_data1) {
+                    $data = [
+                        'name' => $request->fname.' '.$request->lname,
                         'email' => $request->email,
                         'phone' => $request->phone,
                         'address' => $request->address,
@@ -2824,7 +2854,7 @@ class FrontController extends Controller
                         'unit_number' => $request->unit_number,
                         'postal_code' => $request->postal_code,
                         'otp' => random_int(1000, 9999),
-                    );
+                    ];
                     $customer = Customer::create($data);
                     $customer_data = Customer::where('email', $request->email)->first();
                     if ($customer) {
@@ -2840,10 +2870,11 @@ class FrontController extends Controller
                                 $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
-                            \Log::error('Failed to send customer creation email: ' . $e->getMessage());
+                            \Log::error('Failed to send customer creation email: '.$e->getMessage());
                         }
                     }
                 }
+
                 return response()->json(['success' => true, 'cart' => $order_neew, 'order_no' => $order_neew->order_no, 'encrypted_order_no' => $order_neew->encrypted_order_no, 'payment_method' => $request->payment_method, 'message' => 'Order submitted successfully']);
             } catch (\Exception $e) {
                 return response()->json(['success' => false, 'message' => $e->getMessage()]);
@@ -2884,8 +2915,8 @@ class FrontController extends Controller
                 $existingOrder = Order::where('session_id', $session_id)->where('email', $request->email)->where('payment_method', 'unknown')->where('payment_status', 'unpaid')->first();
 
                 if ($existingOrder) {
-                    if ($existingOrder->payment_method ==  'unknown') {
-                        $payment_method =  $request->payment_method;
+                    if ($existingOrder->payment_method == 'unknown') {
+                        $payment_method = $request->payment_method;
                         switch ($payment_method) {
                             case 'stripe':
                                 Stripe::setApiKey(getSetting('stripe_secret_key'));
@@ -2894,30 +2925,31 @@ class FrontController extends Controller
                                 $cvc_check = $intent->payment_method_details->card->checks->block_if_wrong_cvc_based_on_risk ?? null;
                                 if ($cvc_check === 'fail') {
                                     $intent->cancel();
+
                                     return response()->json([
                                         'success' => false,
-                                        'message' => 'Invalid CVC. Please check your card details.'
+                                        'message' => 'Invalid CVC. Please check your card details.',
                                     ]);
                                 }
 
                                 $intent->capture();
                                 $transaction_id = $intent->id;
-                                $payment_method = "Card";
+                                $payment_method = 'Card';
                                 $payment_status = 'paid';
                                 break;
                             case 'express_checkout':
-                                $transaction_id = $request->transaction_id ?? 'EXPRESS_CHECKOUT_' . uniqid();
+                                $transaction_id = $request->transaction_id ?? 'EXPRESS_CHECKOUT_'.uniqid();
                                 $payment_status = 'paid';
                                 break;
                             case 'apple_pay':
                                 $payment_status = 'paid';
-                                $payment_method = "Apple pay";
-                                $transaction_id = $request->transaction_id ?? 'APPLE_PAY_' . uniqid();
+                                $payment_method = 'Apple pay';
+                                $transaction_id = $request->transaction_id ?? 'APPLE_PAY_'.uniqid();
                                 break;
                             case 'google_pay':
                                 $payment_status = 'paid';
-                                $payment_method = "Google Pay";
-                                $transaction_id = $request->transaction_id ?? 'GOOGLE_PAY_' . uniqid();
+                                $payment_method = 'Google Pay';
+                                $transaction_id = $request->transaction_id ?? 'GOOGLE_PAY_'.uniqid();
                                 break;
 
                             case 'ngenius':
@@ -2925,12 +2957,12 @@ class FrontController extends Controller
                                 break;
 
                             case 'cash_on_delivery':
-                                $payment_method = "cash_on_delivery";
+                                $payment_method = 'cash_on_delivery';
                                 $payment_status = 'unpaid';
                                 break;
 
                             default:
-                                throw new \Exception('Invalid payment method ' . $payment_method);
+                                throw new \Exception('Invalid payment method '.$payment_method);
                         }
                         $existingOrder->payment_method = $payment_method;
                         $existingOrder->transaction_id = $transaction_id;
@@ -2943,7 +2975,7 @@ class FrontController extends Controller
                             $coupon->save();
                         }
                         $order_data = Order::where('id', $existingOrder->id)->get();
-                        if ($existingOrder->payment_method != "ngenius") {
+                        if ($existingOrder->payment_method != 'ngenius') {
 
                             try {
                                 $to_name = $existingOrder->customer_name;
@@ -2957,9 +2989,8 @@ class FrontController extends Controller
                                     $message->from(config('mail.from.address'), config('mail.from.name'));
                                 });
                             } catch (\Exception $e) {
-                                \Log::error('Failed to send order email to customer: ' . $e->getMessage());
+                                \Log::error('Failed to send order email to customer: '.$e->getMessage());
                             }
-
 
                             // Admin email
                             $notifyemails = OrderNotification::latest()->get();
@@ -2977,7 +3008,7 @@ class FrontController extends Controller
                                             $message->from(config('mail.from.address'), config('mail.from.name'));
                                         });
                                     } catch (\Exception $e) {
-                                        \Log::error('Failed to send order email to admin: ' . $e->getMessage());
+                                        \Log::error('Failed to send order email to admin: '.$e->getMessage());
                                     }
                                 }
                             }
@@ -3005,6 +3036,7 @@ class FrontController extends Controller
                             Session::forget('cart_customize');
                             Session::forget('selected_box');
                         }
+
                         return response()->json(['success' => true, 'cart' => $existingOrder, 'order_no' => $existingOrder->order_no, 'encrypted_order_no' => $existingOrder->encrypted_order_no, 'payment_method' => $request->payment_method, 'message' => 'Order submitted successfully']);
                     } else {
                         $existingOrder->delete();
@@ -3020,49 +3052,50 @@ class FrontController extends Controller
                         $cvc_check = $intent->payment_method_details->card->checks->cvc_check ?? null;
                         if ($cvc_check === 'fail') {
                             $intent->cancel();
+
                             return response()->json([
                                 'success' => false,
-                                'message' => 'Invalid CVC. Please check your card details.'
+                                'message' => 'Invalid CVC. Please check your card details.',
                             ]);
                         }
 
                         $intent->capture();
                         $transaction_id = $intent->id;
-                        $payment_method = "Card";
+                        $payment_method = 'Card';
                         $payment_status = 'paid';
                         break;
                     case 'express_checkout':
-                        $transaction_id = $request->transaction_id ?? 'EXPRESS_CHECKOUT_' . uniqid();
-                        $payment_method = "express_checkout";
+                        $transaction_id = $request->transaction_id ?? 'EXPRESS_CHECKOUT_'.uniqid();
+                        $payment_method = 'express_checkout';
                         $payment_status = 'paid';
                         break;
                     case 'apple_pay':
                         $payment_status = 'paid';
-                        $payment_method = "Apple pay";
-                        $transaction_id = $request->transaction_id ?? 'APPLE_PAY_' . uniqid();
+                        $payment_method = 'Apple pay';
+                        $transaction_id = $request->transaction_id ?? 'APPLE_PAY_'.uniqid();
                         break;
                     case 'google_pay':
                         $payment_status = 'paid';
-                        $payment_method = "Google Pay";
-                        $transaction_id = $request->transaction_id ?? 'GOOGLE_PAY_' . uniqid();
+                        $payment_method = 'Google Pay';
+                        $transaction_id = $request->transaction_id ?? 'GOOGLE_PAY_'.uniqid();
                         break;
 
                     case 'ngenius':
-                        $payment_method = "ngenius";
+                        $payment_method = 'ngenius';
                         $payment_status = 'pending';
                         break;
 
                     case 'cash_on_delivery':
-                        $payment_method = "cash_on_delivery";
+                        $payment_method = 'cash_on_delivery';
                         $payment_status = 'unpaid';
                         break;
 
                     default:
-                        throw new \Exception('Invalid payment method ' . $payment_method);
+                        throw new \Exception('Invalid payment method '.$payment_method);
                 }
 
                 // Create order
-                $Order = new Order();
+                $Order = new Order;
 
                 $package_type = 0;
                 $package_size = 0;
@@ -3094,7 +3127,7 @@ class FrontController extends Controller
                 $Order->package_detail = json_encode(Session::get('cart')['package_detail']);
                 $Order->uid = Session::get('user') ? Session::get('user')['id'] : rand(10, 100000);
                 $Order->order_no = rand(10, 100000);
-                $Order->customer_name = $request->fname . ' ' . $request->lname;
+                $Order->customer_name = $request->fname.' '.$request->lname;
                 $Order->email = $request->email;
                 $Order->phone = $request->phone;
                 $Order->country = $request->country;
@@ -3132,7 +3165,7 @@ class FrontController extends Controller
                 $order_data = Order::where('id', $lastid)->get();
                 if ($lastid) {
 
-                    if ($order_neew->payment_method != "ngenius") {
+                    if ($order_neew->payment_method != 'ngenius') {
 
                         try {
                             $to_name = $order_neew->customer_name;
@@ -3146,9 +3179,8 @@ class FrontController extends Controller
                                 $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
-                            \Log::error('Failed to send order email to customer: ' . $e->getMessage());
+                            \Log::error('Failed to send order email to customer: '.$e->getMessage());
                         }
-
 
                         // Admin email
                         $notifyemails = OrderNotification::latest()->get();
@@ -3166,7 +3198,7 @@ class FrontController extends Controller
                                         $message->from(config('mail.from.address'), config('mail.from.name'));
                                     });
                                 } catch (\Exception $e) {
-                                    \Log::error('Failed to send order email to admin: ' . $e->getMessage());
+                                    \Log::error('Failed to send order email to admin: '.$e->getMessage());
                                 }
                             }
                         }
@@ -3179,9 +3211,9 @@ class FrontController extends Controller
                 }
 
                 $customer_data1 = Customer::where('email', $request->email)->first();
-                if (!$customer_data1) {
-                    $data = array(
-                        'name' => $request->fname . ' ' . $request->lname,
+                if (! $customer_data1) {
+                    $data = [
+                        'name' => $request->fname.' '.$request->lname,
                         'email' => $request->email,
                         'phone' => $request->phone,
                         'address' => $request->address,
@@ -3191,7 +3223,7 @@ class FrontController extends Controller
                         'unit_number' => $request->unit_number,
                         'postal_code' => $request->postal_code,
                         'otp' => random_int(1000, 9999),
-                    );
+                    ];
                     $customer = Customer::create($data);
                     $customer_data = Customer::where('email', $request->email)->first();
                     if ($customer) {
@@ -3207,7 +3239,7 @@ class FrontController extends Controller
                                 $message->from(config('mail.from.address'), config('mail.from.name'));
                             });
                         } catch (\Exception $e) {
-                            \Log::error('Failed to send customer creation email: ' . $e->getMessage());
+                            \Log::error('Failed to send customer creation email: '.$e->getMessage());
                         }
                     }
                 }
@@ -3234,6 +3266,7 @@ class FrontController extends Controller
                     Session::forget('cart_customize');
                     Session::forget('selected_box');
                 }
+
                 return response()->json(['success' => true, 'cart' => $order_neew, 'order_no' => $order_neew->order_no, 'encrypted_order_no' => $order_neew->encrypted_order_no, 'payment_method' => $request->payment_method, 'message' => 'Order submitted successfully']);
             } catch (\Exception $e) {
                 return response()->json(['success' => false, 'message' => $e->getMessage()]);
@@ -3283,16 +3316,16 @@ class FrontController extends Controller
         // Check if city exists and has valid shipping rules
         $city = City::where('name', $city_name)->first();
         if ($city && $city->min_order > 0 && $city->shipping_cost > 0 && $city->free_shipping > 0) {
-            $minOrder = (int)$city->min_order;
-            $shippingCost = (int)$city->shipping_cost;
-            $freeShippingThreshold = (int)$city->free_shipping;
+            $minOrder = (int) $city->min_order;
+            $shippingCost = (int) $city->shipping_cost;
+            $freeShippingThreshold = (int) $city->free_shipping;
         } else {
             // Fallback to country if city shipping rules are not available
             $country = Countries::where('name', $country_name)->first();
             if ($country) {
-                $minOrder = (int)$country->min_order;
-                $shippingCost = (int)$country->shipping_cost;
-                $freeShippingThreshold = (int)$country->free_shipping;
+                $minOrder = (int) $country->min_order;
+                $shippingCost = (int) $country->shipping_cost;
+                $freeShippingThreshold = (int) $country->free_shipping;
             } else {
                 // Default values if neither city nor country have shipping rules
                 $minOrder = 0;
@@ -3300,9 +3333,9 @@ class FrontController extends Controller
                 $freeShippingThreshold = 0;
             }
         }
+
         return $finalShippingCost = ($amount >= $freeShippingThreshold) ? 0 : $shippingCost;
     }
-
 
     public function thanks(Request $request)
     {
@@ -3314,11 +3347,25 @@ class FrontController extends Controller
         }
 
         $order = Order::where('order_no', $order_no)->first();
-        if (!$order) {
+        if (! $order) {
             abort(404);
         }
 
+        if (
+            config('services.tiktok.access_token')
+            && (float) ($order->amount ?? 0) > 0
+        ) {
+            SendTikTokServerPurchaseJob::dispatch(
+                (int) $order->id,
+                $request->ip(),
+                $request->userAgent(),
+                $request->fullUrl(),
+                $request->headers->get('referer')
+            );
+        }
+
         Session::put('title', 'Thankyou');
+
         return view('front.thanks', compact('order'));
     }
 
@@ -3332,19 +3379,20 @@ class FrontController extends Controller
 
         $order = Order::where('order_no', $order_no)->first();
 
-        if (!$order) {
+        if (! $order) {
             abort(404);
         }
 
         // Security check: Only allow the owner to see the order details
         $user = Session::get('user');
-        if (!$user || $user->email !== $order->email) {
+        if (! $user || $user->email !== $order->email) {
             // Optional: If it was just placed in this session (guest), we might want to allow it?
             // But usually, order_detail is for my_account view.
             return redirect('/login')->with(['msg' => 'Please login to view order details', 'msg_type' => 'danger']);
         }
 
         Session::put('title', 'Order Detail');
+
         return view('front.order_detail', compact('order'));
     }
 
@@ -3358,40 +3406,40 @@ class FrontController extends Controller
 
         $order = Order::where('order_no', $order_no)->first();
 
-        if (!$order) {
+        if (! $order) {
             abort(404);
         }
 
         // Security check: Only allow the owner to reorder
         $user = Session::get('user');
-        if (!$user || $user->email !== $order->email) {
+        if (! $user || $user->email !== $order->email) {
             return redirect('/login')->with(['msg' => 'Please login to reorder items', 'msg_type' => 'danger']);
         }
 
         $products = json_decode($order->product_detail, true) ?? [];
         foreach ($products as $item) {
             if (isset($item['id']) && $item['id'] != null) {
-                \App\Helpers\Cart::add($item['id'], $item['qty']);
+                Cart::add($item['id'], $item['qty']);
             }
         }
 
         $packages = json_decode($order->package_detail, true) ?? [];
         foreach ($packages as $pkg) {
             if (isset($pkg['package_type']) && $pkg['package_type'] != null) {
-                \App\Helpers\Cart::add(null, $pkg['qty'], $pkg['package_type'], $pkg['package_size']);
+                Cart::add(null, $pkg['qty'], $pkg['package_type'], $pkg['package_size']);
             }
         }
 
-        return redirect('/cart')->with(['msg' => 'All items from order ' . $order->order_no . ' have been added to your cart.', 'msg_type' => 'success']);
+        return redirect('/cart')->with(['msg' => 'All items from order '.$order->order_no.' have been added to your cart.', 'msg_type' => 'success']);
     }
 
     public function instant_order(Request $request)
     {
-        $Order = new Order();
-        $array = array(
+        $Order = new Order;
+        $array = [
             'id' => $request->id,
             'qty' => $request->qty,
-        );
+        ];
         $pro[] = $array;
         $Order->product_detail = json_encode($pro);
         $Order->uid = rand(10, 100000);
@@ -3431,7 +3479,7 @@ class FrontController extends Controller
         $productt->product_quantity = $productt->product_quantity - $request->qty;
         $productt->update();
 
-        return redirect('/product/' . $productt->slug)->with([
+        return redirect('/product/'.$productt->slug)->with([
             'msg' => 'Order submit successfully',
             'msg_type' => 'success',
         ]);
@@ -3444,13 +3492,13 @@ class FrontController extends Controller
         $filePath = null;
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $uniqueName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $uniqueName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
             $file->move(public_path('/images/reviews/'), $uniqueName);
-            $filePath = 'images/reviews/' . $uniqueName;
+            $filePath = 'images/reviews/'.$uniqueName;
         }
 
         // Create a new rating entry
-        $rating = new Rating();
+        $rating = new Rating;
         $rating->pid = $request->pid;
         $rating->rate = $request->rating;
         $rating->name = $request->name;
@@ -3463,15 +3511,15 @@ class FrontController extends Controller
         $rating->save();
 
         // Fetch the product for redirection
-        $product = product::where(['id' => $request->pid, 'status' => 1])->first();
-        if (!$product) {
+        $product = Product::where(['id' => $request->pid, 'status' => 1])->first();
+        if (! $product) {
             return redirect('/')->with([
                 'msg' => 'Product not found or inactive',
                 'msg_type' => 'error',
             ]);
         }
 
-        return redirect('/product/' . $product->slug)->with([
+        return redirect('/product/'.$product->slug)->with([
             'msg' => 'Review submitted successfully',
             'msg_type' => 'success',
         ]);
@@ -3480,25 +3528,25 @@ class FrontController extends Controller
     public function faq_submit(Request $request)
     {
         // dd($request);
-        $rating = new Faq();
+        $rating = new Faq;
 
         $rating->pid = $request->pid;
         $rating->question = $request->question;
         $rating->name = $request->name;
         $rating->save();
         if ($rating->save()) {
-            $product = product::where(['id' => $request->pid, 'status' => 1])->get();
+            $product = Product::where(['id' => $request->pid, 'status' => 1])->get();
             $pro = $product[0];
 
-            return redirect('/product/' . $product[0]->slug)->with([
+            return redirect('/product/'.$product[0]->slug)->with([
                 'msg' => 'Question submit successfully',
                 'msg_type' => 'success',
             ]);
         } else {
-            $product = product::where(['id' => $request->pid, 'status' => 1])->get();
+            $product = Product::where(['id' => $request->pid, 'status' => 1])->get();
             $pro = $product[0];
 
-            return redirect('/product/' . $product[0]->slug)->with([
+            return redirect('/product/'.$product[0]->slug)->with([
                 'msg' => 'Please try Again!',
                 'msg_type' => 'success',
             ]);
@@ -3511,6 +3559,7 @@ class FrontController extends Controller
         $product = Order::where(['order_no' => $request->num])->get();
         $count = Order::where(['order_no' => $request->num])->count();
         Session::put('title', 'Track Order');
+
         return view('front.track_order', compact('product', 'count'));
     }
 
@@ -3518,10 +3567,10 @@ class FrontController extends Controller
     {
         $data = $request->data;
         $old = $request->session()->get('selected_shap');
-        if (!$old) {
-            $old = array();
+        if (! $old) {
+            $old = [];
         }
-        if ($request->action == "add") {
+        if ($request->action == 'add') {
 
             // $request->session()->forget('selected_shap');
             if (isset($old)) {
@@ -3532,12 +3581,12 @@ class FrontController extends Controller
                         $request->session()->put('selected_shap', $old);
                     }
                 } else {
-                    $array = array();
+                    $array = [];
                     array_push($array, $data);
                     $request->session()->put('selected_shap', $array);
                 }
             } else {
-                $array = array();
+                $array = [];
                 array_push($array, $data);
                 $request->session()->put('selected_shap', $array);
                 // print_r($old);
@@ -3551,7 +3600,7 @@ class FrontController extends Controller
             $request->session()->forget('selected_shap');
             $request->session()->put('selected_shap', $old);
         }
-        $old = array(1);
+        $old = [1];
 
         $selected_shap = $request->session()->get('selected_shap');
         $selected_color = $request->session()->get('selected_color');
@@ -3562,28 +3611,28 @@ class FrontController extends Controller
 
         $Products = Product::orderBy('id', 'DESC');
         if ($selected_color == '') {
-            $selected_color = array();
+            $selected_color = [];
         }
         if ($selected_shap == '') {
-            $selected_shap = array();
+            $selected_shap = [];
         }
         if ($selected_size == '') {
-            $selected_size = array();
+            $selected_size = [];
         }
 
         if (count($selected_shap) > 0 && count($selected_color) > 0 && count($selected_size) > 0) {
             if ($newto != '' && $datafrom != '') {
-                $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND product_shap IN (" . implode(",", $selected_shap) . ") AND product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND product_shap IN ('.implode(',', $selected_shap).') AND product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
             } else {
-                $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND product_shap IN (" . implode(",", $selected_shap) . ") AND product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND product_shap IN ('.implode(',', $selected_shap).') AND product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
             }
             // return "SELECT * FROM `products` WHERE product_color IN (".implode(",",$selected_color).") AND product_shap IN (".implode(",",$selected_shap).") AND product_size IN (".implode(",",$selected_size).") ORDER BY id DESC ";
 
         } elseif (count($selected_shap) == 0 && count($selected_color) == 0 && count($selected_size) == 0) {
             if ($newto != '' && $datafrom != '') {
-                $Products = DB::select("SELECT * FROM `products` WHERE discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
             } else {
-                $Products = DB::select("SELECT * FROM `products` ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` ORDER BY id DESC ');
             }
         } else {
 
@@ -3591,63 +3640,63 @@ class FrontController extends Controller
 
                 if (count($selected_color) == 0 && count($selected_size) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_color) > 0 && count($selected_size) == 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') ORDER BY id DESC ');
                     }
                 } else {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 }
             } elseif (count($selected_color) == 0) {
 
                 if (count($selected_shap) > 0 && count($selected_size) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") and product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') and product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") and product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') and product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_size) == 0 && count($selected_shap) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_shap) == 0 && count($selected_size) > 1) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 }
             } elseif (count($selected_size) == 0) {
 
                 if (count($selected_shap) > 0 && count($selected_color) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_color) == 0 && count($selected_shap) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_shap) == 0 && count($selected_color) > 1) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') ORDER BY id DESC ');
                     }
                 }
             }
@@ -3672,7 +3721,7 @@ class FrontController extends Controller
             } else {
                 $gallary = '';
             }
-            $html .= '<div class="c-product-grid_item"><div class="c-product-grid_thumb-wrap"><a href="product/' . $product->slug . '" class="lrv-loop-product_link"><img src="' . $product->image_one . '" class="c-product-grid_thumb"><img src="' . $gallary . '" class="c-product-grid_thumb product_grid_thumb_hover"></a><div class="c-product-grid_badges"></div><div class="c-product-grid_thumb-button-list"><button class="h-cb c-product-grid_thumb-button"><i class="ip-eye c-product-grid_icon"></i> <span class="c-product-grid_icon-text">Quick view</span></button> <button data-size="" class="js-wishlist-btn"><i class="ip-heart c-product-grid_icon"></i></button></div></div><a href="product/' . $product->slug . '" class="c-product-grid_atc"><span class="c-product-grid_atc-text">View Product</span></a><div class="c-product-grid_details"><div class="c-product-grid_title-wrap"><div class="c-product-grid_category-list"><a class="c-product-grid_category-item" href="/category/' . $cateslug . '">' . $catename . '</a></div><a href="product/' . $product->slug . '" class="product_link_link"><h2 class="lrv-loop-product_title">' . $product->product_name . '</h2></a></div><div class="c-product-grid_price-wrap"><span class="price"><span class="lrv-Price-amount amount"><bdi><span class="lrv-Price-currencySymbol">$</span>' . $product->discount_price . '</bdi></span></span></div></div></div>';
+            $html .= '<div class="c-product-grid_item"><div class="c-product-grid_thumb-wrap"><a href="product/'.$product->slug.'" class="lrv-loop-product_link"><img src="'.$product->image_one.'" class="c-product-grid_thumb"><img src="'.$gallary.'" class="c-product-grid_thumb product_grid_thumb_hover"></a><div class="c-product-grid_badges"></div><div class="c-product-grid_thumb-button-list"><button class="h-cb c-product-grid_thumb-button"><i class="ip-eye c-product-grid_icon"></i> <span class="c-product-grid_icon-text">Quick view</span></button> <button data-size="" class="js-wishlist-btn"><i class="ip-heart c-product-grid_icon"></i></button></div></div><a href="product/'.$product->slug.'" class="c-product-grid_atc"><span class="c-product-grid_atc-text">View Product</span></a><div class="c-product-grid_details"><div class="c-product-grid_title-wrap"><div class="c-product-grid_category-list"><a class="c-product-grid_category-item" href="/category/'.$cateslug.'">'.$catename.'</a></div><a href="product/'.$product->slug.'" class="product_link_link"><h2 class="lrv-loop-product_title">'.$product->product_name.'</h2></a></div><div class="c-product-grid_price-wrap"><span class="price"><span class="lrv-Price-amount amount"><bdi><span class="lrv-Price-currencySymbol">$</span>'.$product->discount_price.'</bdi></span></span></div></div></div>';
         }
 
         if ($html == '') {
@@ -3689,11 +3738,11 @@ class FrontController extends Controller
         // dd($request->session()->get('selected_color'));
         $data = $request->data;
         $old = $request->session()->get('selected_color');
-        if (!$old) {
-            $old = array();
+        if (! $old) {
+            $old = [];
         }
         // dd($data);
-        if ($request->action == "add") {
+        if ($request->action == 'add') {
 
             // $request->session()->forget('selected_color');
             if (isset($old)) {
@@ -3704,12 +3753,12 @@ class FrontController extends Controller
                         $request->session()->put('selected_color', $old);
                     }
                 } else {
-                    $array = array();
+                    $array = [];
                     array_push($array, $data);
                     $request->session()->put('selected_color', $array);
                 }
             } else {
-                $array = array();
+                $array = [];
                 array_push($array, $data);
                 $request->session()->put('selected_color', $array);
                 // print_r($old);
@@ -3724,7 +3773,7 @@ class FrontController extends Controller
             $request->session()->put('selected_color', $old);
         }
 
-        $old = array(1);
+        $old = [1];
 
         $selected_shap = $request->session()->get('selected_shap');
         $selected_color = $request->session()->get('selected_color');
@@ -3736,26 +3785,26 @@ class FrontController extends Controller
         $Products = Product::orderBy('id', 'DESC');
         // // return $selected_color;
         if ($selected_color == '') {
-            $selected_color = array();
+            $selected_color = [];
         }
         if ($selected_shap == '') {
-            $selected_shap = array();
+            $selected_shap = [];
         }
         if ($selected_size == '') {
-            $selected_size = array();
+            $selected_size = [];
         }
 
         if (count($selected_shap) > 0 && count($selected_color) > 0 && count($selected_size) > 0) {
             if ($newto != '' && $datafrom != '') {
-                $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND product_shap IN (" . implode(",", $selected_shap) . ") AND product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND product_shap IN ('.implode(',', $selected_shap).') AND product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
             } else {
-                $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND product_shap IN (" . implode(",", $selected_shap) . ") AND product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND product_shap IN ('.implode(',', $selected_shap).') AND product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
             }
         } elseif (count($selected_shap) == 0 && count($selected_color) == 0 && count($selected_size) == 0) {
             if ($newto != '' && $datafrom != '') {
-                $Products = DB::select("SELECT * FROM `products` WHERE discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
             } else {
-                $Products = DB::select("SELECT * FROM `products` ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` ORDER BY id DESC ');
             }
         } else {
 
@@ -3763,64 +3812,64 @@ class FrontController extends Controller
 
                 if (count($selected_color) == 0 && count($selected_size) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_color) > 0 && count($selected_size) == 0) {
                     // return "SELECT * FROM `products` WHERE product_color IN (".implode(",",$selected_color).") ORDER BY id DESC ";
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') ORDER BY id DESC ');
                     }
                 } else {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 }
             } elseif (count($selected_color) == 0) {
 
                 if (count($selected_shap) > 0 && count($selected_size) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") and product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') and product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") and product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') and product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_size) == 0 && count($selected_shap) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ")  AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).')  AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_shap) == 0 && count($selected_size) > 1) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 }
             } elseif (count($selected_size) == 0) {
 
                 if (count($selected_shap) > 0 && count($selected_color) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . "  ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.'  ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_color) == 0 && count($selected_shap) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_shap) == 0 && count($selected_color) > 1) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') ORDER BY id DESC ');
                     }
                 }
             }
@@ -3845,7 +3894,7 @@ class FrontController extends Controller
             } else {
                 $gallary = '';
             }
-            $html .= '<div class="c-product-grid_item"><div class="c-product-grid_thumb-wrap"><a href="product/' . $product->slug . '" class="lrv-loop-product_link"><img src="' . $product->image_one . '" class="c-product-grid_thumb"><img src="' . $gallary . '" class="c-product-grid_thumb product_grid_thumb_hover"></a><div class="c-product-grid_badges"></div><div class="c-product-grid_thumb-button-list"><button class="h-cb c-product-grid_thumb-button"><i class="ip-eye c-product-grid_icon"></i> <span class="c-product-grid_icon-text">Quick view</span></button> <button data-size="" class="js-wishlist-btn"><i class="ip-heart c-product-grid_icon"></i></button></div></div><a href="product/' . $product->slug . '" class="c-product-grid_atc"><span class="c-product-grid_atc-text">View Product</span></a><div class="c-product-grid_details"><div class="c-product-grid_title-wrap"><div class="c-product-grid_category-list"><a class="c-product-grid_category-item" href="/category/' . $cateslug . '">' . $catename . '</a></div><a href="product/' . $product->slug . '" class="product_link_link"><h2 class="lrv-loop-product_title">' . $product->product_name . '</h2></a></div><div class="c-product-grid_price-wrap"><span class="price"><span class="lrv-Price-amount amount"><bdi><span class="lrv-Price-currencySymbol">$</span>' . $product->discount_price . '</bdi></span></span></div></div></div>';
+            $html .= '<div class="c-product-grid_item"><div class="c-product-grid_thumb-wrap"><a href="product/'.$product->slug.'" class="lrv-loop-product_link"><img src="'.$product->image_one.'" class="c-product-grid_thumb"><img src="'.$gallary.'" class="c-product-grid_thumb product_grid_thumb_hover"></a><div class="c-product-grid_badges"></div><div class="c-product-grid_thumb-button-list"><button class="h-cb c-product-grid_thumb-button"><i class="ip-eye c-product-grid_icon"></i> <span class="c-product-grid_icon-text">Quick view</span></button> <button data-size="" class="js-wishlist-btn"><i class="ip-heart c-product-grid_icon"></i></button></div></div><a href="product/'.$product->slug.'" class="c-product-grid_atc"><span class="c-product-grid_atc-text">View Product</span></a><div class="c-product-grid_details"><div class="c-product-grid_title-wrap"><div class="c-product-grid_category-list"><a class="c-product-grid_category-item" href="/category/'.$cateslug.'">'.$catename.'</a></div><a href="product/'.$product->slug.'" class="product_link_link"><h2 class="lrv-loop-product_title">'.$product->product_name.'</h2></a></div><div class="c-product-grid_price-wrap"><span class="price"><span class="lrv-Price-amount amount"><bdi><span class="lrv-Price-currencySymbol">$</span>'.$product->discount_price.'</bdi></span></span></div></div></div>';
         }
         // return $html;
         if ($html == '') {
@@ -3861,11 +3910,11 @@ class FrontController extends Controller
     {
         $data = $request->data;
         $old = $request->session()->get('selected_size');
-        if (!$old) {
-            $old = array();
+        if (! $old) {
+            $old = [];
         }
         // dd($request->session()->get('selected_size'));
-        if ($request->action == "add") {
+        if ($request->action == 'add') {
 
             // $request->session()->forget('selected_size');
             if (isset($old)) {
@@ -3876,12 +3925,12 @@ class FrontController extends Controller
                         $request->session()->put('selected_size', $old);
                     }
                 } else {
-                    $array = array();
+                    $array = [];
                     array_push($array, $data);
                     $request->session()->put('selected_size', $array);
                 }
             } else {
-                $array = array();
+                $array = [];
                 array_push($array, $data);
                 $request->session()->put('selected_size', $array);
                 // print_r($old);
@@ -3907,26 +3956,26 @@ class FrontController extends Controller
         $Products = Product::orderBy('id', 'DESC');
         // // return $selected_color;
         if ($selected_color == '') {
-            $selected_color = array();
+            $selected_color = [];
         }
         if ($selected_shap == '') {
-            $selected_shap = array();
+            $selected_shap = [];
         }
         if ($selected_size == '') {
-            $selected_size = array();
+            $selected_size = [];
         }
 
         if (count($selected_shap) > 0 && count($selected_color) > 0 && count($selected_size) > 0) {
             if ($newto != '' && $datafrom != '') {
-                $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND product_shap IN (" . implode(",", $selected_shap) . ") AND product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . "  ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND product_shap IN ('.implode(',', $selected_shap).') AND product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.'  ORDER BY id DESC ');
             } else {
-                $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND product_shap IN (" . implode(",", $selected_shap) . ") AND product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND product_shap IN ('.implode(',', $selected_shap).') AND product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
             }
         } elseif (count($selected_shap) == 0 && count($selected_color) == 0 && count($selected_size) == 0) {
             if ($newto != '' && $datafrom != '') {
-                $Products = DB::select("SELECT * FROM `products` WHERE discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` WHERE discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
             } else {
-                $Products = DB::select("SELECT * FROM `products` ORDER BY id DESC ");
+                $Products = DB::select('SELECT * FROM `products` ORDER BY id DESC ');
             }
         } else {
 
@@ -3934,64 +3983,64 @@ class FrontController extends Controller
 
                 if (count($selected_color) == 0 && count($selected_size) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
                         // return "SELECT * FROM `products` WHERE product_size IN (".implode(",",$selected_size).") ORDER BY id DESC ";
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_color) > 0 && count($selected_size) == 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') ORDER BY id DESC ');
                     }
                 } else {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 }
             } elseif (count($selected_color) == 0) {
 
                 if (count($selected_shap) > 0 && count($selected_size) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") and product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') and product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") and product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') and product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_size) == 0 && count($selected_shap) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_shap) == 0 && count($selected_size) > 1) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_size IN (" . implode(",", $selected_size) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_size IN ('.implode(',', $selected_size).') ORDER BY id DESC ');
                     }
                 }
             } elseif (count($selected_size) == 0) {
 
                 if (count($selected_shap) > 0 && count($selected_color) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") and product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') and product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_color) == 0 && count($selected_shap) > 0) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_shap IN (" . implode(",", $selected_shap) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_shap IN ('.implode(',', $selected_shap).') ORDER BY id DESC ');
                     }
                 } elseif (count($selected_shap) == 0 && count($selected_color) > 1) {
                     if ($newto != '' && $datafrom != '') {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") AND discount_price BETWEEN " . $newto . " AND " . $datafrom . " ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') AND discount_price BETWEEN '.$newto.' AND '.$datafrom.' ORDER BY id DESC ');
                     } else {
-                        $Products = DB::select("SELECT * FROM `products` WHERE product_color IN (" . implode(",", $selected_color) . ") ORDER BY id DESC ");
+                        $Products = DB::select('SELECT * FROM `products` WHERE product_color IN ('.implode(',', $selected_color).') ORDER BY id DESC ');
                     }
                 }
             }
@@ -4016,7 +4065,7 @@ class FrontController extends Controller
             } else {
                 $gallary = '';
             }
-            $html .= '<div class="c-product-grid_item"><div class="c-product-grid_thumb-wrap"><a href="product/' . $product->slug . '" class="lrv-loop-product_link"><img src="' . $product->image_one . '" class="c-product-grid_thumb"><img src="' . $gallary . '" class="c-product-grid_thumb product_grid_thumb_hover"></a><div class="c-product-grid_badges"></div><div class="c-product-grid_thumb-button-list"><button class="h-cb c-product-grid_thumb-button"><i class="ip-eye c-product-grid_icon"></i> <span class="c-product-grid_icon-text">Quick view</span></button> <button data-size="" class="js-wishlist-btn"><i class="ip-heart c-product-grid_icon"></i></button></div></div><a href="product/' . $product->slug . '" class="c-product-grid_atc"><span class="c-product-grid_atc-text">View Product</span></a><div class="c-product-grid_details"><div class="c-product-grid_title-wrap"><div class="c-product-grid_category-list"><a class="c-product-grid_category-item" href="/category/' . $cateslug . '">' . $catename . '</a></div><a href="product/' . $product->slug . '" class="product_link_link"><h2 class="lrv-loop-product_title">' . $product->product_name . '</h2></a></div><div class="c-product-grid_price-wrap"><span class="price"><span class="lrv-Price-amount amount"><bdi><span class="lrv-Price-currencySymbol">$</span>' . $product->discount_price . '</bdi></span></span></div></div></div>';
+            $html .= '<div class="c-product-grid_item"><div class="c-product-grid_thumb-wrap"><a href="product/'.$product->slug.'" class="lrv-loop-product_link"><img src="'.$product->image_one.'" class="c-product-grid_thumb"><img src="'.$gallary.'" class="c-product-grid_thumb product_grid_thumb_hover"></a><div class="c-product-grid_badges"></div><div class="c-product-grid_thumb-button-list"><button class="h-cb c-product-grid_thumb-button"><i class="ip-eye c-product-grid_icon"></i> <span class="c-product-grid_icon-text">Quick view</span></button> <button data-size="" class="js-wishlist-btn"><i class="ip-heart c-product-grid_icon"></i></button></div></div><a href="product/'.$product->slug.'" class="c-product-grid_atc"><span class="c-product-grid_atc-text">View Product</span></a><div class="c-product-grid_details"><div class="c-product-grid_title-wrap"><div class="c-product-grid_category-list"><a class="c-product-grid_category-item" href="/category/'.$cateslug.'">'.$catename.'</a></div><a href="product/'.$product->slug.'" class="product_link_link"><h2 class="lrv-loop-product_title">'.$product->product_name.'</h2></a></div><div class="c-product-grid_price-wrap"><span class="price"><span class="lrv-Price-amount amount"><bdi><span class="lrv-Price-currencySymbol">$</span>'.$product->discount_price.'</bdi></span></span></div></div></div>';
         }
         // return $html;
         if ($html == '') {
@@ -4033,11 +4082,11 @@ class FrontController extends Controller
         $html = '';
         $products = Product::select('products.*')->orderBy('products.id', 'DESC')->get();
         // dd($products);
-        //price filter
-        $npro = array();
+        // price filter
+        $npro = [];
         foreach ($products as $key => $product) {
             if (isset($request->min_price) && isset($request->max_price)) {
-                //var_dump( $product->discount_price);
+                // var_dump( $product->discount_price);
                 $price = str_replace(',', '', $product->discount_price);
                 $price = (float) $price;
                 $price = ceil($price);
@@ -4054,9 +4103,9 @@ class FrontController extends Controller
         if ($request->shap) {
             $shap = explode(',', $request->shap);
             //  dd($shap);
-            $npro = array();
+            $npro = [];
             foreach ($products as $key => $product) {
-                $pshaps = array();
+                $pshaps = [];
                 if ($product->product_shap) {
                     $pshaps = explode(',', $product->product_shap);
                     // dd(array_intersect($pshaps,$shap));
@@ -4072,9 +4121,9 @@ class FrontController extends Controller
         if ($request->size) {
             $size = explode(',', $request->size);
             //  dd($size);
-            $npro = array();
+            $npro = [];
             foreach ($products as $key => $product) {
-                $pshaps = array();
+                $pshaps = [];
                 if ($product->product_clarity) {
                     $pshaps = explode(',', $product->product_clarity);
                     // dd(array_intersect($pshaps,$shap));
@@ -4089,9 +4138,9 @@ class FrontController extends Controller
         }
         if ($request->category) {
             //  dd($size);
-            $npro = array();
+            $npro = [];
             foreach ($products as $key => $product) {
-                $pshaps = array();
+                $pshaps = [];
                 if ($product->category_id) {
                     $pshaps = explode(',', $product->category_id);
                     // dd(array_intersect($pshaps,$shap));
@@ -4113,9 +4162,9 @@ class FrontController extends Controller
         if ($request->colors) {
             $size = explode(',', $request->colors);
             //  dd($size);
-            $npro = array();
+            $npro = [];
             foreach ($products as $key => $product) {
-                $pshaps = array();
+                $pshaps = [];
                 if ($product->product_color) {
                     $pshaps = explode(',', $product->product_color);
                     // dd(array_intersect($pshaps,$shap));
@@ -4128,7 +4177,7 @@ class FrontController extends Controller
             // dd($npro);
             $products = $npro;
         }
-        //price filter
+        // price filter
         foreach ($products as $key => $product) {
             // dd($product->id);
             $Galleries = Gallerie::where(['product_id' => $product->id])->get();
@@ -4147,7 +4196,7 @@ class FrontController extends Controller
             } else {
                 $gallary = '';
             }
-            $html .= '<div class="c-product-grid_item"><div class="c-product-grid_thumb-wrap"><a href="' . url('/') . '/product/' . $product->slug . '" class="lrv-loop-product_link"><img src="/' . $product->image_one . '" class="c-product-grid_thumb"><img src="' . $gallary . '" class="c-product-grid_thumb product_grid_thumb_hover"></a><div class="c-product-grid_badges"></div><div class="c-product-grid_thumb-button-list"><button class="h-cb c-product-grid_thumb-button"><i class="ip-eye c-product-grid_icon"></i> <span class="c-product-grid_icon-text">Quick view</span></button> <button data-size="" class="js-wishlist-btn"><i class="ip-heart c-product-grid_icon"></i></button></div></div><a href="product/' . $product->slug . '" class="c-product-grid_atc"><span class="c-product-grid_atc-text">View Product</span></a><div class="c-product-grid_details"><div class="c-product-grid_title-wrap"><div class="c-product-grid_category-list"><a class="c-product-grid_category-item" href="/category/' . $cateslug . '">' . $catename . '</a></div><a href="product/' . $product->slug . '" class="product_link_link"><h2 class="lrv-loop-product_title">' . $product->product_name . '-' . $product->category_id . '</h2></a></div><div class="c-product-grid_price-wrap"><span class="price"><span class="lrv-Price-amount amount"><bdi><span class="lrv-Price-currencySymbol">$</span>' . $product->discount_price . '</bdi></span></span></div></div></div>';
+            $html .= '<div class="c-product-grid_item"><div class="c-product-grid_thumb-wrap"><a href="'.url('/').'/product/'.$product->slug.'" class="lrv-loop-product_link"><img src="/'.$product->image_one.'" class="c-product-grid_thumb"><img src="'.$gallary.'" class="c-product-grid_thumb product_grid_thumb_hover"></a><div class="c-product-grid_badges"></div><div class="c-product-grid_thumb-button-list"><button class="h-cb c-product-grid_thumb-button"><i class="ip-eye c-product-grid_icon"></i> <span class="c-product-grid_icon-text">Quick view</span></button> <button data-size="" class="js-wishlist-btn"><i class="ip-heart c-product-grid_icon"></i></button></div></div><a href="product/'.$product->slug.'" class="c-product-grid_atc"><span class="c-product-grid_atc-text">View Product</span></a><div class="c-product-grid_details"><div class="c-product-grid_title-wrap"><div class="c-product-grid_category-list"><a class="c-product-grid_category-item" href="/category/'.$cateslug.'">'.$catename.'</a></div><a href="product/'.$product->slug.'" class="product_link_link"><h2 class="lrv-loop-product_title">'.$product->product_name.'-'.$product->category_id.'</h2></a></div><div class="c-product-grid_price-wrap"><span class="price"><span class="lrv-Price-amount amount"><bdi><span class="lrv-Price-currencySymbol">$</span>'.$product->discount_price.'</bdi></span></span></div></div></div>';
         }
         // var_dump($html);
 
@@ -4165,7 +4214,7 @@ class FrontController extends Controller
         $data = $request->data;
         $old = $request->session()->get('selected_color');
 
-        if ($request->action == "add" && $request->method == "colors") {
+        if ($request->action == 'add' && $request->method == 'colors') {
 
             // $request->session()->forget('selected_color');
             if (isset($old)) {
@@ -4176,17 +4225,17 @@ class FrontController extends Controller
                         $request->session()->put('selected_color', $old);
                     }
                 } else {
-                    $array = array();
+                    $array = [];
                     array_push($array, $data);
                     $request->session()->put('selected_color', $array);
                 }
             } else {
-                $array = array();
+                $array = [];
                 array_push($array, $data);
                 $request->session()->put('selected_color', $array);
                 // print_r($old);
             }
-        } elseif ($request->action == "remove" && $request->method == "colors") {
+        } elseif ($request->action == 'remove' && $request->method == 'colors') {
 
             foreach (array_keys($old, $data, true) as $key) {
                 unset($old[$key]);
@@ -4197,7 +4246,7 @@ class FrontController extends Controller
         }
 
         $oldone = $request->session()->get('selected_size');
-        if ($request->action == "add" && $request->method == "colors") {
+        if ($request->action == 'add' && $request->method == 'colors') {
 
             // $request->session()->forget('selected_size');
             if (isset($oldone)) {
@@ -4208,17 +4257,17 @@ class FrontController extends Controller
                         $request->session()->put('selected_size', $oldone);
                     }
                 } else {
-                    $array = array();
+                    $array = [];
                     array_push($array, $data);
                     $request->session()->put('selected_size', $array);
                 }
             } else {
-                $array = array();
+                $array = [];
                 array_push($array, $data);
                 $request->session()->put('selected_size', $array);
                 // print_r($oldone);
             }
-        } elseif ($request->action == "remove" && $request->method == "colors") {
+        } elseif ($request->action == 'remove' && $request->method == 'colors') {
 
             foreach (array_keys($oldone, $data, true) as $key) {
                 unset($oldone[$key]);
@@ -4235,62 +4284,62 @@ class FrontController extends Controller
         $Slider = Slider::all();
         $categories = Category::all();
 
-        $brand_id = brand::where(['slug' => $slug])->first();
+        $brand_id = Brand::where(['slug' => $slug])->first();
 
         $meta = DB::table('brand_to_meta')
             ->where('bid', '=', $brand_id->id)
             ->first();
         if ($meta) {
             $meta->image = '';
-            $meta->url = url('/brand/') . '/' . $slug;
-            $sch = array(
+            $meta->url = url('/brand/').'/'.$slug;
+            $sch = [
                 '@context' => 'https://schema.org/',
                 '@type' => 'Brand',
                 'name' => $meta->title,
                 'description' => $meta->description,
-                'brand' => array(
+                'brand' => [
                     '@type' => 'Brand',
                     'name' => 'UAE Disar',
-                ),
+                ],
                 'sku' => 'DealStore_diSUa',
                 'gtin13' => '54435345',
-                'offers' => array(
+                'offers' => [
                     '@type' => 'AggregateOffer',
                     'url' => url()->current(),
                     'priceCurrency' => 'PKR',
                     'lowPrice' => '1999',
                     'highPrice' => '2000',
                     'offerCount' => '5',
-                ),
-                'aggregateRating' => array(
+                ],
+                'aggregateRating' => [
                     '@type' => 'AggregateRating',
                     'ratingValue' => '5',
                     'bestRating' => '5',
                     'worstRating' => '1',
                     'ratingCount' => '1',
                     'reviewCount' => '1',
-                ),
-                'review' => array(
+                ],
+                'review' => [
                     '@type' => 'Review',
                     'name' => 'Fahad Khan',
                     'reviewBody' => 'Best Product',
-                    'reviewRating' => array(
+                    'reviewRating' => [
                         '@type' => 'Rating',
                         'ratingValue' => '5',
                         'bestRating' => '5',
                         'worstRating' => '1',
-                    ),
+                    ],
                     'datePublished' => '2022-05-01',
-                    'author' => array(
+                    'author' => [
                         '@type' => 'Person',
                         'name' => 'DealStore',
-                    ),
-                    'publisher' => array(
+                    ],
+                    'publisher' => [
                         '@type' => 'Organization',
                         'name' => 'DealStore.com.pk',
-                    ),
-                ),
-            );
+                    ],
+                ],
+            ];
             $meta->scheme = $sch;
         }
         // dd($brand_id[0]->id);
@@ -4304,7 +4353,7 @@ class FrontController extends Controller
         $Slider = Slider::all();
         $categories = Category::all();
 
-        $rproducts = product::where('tags', 'ilike', '%' . $slug . '%')->get();
+        $rproducts = Product::where('tags', 'ilike', '%'.$slug.'%')->get();
 
         $tags = str_replace('-', ' ', $slug);
 
@@ -4327,25 +4376,32 @@ class FrontController extends Controller
         $page = Pages::where(['slug' => 'about-us'])->first();
         $page->increment('view');
         Session::put('title', $page->name);
+
         return view('front.aboutus', compact('page'));
     }
+
     public function privacypolicy()
     {
         $page = Pages::where(['slug' => 'privacypolicy'])->first();
         $page->increment('view');
         Session::put('title', 'Privacy Policy');
+
         return view('front.privacypolicy', compact('page'));
     }
+
     public function terms()
     {
         $page = Pages::where(['slug' => 'terms'])->first();
         $page->increment('view');
         Session::put('title', 'Terms');
+
         return view('front.terms', compact('page'));
     }
+
     public function becomepartner()
     {
         Session::put('title', 'Be Come Partner');
+
         return view('front.becomepartner');
     }
 
@@ -4355,6 +4411,7 @@ class FrontController extends Controller
         $page->increment('view');
         Session::put('title', 'FAQ`S');
         $faqs = Faq::where('page', 'general')->get();
+
         return view('front.faqs', compact('page', 'faqs'));
     }
 
@@ -4366,6 +4423,7 @@ class FrontController extends Controller
         $page->increment('view');
         Session::put('title', $page->name);
         $faqs = Faq::where('page', 'stores')->get();
+
         return view('front.locations', compact('locations', 'page', 'faqs'));
     }
 
@@ -4377,14 +4435,17 @@ class FrontController extends Controller
         Session::put('title', $page->name);
         $faqs = Faq::where('page', 'retailers')->get();
         $resslerfaqs = Faq::where('page', 'resellers')->get();
+
         return view('front.retailers', compact('page', 'faqs', 'resslerfaqs'));
     }
+
     public function partners()
     {
         $page = Pages::where(['slug' => 'partners'])->first();
         $faqs = Faq::where('page', 'partners')->get();
         $page->increment('view');
         Session::put('title', $page->name);
+
         return view('front.partners', compact('page', 'faqs'));
     }
 
@@ -4394,8 +4455,10 @@ class FrontController extends Controller
         $faqs = Faq::where('page', 'corporate-events')->get();
         $page->increment('view');
         Session::put('title', $page->name);
+
         return view('front.corporate-events', compact('page', 'faqs'));
     }
+
     public function resellers()
     {
         Session::put('title', 'Resellers');
@@ -4403,16 +4466,20 @@ class FrontController extends Controller
         $faqs = Faq::where('page', 'resellers')->get();
         $page->increment('view');
         Session::put('title', $page->name);
+
         return view('front.reseller', compact('page', 'faqs'));
     }
+
     public function influencers()
     {
         $page = Pages::where(['slug' => 'influencers'])->first();
         $faqs = Faq::where('page', 'influencers')->get();
         $page->increment('view');
         Session::put('title', $page->name);
+
         return view('front.influencers', compact('page', 'faqs'));
     }
+
     public function makeownbasket()
     {
         Session::put('title', 'Make Own Basket');
@@ -4424,8 +4491,10 @@ class FrontController extends Controller
             ->join('box_sizes', 'box_customize.size_id', '=', 'box_sizes.id')
             ->select('box_customize.*', 'package_types.name as package_type_name', 'package_types.id as package_type_id', 'box_sizes.name as box_size_name', 'box_sizes.id as box_sizes_id')
             ->get();
+
         return view('front.makeownbasket', compact('product', 'sizes', 'packages'));
     }
+
     public function get_box(Request $request)
     {
         Session::forget('cart_customize');
@@ -4458,9 +4527,11 @@ class FrontController extends Controller
             'total_quantity' => $totalQuantity,
         ]);
     }
+
     public function import_product()
     {
         Session::put('title', 'import_product');
+
         return view('front.import_product');
     }
 
@@ -4473,19 +4544,21 @@ class FrontController extends Controller
         try {
             // dd($request);
             $filePath = $request->file('file')->store('temp');
-            $absolutePath = storage_path('app/' . $filePath);
+            $absolutePath = storage_path('app/'.$filePath);
 
             // Import the Excel data
             Excel::import(new ProductsImport, $absolutePath);
+
             return back()->with('success', 'Products imported successfully!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error importing file: ' . $e->getMessage());
+            return back()->with('error', 'Error importing file: '.$e->getMessage());
         }
     }
 
     public function thankyou()
     {
         Session::put('title', 'Thankyou');
+
         return view('front.thanks');
     }
 
@@ -4493,6 +4566,7 @@ class FrontController extends Controller
     {
         $query = $request->input('text');
         $products = Product::where('product_name', 'ilike', "%{$query}%")->where('status', 1)->limit(10)->get();
+
         return response()->json($products);
     }
 
@@ -4503,9 +4577,9 @@ class FrontController extends Controller
             if ($city && $city->min_order > 0 && $city->shipping_cost > 0 && $city->free_shipping > 0) {
                 return response()->json([
                     'name' => $city->name,
-                    'minOrder' => (int)$city->min_order,
-                    'shippingCost' => (int)$city->shipping_cost,
-                    'freeShippingThreshold' => (int)$city->free_shipping,
+                    'minOrder' => (int) $city->min_order,
+                    'shippingCost' => (int) $city->shipping_cost,
+                    'freeShippingThreshold' => (int) $city->free_shipping,
                     'discount' => Session::get('cart.discount', 0),
                 ]);
                 exit;
@@ -4516,9 +4590,9 @@ class FrontController extends Controller
             if ($country) {
                 return response()->json([
                     'name' => $country->name,
-                    'minOrder' => (int)$country->min_order,
-                    'shippingCost' => (int)$country->shipping_cost,
-                    'freeShippingThreshold' => (int)$country->free_shipping,
+                    'minOrder' => (int) $country->min_order,
+                    'shippingCost' => (int) $country->shipping_cost,
+                    'freeShippingThreshold' => (int) $country->free_shipping,
                     'discount' => Session::get('cart.discount', 0),
                 ]);
                 exit;
